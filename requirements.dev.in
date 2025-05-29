@@ -1,0 +1,5 @@
+coverage
+pip==25.0.1
+pre-commit
+pytest
+ruff
