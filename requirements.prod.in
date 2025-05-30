@@ -1,1 +1,3 @@
+SQLAlchemy
 httpx
+psycopg2-binary
