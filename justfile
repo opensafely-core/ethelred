@@ -61,9 +61,11 @@ prodenv: requirements-prod (_install 'prod')
 # Install dev requirements into the virtual environment
 devenv: requirements-dev prodenv (_install 'dev') && install-pre-commit
 
-# Run a command in the virtual environment
+# Run the pipeline
 run *args: devenv
-    echo "Not implemented"
+    {{ BIN_DIR }}/python -m tasks.get_project_definitions
+    {{ BIN_DIR }}/python -m tasks.get_job_requests
+    {{ BIN_DIR }}/python -m tasks.analyse
 
 # Run tests
 test *args: devenv
