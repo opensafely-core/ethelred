@@ -519,6 +519,14 @@ typing-extensions==4.13.2 \
     #   anyio
     #   referencing
     #   sqlalchemy
+vl-convert-python==1.8.0 \
+    --hash=sha256:3388e3913287867b3553c10f81ca2d85268216a5a75e7c71b9c1b59887c1977e \
+    --hash=sha256:81f6380019ceadf070a79f85aa624475a6568093f70de0e151a32e91ecbcaacf \
+    --hash=sha256:9f1146b791ed27916f54c45e1d66af53a40eb26e5aaea1892f33eb9a935039ab \
+    --hash=sha256:b51264998e8fcc43dbce801484a950cfe6513cdc4c46b20604ef50989855a617 \
+    --hash=sha256:ceca613ca5551c55270a15ca48d0f3a7de1e949e0f127310e9b0f6570ea3fbbb \
+    --hash=sha256:f663317fc280b07553534195c1e31c4ca882d9c8601430211b078196db5ed227
+    # via -r requirements.prod.in
 
 # The following packages are considered to be unsafe in a requirements file:
 setuptools==80.9.0 \
