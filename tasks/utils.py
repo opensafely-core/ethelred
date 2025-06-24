@@ -1,3 +1,5 @@
+import datetime
+import json
 import os
 
 import sqlalchemy
@@ -15,3 +17,12 @@ def get_metadata(engine):
 
 def get_repo(url):
     return url.split("/")[-1]
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        try:
+            return datetime.datetime.isoformat(obj)
+        except TypeError:
+            pass
+        return super().default(obj)
