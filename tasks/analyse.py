@@ -1,32 +1,29 @@
+import collections
 import csv
 import datetime
-import functools
 
 import altair
 
 from . import DATA_DIR
 
 
-to_datetime = functools.partial(map, datetime.datetime.fromisoformat)
-to_int = functools.partial(map, int)
-
-
 def extract(f_path, transforms):
     with f_path.open(newline="") as f:
         reader = csv.reader(f)
-        next(reader)  # discard the header
 
-        columns = zip(*reader)
-        return tuple(list(tr(col)) for tr, col in zip(transforms, columns, strict=True))
+        header = next(reader)
+        assert len(transforms) == len(header)
+        Record = collections.namedtuple("Record", header)
 
+        rows = ((tr(value) for tr, value in zip(transforms, row)) for row in reader)
+        records = (Record(*row) for row in rows)
 
-def get_measure(num_actions, num_jobs):
-    return [j / a for a, j in zip(num_actions, num_jobs)]
+        yield from records
 
 
 def transform(data):
     return (
-        altair.Chart(altair.InlineData(data))
+        altair.Chart(altair.InlineData(list(data)))
         .mark_bar()
         .encode(altair.X("data:Q", bin=True), altair.Y("count()"))
     )
@@ -40,17 +37,16 @@ def write(chart, f_name):
 
 def main():
     f_path = DATA_DIR / "job_requests" / "job_requests.csv"
-    transforms = (to_datetime, to_int, to_int)
-    _, num_actions, num_jobs = extract(f_path, transforms)
-    measure = get_measure(num_actions, num_jobs)
+    transforms = (datetime.datetime.fromisoformat, int, int)
+    records = list(extract(f_path, transforms))
 
-    num_actions_histogram = transform(num_actions)
+    num_actions_histogram = transform(r.num_actions for r in records)
     write(num_actions_histogram, "num_actions_histogram.png")
 
-    num_jobs_histogram = transform(num_jobs)
+    num_jobs_histogram = transform(r.num_jobs for r in records)
     write(num_jobs_histogram, "num_jobs_histogram.png")
 
-    measure_histogram = transform(measure)
+    measure_histogram = transform(r.num_jobs / r.num_actions for r in records)
     write(measure_histogram, "measure_histogram.png")
 
 
