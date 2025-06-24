@@ -8,7 +8,7 @@ from . import DATA_DIR
 
 
 def read_csv(f_path, transforms):
-    with f_path.open(newline="") as f:
+    with open(f_path, newline="") as f:
         reader = csv.reader(f)
 
         header = next(reader)
