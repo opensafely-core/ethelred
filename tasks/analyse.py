@@ -11,13 +11,11 @@ to_datetime = functools.partial(map, datetime.datetime.fromisoformat)
 to_int = functools.partial(map, int)
 
 
-def extract():
-    f_path = DATA_DIR / "job_requests" / "job_requests.csv"
+def extract(f_path, transforms):
     with f_path.open(newline="") as f:
         reader = csv.reader(f)
         next(reader)  # discard the header
 
-        transforms = (to_datetime, to_int, to_int)
         columns = zip(*reader)
         return tuple(list(tr(col)) for tr, col in zip(transforms, columns, strict=True))
 
@@ -41,7 +39,9 @@ def write(chart, f_name):
 
 
 def main():
-    _, num_actions, num_jobs = extract()
+    f_path = DATA_DIR / "job_requests" / "job_requests.csv"
+    transforms = (to_datetime, to_int, to_int)
+    _, num_actions, num_jobs = extract(f_path, transforms)
     measure = get_measure(num_actions, num_jobs)
 
     num_actions_histogram = transform(num_actions)
