@@ -7,7 +7,7 @@ import altair
 from . import DATA_DIR
 
 
-def extract(f_path, transforms):
+def read_csv(f_path, transforms):
     with f_path.open(newline="") as f:
         reader = csv.reader(f)
 
@@ -36,7 +36,7 @@ def write(chart, f_path):
 
 def main():
     transforms = (datetime.datetime.fromisoformat, int, int)
-    records = list(extract(DATA_DIR / "job_requests" / "job_requests.csv", transforms))
+    records = list(read_csv(DATA_DIR / "job_requests" / "job_requests.csv", transforms))
 
     d_path = DATA_DIR / "analysis"
 
