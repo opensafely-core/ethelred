@@ -36,9 +36,8 @@ def write(chart, f_name):
 
 
 def main():
-    f_path = DATA_DIR / "job_requests" / "job_requests.csv"
     transforms = (datetime.datetime.fromisoformat, int, int)
-    records = list(extract(f_path, transforms))
+    records = list(extract(DATA_DIR / "job_requests" / "job_requests.csv", transforms))
 
     num_actions_histogram = transform(r.num_actions for r in records)
     write(num_actions_histogram, "num_actions_histogram.png")
