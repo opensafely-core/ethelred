@@ -1,10 +1,11 @@
 import collections
 import csv
 import datetime
+import json
 
 import altair
 
-from . import DATA_DIR
+from . import DATA_DIR, utils
 
 
 def read_csv(f_path, transforms):
@@ -29,6 +30,18 @@ def get_histogram(data):
     )
 
 
+def get_scatter_plot(records):
+    inline_data = altair.InlineData(
+        json.dumps([r._asdict() for r in records], cls=utils.JSONEncoder)
+    )
+    return (
+        altair.Chart(inline_data)
+        .mark_circle()
+        .encode(x="num_actions:Q", y="measure:Q")
+        .transform_calculate(measure=altair.datum.num_jobs / altair.datum.num_actions)
+    )
+
+
 def write(chart, f_path):
     f_path.parent.mkdir(parents=True, exist_ok=True)
     chart.save(f_path)
@@ -48,6 +61,9 @@ def main():
 
     measure_histogram = get_histogram(r.num_jobs / r.num_actions for r in records)
     write(measure_histogram, d_path / "measure_histogram.png")
+
+    scatter_plot = get_scatter_plot(records)
+    write(scatter_plot, d_path / "scatter_plot.png")
 
 
 if __name__ == "__main__":
