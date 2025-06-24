@@ -21,7 +21,7 @@ def read_csv(f_path, transforms):
         yield from records
 
 
-def transform(data):
+def get_histogram(data):
     return (
         altair.Chart(altair.InlineData(list(data)))
         .mark_bar()
@@ -40,13 +40,13 @@ def main():
 
     d_path = DATA_DIR / "analysis"
 
-    num_actions_histogram = transform(r.num_actions for r in records)
+    num_actions_histogram = get_histogram(r.num_actions for r in records)
     write(num_actions_histogram, d_path / "num_actions_histogram.png")
 
-    num_jobs_histogram = transform(r.num_jobs for r in records)
+    num_jobs_histogram = get_histogram(r.num_jobs for r in records)
     write(num_jobs_histogram, d_path / "num_jobs_histogram.png")
 
-    measure_histogram = transform(r.num_jobs / r.num_actions for r in records)
+    measure_histogram = get_histogram(r.num_jobs / r.num_actions for r in records)
     write(measure_histogram, d_path / "measure_histogram.png")
 
 
