@@ -29,24 +29,25 @@ def transform(data):
     )
 
 
-def write(chart, f_name):
-    d_path = DATA_DIR / "analysis"
-    d_path.mkdir(parents=True, exist_ok=True)
-    chart.save(d_path / f_name)
+def write(chart, f_path):
+    f_path.parent.mkdir(parents=True, exist_ok=True)
+    chart.save(f_path)
 
 
 def main():
     transforms = (datetime.datetime.fromisoformat, int, int)
     records = list(extract(DATA_DIR / "job_requests" / "job_requests.csv", transforms))
 
+    d_path = DATA_DIR / "analysis"
+
     num_actions_histogram = transform(r.num_actions for r in records)
-    write(num_actions_histogram, "num_actions_histogram.png")
+    write(num_actions_histogram, d_path / "num_actions_histogram.png")
 
     num_jobs_histogram = transform(r.num_jobs for r in records)
-    write(num_jobs_histogram, "num_jobs_histogram.png")
+    write(num_jobs_histogram, d_path / "num_jobs_histogram.png")
 
     measure_histogram = transform(r.num_jobs / r.num_actions for r in records)
-    write(measure_histogram, "measure_histogram.png")
+    write(measure_histogram, d_path / "measure_histogram.png")
 
 
 if __name__ == "__main__":
