@@ -1,5 +1,3 @@
-import pytest
-
 from tasks import utils
 
 
@@ -15,6 +13,6 @@ def test_get_metadata(monkeypatch):
     assert metadata.tables == {}
 
 
-@pytest.mark.xfail
 def test_get_repo():
-    assert False
+    repo = utils.get_repo("https://github.com/opensafely/my-repo")
+    repo == "my-repo"
