@@ -1,69 +1,38 @@
-import collections
-import csv
-import datetime
-import json
-
 import altair
+import pandas
+import streamlit
 
-from . import DATA_DIR, utils
-
-
-def read_csv(f_path, transforms):
-    with open(f_path, newline="") as f:
-        reader = csv.reader(f)
-
-        header = next(reader)
-        assert len(transforms) == len(header)
-        Record = collections.namedtuple("Record", header)
-
-        rows = ((tr(value) for tr, value in zip(transforms, row)) for row in reader)
-        records = (Record(*row) for row in rows)
-
-        yield from records
+from tasks import DATA_DIR
 
 
-def get_histogram(data):
+def get_histogram(job_requests, column_name):
     return (
-        altair.Chart(altair.InlineData(list(data)))
+        altair.Chart(job_requests)
         .mark_bar()
-        .encode(altair.X("data:Q", bin=True), altair.Y("count()"))
+        .encode(altair.X(column_name, bin=True), altair.Y("count()"))
     )
 
 
-def get_scatter_plot(records):
-    inline_data = altair.InlineData(
-        json.dumps([r._asdict() for r in records], cls=utils.JSONEncoder)
-    )
-    return (
-        altair.Chart(inline_data)
-        .mark_circle()
-        .encode(x="num_actions:Q", y="measure:Q")
-        .transform_calculate(measure=altair.datum.num_jobs / altair.datum.num_actions)
-    )
-
-
-def write(chart, f_path):
-    f_path.parent.mkdir(parents=True, exist_ok=True)
-    chart.save(f_path)
+def get_scatter_plot(job_requests, column_names):
+    encode_x, encode_y = column_names
+    return altair.Chart(job_requests).mark_circle().encode(x=encode_x, y=encode_y)
 
 
 def main():
-    transforms = (datetime.datetime.fromisoformat, int, int)
-    records = list(read_csv(DATA_DIR / "job_requests" / "job_requests.csv", transforms))
+    job_requests = pandas.read_csv(DATA_DIR / "job_requests" / "job_requests.csv")
+    job_requests["measure"] = job_requests["num_jobs"] / job_requests["num_actions"]
 
-    d_path = DATA_DIR / "analysis"
+    num_actions_histogram = get_histogram(job_requests, "num_actions")
+    streamlit.write(num_actions_histogram)
 
-    num_actions_histogram = get_histogram(r.num_actions for r in records)
-    write(num_actions_histogram, d_path / "num_actions_histogram.png")
+    num_jobs_histogram = get_histogram(job_requests, "num_jobs")
+    streamlit.write(num_jobs_histogram)
 
-    num_jobs_histogram = get_histogram(r.num_jobs for r in records)
-    write(num_jobs_histogram, d_path / "num_jobs_histogram.png")
+    measure_histogram = get_histogram(job_requests, "measure")
+    streamlit.write(measure_histogram)
 
-    measure_histogram = get_histogram(r.num_jobs / r.num_actions for r in records)
-    write(measure_histogram, d_path / "measure_histogram.png")
-
-    scatter_plot = get_scatter_plot(records)
-    write(scatter_plot, d_path / "scatter_plot.png")
+    scatter_plot = get_scatter_plot(job_requests, ("num_actions", "measure"))
+    streamlit.write(scatter_plot)
 
 
 if __name__ == "__main__":
