@@ -10,6 +10,13 @@ skip_covered = true
 [tool.coverage.html]
 show_contexts = true
 
+[tool.pytest.ini_options]
+filterwarnings = [
+    # Streamlit modifies an Altair chart's theme using a deprecated attribute. We don't
+    # control Streamlit, so we ignore the deprecation warning.
+    "ignore::altair.utils.deprecation.AltairDeprecationWarning:streamlit.elements.vega_charts",
+]
+
 [tool.ruff]
 target-version = "py312"
 
