@@ -10,7 +10,7 @@ from . import DATA_DIR, INDEX_DATE, utils
 Record = collections.namedtuple("Record", ["created_at", "num_actions", "num_jobs"])
 
 
-def get_stmt(metadata):
+def extract(engine, metadata):
     job = metadata.tables["jobserver_job"]
     job_request = metadata.tables["jobserver_jobrequest"]
     workspace = metadata.tables["jobserver_workspace"]
@@ -32,10 +32,7 @@ def get_stmt(metadata):
         .join(repo, repo.c.id == workspace.c.repo_id)
         .where(job_request.c.created_at >= INDEX_DATE)
     )
-    return stmt
 
-
-def extract(engine, stmt):
     with engine.connect() as conn:
         yield from conn.execute(stmt)
 
@@ -73,8 +70,7 @@ def main():
     engine = utils.get_engine()
     metadata = utils.get_metadata(engine)
 
-    stmt = get_stmt(metadata)
-    rows = extract(engine, stmt)
+    rows = extract(engine, metadata)
     records = transform(rows)
     write(records)
 
