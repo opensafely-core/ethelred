@@ -4,3 +4,4 @@ opensafely-pipeline[fastparser]@https://github.com/opensafely-core/pipeline/arch
 pandas
 psycopg2-binary
 streamlit
+watchdog
