@@ -10,7 +10,8 @@ from . import DATA_DIR, INDEX_DATE, utils
 Record = collections.namedtuple("Record", ["created_at", "num_actions", "num_jobs"])
 
 
-def extract(engine, metadata):
+def extract(engine, metadata):  # pragma: no cover
+    # This is hard to test without a Job Server DB, so we exclude it from coverage.
     job = metadata.tables["jobserver_job"]
     job_request = metadata.tables["jobserver_jobrequest"]
     workspace = metadata.tables["jobserver_workspace"]
