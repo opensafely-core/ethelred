@@ -1,0 +1,31 @@
+name: Continuous Integration
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: opensafely-core/setup-action@v1
+        with:
+          python-version: 3.12
+          cache-dependency-path: requirements.*.txt
+          install-just: true
+      - run: just devenv
+      - run: just check
+
+  test:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: opensafely-core/setup-action@v1
+        with:
+          python-version: 3.12
+          cache-dependency-path: requirements.*.txt
+          install-just: true
+      - run: just devenv
+      - run: just test
