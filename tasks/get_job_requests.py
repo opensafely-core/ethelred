@@ -1,5 +1,6 @@
 import collections
 import csv
+import functools
 import pickle
 
 import sqlalchemy
@@ -38,8 +39,8 @@ def extract(engine, metadata):  # pragma: no cover
         yield from conn.execute(stmt)
 
 
-def load_project_definition(repo, sha):
-    f_path = DATA_DIR / "project_definitions" / repo / f"{sha}.pickle"
+def load_project_definition(project_definitions_dir, repo, sha):
+    f_path = project_definitions_dir / repo / f"{sha}.pickle"
     with f_path.open("rb") as f:
         return pickle.load(f)
 
@@ -49,10 +50,10 @@ def get_record(row, project_definition):
     return Record(row.created_at, num_actions, row.num_jobs)
 
 
-def transform(rows):
+def transform(rows, project_definition_loader):
     for row in rows:
         repo = utils.get_repo(row.url)
-        project_definition = load_project_definition(repo, row.sha)
+        project_definition = project_definition_loader(repo, row.sha)
         yield get_record(row, project_definition)
 
 
@@ -71,8 +72,13 @@ def main():
     engine = utils.get_engine()
     metadata = utils.get_metadata(engine)
 
+    project_definitions_dir = DATA_DIR / "project_definitions"
+    project_definition_loader = functools.partial(
+        load_project_definition, project_definitions_dir
+    )
+
     rows = extract(engine, metadata)
-    records = transform(rows)
+    records = transform(rows, project_definition_loader)
     write(records)
 
 
