@@ -71,9 +71,8 @@ def main():
     engine = utils.get_engine()
     metadata = utils.get_metadata(engine)
 
-    project_definitions_dir = DATA_DIR / "project_definitions"
     project_definition_loader = functools.partial(
-        load_project_definition, project_definitions_dir
+        load_project_definition, DATA_DIR / "project_definitions"
     )
 
     rows = extract(engine, metadata)
