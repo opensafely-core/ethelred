@@ -70,13 +70,13 @@ def write_csv(records, f_path):
 def main():
     engine = utils.get_engine()
     metadata = utils.get_metadata(engine)
+    rows = extract(engine, metadata)
 
     project_definition_loader = functools.partial(
         load_project_definition, DATA_DIR / "project_definitions"
     )
-
-    rows = extract(engine, metadata)
     records = transform(rows, project_definition_loader)
+
     write_csv(records, DATA_DIR / "job_requests" / "job_requests.csv")
 
 
