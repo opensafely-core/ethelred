@@ -44,7 +44,7 @@ def test_write(tmp_path):
         get_job_requests.Record(datetime.datetime(2025, 1, 2), 4, 2),
     ]
     f_path = tmp_path / "job_requests" / "job_requests.csv"
-    get_job_requests.write(records, f_path)
+    get_job_requests.write_csv(records, f_path)
     assert (
         f_path.read_text()
         == "created_at,num_actions,num_jobs\n"

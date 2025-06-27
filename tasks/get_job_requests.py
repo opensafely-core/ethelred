@@ -58,7 +58,7 @@ def transform(rows, project_definition_loader):
         yield get_record(row, project_definition)
 
 
-def write(records, f_path):
+def write_csv(records, f_path):
     records = iter(records)
     record_0 = next(records)
     f_path.parent.mkdir(parents=True, exist_ok=True)
@@ -78,7 +78,7 @@ def main():
 
     rows = extract(engine, metadata)
     records = transform(rows, project_definition_loader)
-    write(records, DATA_DIR / "job_requests" / "job_requests.csv")
+    write_csv(records, DATA_DIR / "job_requests" / "job_requests.csv")
 
 
 if __name__ == "__main__":
