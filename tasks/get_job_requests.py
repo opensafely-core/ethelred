@@ -1,6 +1,7 @@
 import collections
 import csv
 import functools
+import itertools
 import pickle
 
 import sqlalchemy
@@ -57,15 +58,13 @@ def transform(rows, project_definition_loader):
         yield get_record(row, project_definition)
 
 
-def write(records):
-    d_path = DATA_DIR / "job_requests"
-    d_path.mkdir(parents=True, exist_ok=True)
-
-    f_path = d_path / "job_requests.csv"
+def write(records, f_path):
+    records = iter(records)
+    record_0 = next(records)
+    f_path.parent.mkdir(parents=True, exist_ok=True)
     with f_path.open("w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(Record._fields)  # header
-        writer.writerows(records)
+        writer.writerows(itertools.chain([record_0._fields], [record_0], records))
 
 
 def main():
@@ -79,7 +78,7 @@ def main():
 
     rows = extract(engine, metadata)
     records = transform(rows, project_definition_loader)
-    write(records)
+    write(records, DATA_DIR / "job_requests" / "job_requests.csv")
 
 
 if __name__ == "__main__":
