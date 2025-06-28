@@ -37,11 +37,9 @@ def get_record(row):
     return Record(repo, row.sha, project_definition)
 
 
-def write(record):
-    d_path = DATA_DIR / "project_definitions" / record.repo
-    d_path.mkdir(parents=True, exist_ok=True)
-
-    f_path = d_path / f"{record.sha}.pickle"
+def write(record, project_definitions_dir):
+    f_path = project_definitions_dir / record.repo / f"{record.sha}.pickle"
+    f_path.parent.mkdir(parents=True, exist_ok=True)
     with f_path.open("wb") as f:
         pickle.dump(record.project_definition, f)
 
@@ -52,8 +50,9 @@ def main():
 
     rows = extract(engine, metadata)
     records = (record for row in rows if (record := get_record(row)) is not None)
+    project_definitions_dir = DATA_DIR / "project_definitions"
     for record in records:
-        write(record)
+        write(record, project_definitions_dir)
 
 
 if __name__ == "__main__":
