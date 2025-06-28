@@ -44,7 +44,8 @@ def write(record, project_definitions_dir):
         pickle.dump(record.project_definition, f)
 
 
-def main():
+def main():  # pragma: no cover
+    # This is hard to test without a Job Server DB, so we exclude it from coverage.
     engine = utils.get_engine()
     metadata = utils.get_metadata(engine)
 
