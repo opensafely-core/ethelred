@@ -28,7 +28,7 @@ def test_write(tmp_path):
     )
     project_definitions_dir = tmp_path / "project_definitions"
 
-    get_project_definitions.write(record, project_definitions_dir)
+    get_project_definitions.write([record], project_definitions_dir)
 
     project_definition = io.read(project_definitions_dir / "my-repo" / "0000000.pickle")
     assert project_definition == {"actions": {"a1": {}, "a2": {}}}

@@ -36,9 +36,10 @@ def get_record(row):
     return Record(repo, row.sha, project_definition)
 
 
-def write(record, project_definitions_dir):
-    f_path = project_definitions_dir / record.repo / f"{record.sha}.pickle"
-    io.write(record.project_definition, f_path)
+def write(records, project_definitions_dir):
+    for record in records:
+        f_path = project_definitions_dir / record.repo / f"{record.sha}.pickle"
+        io.write(record.project_definition, f_path)
 
 
 def main():  # pragma: no cover
@@ -48,9 +49,7 @@ def main():  # pragma: no cover
 
     rows = extract(engine, metadata)
     records = (record for row in rows if (record := get_record(row)) is not None)
-    project_definitions_dir = DATA_DIR / "project_definitions"
-    for record in records:
-        write(record, project_definitions_dir)
+    write(records, DATA_DIR / "project_definitions")
 
 
 if __name__ == "__main__":
