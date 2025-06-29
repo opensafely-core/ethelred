@@ -1,10 +1,9 @@
 import collections
-import pickle
 
 import pipeline
 import sqlalchemy
 
-from . import DATA_DIR, INDEX_DATE, utils
+from . import DATA_DIR, INDEX_DATE, io, utils
 
 
 Record = collections.namedtuple("Record", ["repo", "sha", "project_definition"])
@@ -39,9 +38,7 @@ def get_record(row):
 
 def write(record, project_definitions_dir):
     f_path = project_definitions_dir / record.repo / f"{record.sha}.pickle"
-    f_path.parent.mkdir(parents=True, exist_ok=True)
-    with f_path.open("wb") as f:
-        pickle.dump(record.project_definition, f)
+    io.write(record.project_definition, f_path)
 
 
 def main():  # pragma: no cover

@@ -1,18 +1,14 @@
 import collections
 import datetime
-import pickle
 
-from tasks import get_job_requests
+from tasks import get_job_requests, io
 
 
 Row = collections.namedtuple("Row", ["url", "sha", "created_at", "num_jobs"])
 
 
 def test_load_project_definition(tmp_path):
-    f_path = tmp_path / "my-repo" / "0000000.pickle"
-    f_path.parent.mkdir()
-    with f_path.open("wb") as f:
-        pickle.dump({}, f)
+    io.write({}, tmp_path / "my-repo" / "0000000.pickle")
     project_definition = get_job_requests.load_project_definition(
         tmp_path, "my-repo", "0000000"
     )

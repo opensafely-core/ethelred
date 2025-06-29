@@ -2,11 +2,10 @@ import collections
 import csv
 import functools
 import itertools
-import pickle
 
 import sqlalchemy
 
-from . import DATA_DIR, INDEX_DATE, utils
+from . import DATA_DIR, INDEX_DATE, io, utils
 
 
 Record = collections.namedtuple("Record", ["created_at", "num_actions", "num_jobs"])
@@ -42,8 +41,7 @@ def extract(engine, metadata):  # pragma: no cover
 
 def load_project_definition(project_definitions_dir, repo, sha):
     f_path = project_definitions_dir / repo / f"{sha}.pickle"
-    with f_path.open("rb") as f:
-        return pickle.load(f)
+    return io.read(f_path)
 
 
 def get_record(row, project_definition):

@@ -1,7 +1,6 @@
 import collections
-import pickle
 
-from tasks import get_project_definitions
+from tasks import get_project_definitions, io
 
 
 Row = collections.namedtuple("Row", ["url", "sha", "project_definition"])
@@ -31,7 +30,5 @@ def test_write(tmp_path):
 
     get_project_definitions.write(record, project_definitions_dir)
 
-    with open(project_definitions_dir / "my-repo" / "0000000.pickle", "rb") as f:
-        project_definition = pickle.load(f)
-
+    project_definition = io.read(project_definitions_dir / "my-repo" / "0000000.pickle")
     assert project_definition == {"actions": {"a1": {}, "a2": {}}}
