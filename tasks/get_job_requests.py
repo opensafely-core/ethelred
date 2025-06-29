@@ -40,8 +40,7 @@ def extract(engine, metadata):  # pragma: no cover
 
 
 def load_project_definition(project_definitions_dir, repo, sha):
-    f_path = project_definitions_dir / repo / f"{sha}.pickle"
-    return io.read(f_path)
+    return io.read(project_definitions_dir / repo / f"{sha}.pickle")
 
 
 def get_records(rows, project_definition_loader):
