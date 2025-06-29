@@ -49,7 +49,7 @@ def get_record(row, project_definition):
     return Record(row.created_at, num_actions, row.num_jobs)
 
 
-def transform(rows, project_definition_loader):
+def get_records(rows, project_definition_loader):
     for row in rows:
         repo = utils.get_repo(row.url)
         project_definition = project_definition_loader(repo, row.sha)
@@ -74,7 +74,7 @@ def main():  # pragma: no cover
     project_definition_loader = functools.partial(
         load_project_definition, DATA_DIR / "project_definitions"
     )
-    records = transform(rows, project_definition_loader)
+    records = get_records(rows, project_definition_loader)
 
     write_csv(records, DATA_DIR / "job_requests" / "job_requests.csv")
 

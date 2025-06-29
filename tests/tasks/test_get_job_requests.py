@@ -15,7 +15,7 @@ def test_load_project_definition(tmp_path):
     assert project_definition == {}
 
 
-def test_transform():
+def test_get_records():
     row = Row(
         "https://github.com/opensafely/my-repo",
         "0000000",
@@ -26,7 +26,7 @@ def test_transform():
     def load_project_definition(repo, sha):
         return {"actions": {"a1": {}, "a2": {}}}
 
-    records = list(get_job_requests.transform([row], load_project_definition))
+    records = list(get_job_requests.get_records([row], load_project_definition))
     record = records[0]
 
     assert record.created_at == datetime.datetime(2025, 1, 1)
