@@ -48,7 +48,7 @@ def main():  # pragma: no cover
     metadata = utils.get_metadata(engine)
 
     rows = extract(engine, metadata)
-    records = (record for row in rows if (record := get_record(row)) is not None)
+    records = (get_record(row) for row in rows)
     write(records, DATA_DIR / "project_definitions")
 
 
