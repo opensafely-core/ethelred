@@ -1,7 +1,5 @@
 import collections
-import csv
 import functools
-import itertools
 
 import sqlalchemy
 
@@ -51,15 +49,6 @@ def get_records(rows, project_definition_loader):
         yield Record(row.created_at, num_actions, row.num_jobs)
 
 
-def write_csv(records, f_path):
-    records = iter(records)
-    record_0 = next(records)
-    f_path.parent.mkdir(parents=True, exist_ok=True)
-    with f_path.open("w", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerows(itertools.chain([record_0._fields], [record_0], records))
-
-
 def main():  # pragma: no cover
     # This is hard to test without a Job Server DB, so we exclude it from coverage.
     engine = utils.get_engine()
@@ -71,7 +60,7 @@ def main():  # pragma: no cover
     )
     records = get_records(rows, project_definition_loader)
 
-    write_csv(records, DATA_DIR / "job_requests" / "job_requests.csv")
+    io.write(records, DATA_DIR / "job_requests" / "job_requests.csv")
 
 
 if __name__ == "__main__":
