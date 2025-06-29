@@ -34,7 +34,7 @@ def test_get_records():
     assert record.num_jobs == 1
 
 
-def test_write(tmp_path):
+def test_write_csv(tmp_path):
     records = [
         get_job_requests.Record(datetime.datetime(2025, 1, 1), 2, 1),
         get_job_requests.Record(datetime.datetime(2025, 1, 2), 4, 2),
