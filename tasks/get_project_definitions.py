@@ -36,7 +36,7 @@ def get_record(row):
     return Record(repo, row.sha, project_definition)
 
 
-def write(records, project_definitions_dir):
+def write_pickle(records, project_definitions_dir):
     for record in records:
         f_path = project_definitions_dir / record.repo / f"{record.sha}.pickle"
         io.write(record.project_definition, f_path)
@@ -49,7 +49,7 @@ def main():  # pragma: no cover
 
     rows = extract(engine, metadata)
     records = (get_record(row) for row in rows)
-    write(records, DATA_DIR / "project_definitions")
+    write_pickle(records, DATA_DIR / "project_definitions")
 
 
 if __name__ == "__main__":
