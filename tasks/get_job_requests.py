@@ -44,16 +44,12 @@ def load_project_definition(project_definitions_dir, repo, sha):
     return io.read(f_path)
 
 
-def get_record(row, project_definition):
-    num_actions = len(project_definition["actions"])
-    return Record(row.created_at, num_actions, row.num_jobs)
-
-
 def get_records(rows, project_definition_loader):
     for row in rows:
         repo = utils.get_repo(row.url)
         project_definition = project_definition_loader(repo, row.sha)
-        yield get_record(row, project_definition)
+        num_actions = len(project_definition["actions"])
+        yield Record(row.created_at, num_actions, row.num_jobs)
 
 
 def write_csv(records, f_path):
