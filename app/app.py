@@ -1,8 +1,13 @@
+import pathlib
+
 import altair
 import pandas
 import streamlit
 
-from tasks import DATA_DIR
+
+ROOT_DIR = pathlib.Path(__file__).parents[1]
+
+DATA_DIR = ROOT_DIR / "data"
 
 
 def get_job_requests(f_path):
