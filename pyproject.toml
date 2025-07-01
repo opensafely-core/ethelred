@@ -9,6 +9,10 @@ skip_covered = true
 exclude_also = [
     'if __name__ == "__main__":',
 ]
+omit = [
+    "tests/jobserver/get_tables.py",
+    "tests/jobserver/tables.py",
+]
 
 [tool.coverage.html]
 show_contexts = true
