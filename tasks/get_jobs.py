@@ -5,7 +5,7 @@ import sqlalchemy
 from . import DATA_DIR, INDEX_DATE, io, utils
 
 
-Record = collections.namedtuple("Record", ["id", "job_request_id"])
+Record = collections.namedtuple("Record", ["id", "job_request_id", "created_at"])
 
 
 def extract(engine, metadata):  # pragma: no cover
@@ -16,6 +16,7 @@ def extract(engine, metadata):  # pragma: no cover
         sqlalchemy.select(
             job.c.id,
             job.c.job_request_id,
+            job.c.created_at,
         )
         # Techincally we can just do job.c.created_at >= INDEX_DATE
         # (since jobs are created after their job request),
@@ -29,7 +30,7 @@ def extract(engine, metadata):  # pragma: no cover
 
 def transform(rows):
     for row in rows:
-        yield Record(row.id, row.job_request_id)
+        yield Record(row.id, row.job_request_id, row.created_at)
 
 
 def main():  # pragma: no cover
