@@ -6,7 +6,8 @@ from . import DATA_DIR, INDEX_DATE, io, utils
 
 
 Record = collections.namedtuple(
-    "Record", ["id", "job_request_id", "created_at", "stage"]
+    "Record",
+    ["id", "job_request_id", "created_at", "stage", "outcome"],
 )
 
 
@@ -34,7 +35,11 @@ def extract(engine, metadata):  # pragma: no cover
 def transform(rows):
     for row in rows:
         yield Record(
-            row.id, row.job_request_id, row.created_at, get_stage(row.run_command)
+            row.id,
+            row.job_request_id,
+            row.created_at,
+            get_stage(row.run_command),
+            get_outcome(row.status, row.status_message),
         )
 
 
@@ -43,6 +48,20 @@ def get_stage(run_command):
     if run_command.split(":")[0] in database_commands:
         return "database"
     return "analysis"
+
+
+def get_outcome(status, status_message):
+    if status == "failed":
+        if status_message.startswith("Not starting as dependency failed"):
+            return "cancelled by dependency"
+        elif (
+            status_message.startswith("Job exited with an error")
+            or status_message.startswith("Internal error")
+            or status_message.startswith("No outputs found matching patterns")
+            or status_message.startswith("GitRepoNotReachableError")
+        ):
+            return "errored"
+    return "other"
 
 
 def main():  # pragma: no cover
