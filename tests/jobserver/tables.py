@@ -1,4 +1,3 @@
-
 """
 This file contains SQLAlchemy objects that represent Job Server's tables.
 To create them, call `metadata.create_all(bind=<engine>)`.
@@ -28,118 +27,1542 @@ from sqlalchemy.dialects.postgresql import INTERVAL, JSONB
 
 metadata = MetaData()
 
-Table('auth_group', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('name', TEXT()), schema=None)
+Table(
+    "auth_group",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("name", TEXT()),
+    schema=None,
+)
 
-Table('auth_user', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('password', TEXT()), Column('last_login', TIMESTAMP(timezone=True)), Column('is_superuser', BOOLEAN()), Column('username', TEXT()), Column('first_name', TEXT()), Column('email', TEXT()), Column('is_staff', BOOLEAN()), Column('is_active', BOOLEAN()), Column('date_joined', TIMESTAMP(timezone=True)), Column('last_name', TEXT()), schema=None)
+Table(
+    "auth_user",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("password", TEXT()),
+    Column("last_login", TIMESTAMP(timezone=True)),
+    Column("is_superuser", BOOLEAN()),
+    Column("username", TEXT()),
+    Column("first_name", TEXT()),
+    Column("email", TEXT()),
+    Column("is_staff", BOOLEAN()),
+    Column("is_active", BOOLEAN()),
+    Column("date_joined", TIMESTAMP(timezone=True)),
+    Column("last_name", TEXT()),
+    schema=None,
+)
 
-Table('django_content_type', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('app_label', TEXT()), Column('model', TEXT()), schema=None)
+Table(
+    "django_content_type",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("app_label", TEXT()),
+    Column("model", TEXT()),
+    schema=None,
+)
 
-Table('django_migrations', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('app', TEXT()), Column('name', TEXT()), Column('applied', TIMESTAMP(timezone=True)), schema=None)
+Table(
+    "django_migrations",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("app", TEXT()),
+    Column("name", TEXT()),
+    Column("applied", TIMESTAMP(timezone=True)),
+    schema=None,
+)
 
-Table('django_session', metadata, Column('session_key', TEXT(), primary_key=True, nullable=False), Column('session_data', TEXT()), Column('expire_date', TIMESTAMP(timezone=True)), schema=None)
+Table(
+    "django_session",
+    metadata,
+    Column("session_key", TEXT(), primary_key=True, nullable=False),
+    Column("session_data", TEXT()),
+    Column("expire_date", TIMESTAMP(timezone=True)),
+    schema=None,
+)
 
-Table('jobserver_auditableevent', metadata, Column('id', INTEGER(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1)), Column('old', TEXT(), nullable=False), Column('new', TEXT(), nullable=False), Column('type', TEXT(), nullable=False), Column('target_model', TEXT(), nullable=False), Column('target_field', TEXT(), nullable=False), Column('target_id', TEXT(), nullable=False), Column('target_user', TEXT(), nullable=False), Column('parent_model', TEXT(), nullable=False), Column('parent_id', TEXT(), nullable=False), Column('created_at', TIMESTAMP(timezone=True), nullable=False), Column('created_by', TEXT(), nullable=False), schema=None)
+Table(
+    "jobserver_auditableevent",
+    metadata,
+    Column(
+        "id",
+        INTEGER(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
+        ),
+    ),
+    Column("old", TEXT(), nullable=False),
+    Column("new", TEXT(), nullable=False),
+    Column("type", TEXT(), nullable=False),
+    Column("target_model", TEXT(), nullable=False),
+    Column("target_field", TEXT(), nullable=False),
+    Column("target_id", TEXT(), nullable=False),
+    Column("target_user", TEXT(), nullable=False),
+    Column("parent_model", TEXT(), nullable=False),
+    Column("parent_id", TEXT(), nullable=False),
+    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("created_by", TEXT(), nullable=False),
+    schema=None,
+)
 
-Table('jobserver_backend', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('name', TEXT()), Column('parent_directory', TEXT()), Column('auth_token', TEXT()), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('is_active', BOOLEAN()), Column('level_4_url', TEXT()), Column('slug', TEXT()), Column('alert_timeout', INTERVAL(), nullable=False), Column('jobrunner_state', JSONB(astext_type=Text())), schema=None)
+Table(
+    "jobserver_backend",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("name", TEXT()),
+    Column("parent_directory", TEXT()),
+    Column("auth_token", TEXT()),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("is_active", BOOLEAN()),
+    Column("level_4_url", TEXT()),
+    Column("slug", TEXT()),
+    Column("alert_timeout", INTERVAL(), nullable=False),
+    Column("jobrunner_state", JSONB(astext_type=Text())),
+    schema=None,
+)
 
-Table('jobserver_user', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('password', TEXT()), Column('last_login', TIMESTAMP(timezone=True)), Column('username', TEXT()), Column('email', TEXT()), Column('date_joined', TIMESTAMP(timezone=True)), Column('pat_expires_at', TIMESTAMP(timezone=True)), Column('pat_token', TEXT()), Column('fullname', TEXT(), nullable=False), Column('created_by_id', INTEGER(), ForeignKey('jobserver_user.id')), Column('login_token', TEXT()), Column('login_token_expires_at', TIMESTAMP(timezone=True)), Column('roles', ARRAY(TEXT()), nullable=False), schema=None)
+Table(
+    "jobserver_user",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("password", TEXT()),
+    Column("last_login", TIMESTAMP(timezone=True)),
+    Column("username", TEXT()),
+    Column("email", TEXT()),
+    Column("date_joined", TIMESTAMP(timezone=True)),
+    Column("pat_expires_at", TIMESTAMP(timezone=True)),
+    Column("pat_token", TEXT()),
+    Column("fullname", TEXT(), nullable=False),
+    Column("created_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    Column("login_token", TEXT()),
+    Column("login_token_expires_at", TIMESTAMP(timezone=True)),
+    Column("roles", ARRAY(TEXT()), nullable=False),
+    schema=None,
+)
 
-Table('social_auth_association', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('server_url', TEXT()), Column('handle', TEXT()), Column('secret', TEXT()), Column('issued', BIGINT()), Column('lifetime', BIGINT()), Column('assoc_type', TEXT()), schema=None)
+Table(
+    "social_auth_association",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("server_url", TEXT()),
+    Column("handle", TEXT()),
+    Column("secret", TEXT()),
+    Column("issued", BIGINT()),
+    Column("lifetime", BIGINT()),
+    Column("assoc_type", TEXT()),
+    schema=None,
+)
 
-Table('social_auth_code', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('email', TEXT()), Column('code', TEXT()), Column('verified', BOOLEAN()), Column('timestamp', TIMESTAMP(timezone=True)), schema=None)
+Table(
+    "social_auth_code",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("email", TEXT()),
+    Column("code", TEXT()),
+    Column("verified", BOOLEAN()),
+    Column("timestamp", TIMESTAMP(timezone=True)),
+    schema=None,
+)
 
-Table('social_auth_nonce', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('server_url', TEXT()), Column('timestamp', BIGINT()), Column('salt', TEXT()), schema=None)
+Table(
+    "social_auth_nonce",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("server_url", TEXT()),
+    Column("timestamp", BIGINT()),
+    Column("salt", TEXT()),
+    schema=None,
+)
 
-Table('social_auth_partial', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('token', TEXT()), Column('next_step', SMALLINT()), Column('backend', TEXT()), Column('timestamp', TIMESTAMP(timezone=True)), Column('data', JSONB(astext_type=Text()), nullable=False), schema=None)
+Table(
+    "social_auth_partial",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("token", TEXT()),
+    Column("next_step", SMALLINT()),
+    Column("backend", TEXT()),
+    Column("timestamp", TIMESTAMP(timezone=True)),
+    Column("data", JSONB(astext_type=Text()), nullable=False),
+    schema=None,
+)
 
-Table('auth_permission', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('content_type_id', BIGINT(), ForeignKey('django_content_type.id')), Column('codename', TEXT()), Column('name', TEXT()), schema=None)
+Table(
+    "auth_permission",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("content_type_id", BIGINT(), ForeignKey("django_content_type.id")),
+    Column("codename", TEXT()),
+    Column("name", TEXT()),
+    schema=None,
+)
 
-Table('auth_user_groups', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('user_id', BIGINT(), ForeignKey('auth_user.id')), Column('group_id', BIGINT(), ForeignKey('auth_group.id')), schema=None)
+Table(
+    "auth_user_groups",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("user_id", BIGINT(), ForeignKey("auth_user.id")),
+    Column("group_id", BIGINT(), ForeignKey("auth_group.id")),
+    schema=None,
+)
 
-Table('django_admin_log', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('action_time', TIMESTAMP(timezone=True)), Column('object_id', TEXT()), Column('object_repr', TEXT()), Column('change_message', TEXT()), Column('content_type_id', BIGINT(), ForeignKey('django_content_type.id')), Column('user_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('action_flag', SMALLINT()), schema=None)
+Table(
+    "django_admin_log",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("action_time", TIMESTAMP(timezone=True)),
+    Column("object_id", TEXT()),
+    Column("object_repr", TEXT()),
+    Column("change_message", TEXT()),
+    Column("content_type_id", BIGINT(), ForeignKey("django_content_type.id")),
+    Column("user_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("action_flag", SMALLINT()),
+    schema=None,
+)
 
-Table('jobserver_backendmembership', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('created_at', TIMESTAMP(timezone=True)), Column('backend_id', BIGINT(), ForeignKey('jobserver_backend.id')), Column('created_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('user_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "jobserver_backendmembership",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("backend_id", BIGINT(), ForeignKey("jobserver_backend.id")),
+    Column("created_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("user_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('jobserver_org', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('name', TEXT()), Column('slug', TEXT()), Column('created_at', TIMESTAMP(timezone=True)), Column('description', TEXT()), Column('logo', TEXT()), Column('created_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('github_orgs', ARRAY(TEXT()), nullable=False), Column('logo_file', VARCHAR(length=100)), schema=None)
+Table(
+    "jobserver_org",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("name", TEXT()),
+    Column("slug", TEXT()),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("description", TEXT()),
+    Column("logo", TEXT()),
+    Column("created_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("github_orgs", ARRAY(TEXT()), nullable=False),
+    Column("logo_file", VARCHAR(length=100)),
+    schema=None,
+)
 
-Table('jobserver_project', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('slug', TEXT()), Column('name', TEXT()), Column('created_at', TIMESTAMP(timezone=True)), Column('created_by_id', BIGINT(), ForeignKey('jobserver_user.id'), nullable=False), Column('copilot_id', INTEGER(), ForeignKey('jobserver_user.id')), Column('copilot_support_ends_at', TIMESTAMP(timezone=True)), Column('number', INTEGER()), Column('updated_at', TIMESTAMP(timezone=True), nullable=False), Column('updated_by_id', INTEGER(), ForeignKey('jobserver_user.id'), nullable=False), Column('status', TEXT(), nullable=False), Column('status_description', TEXT(), nullable=False), Column('copilot_notes', TEXT(), nullable=False), schema=None)
+Table(
+    "jobserver_project",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("slug", TEXT()),
+    Column("name", TEXT()),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("created_by_id", BIGINT(), ForeignKey("jobserver_user.id"), nullable=False),
+    Column("copilot_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    Column("copilot_support_ends_at", TIMESTAMP(timezone=True)),
+    Column("number", INTEGER()),
+    Column("updated_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("updated_by_id", INTEGER(), ForeignKey("jobserver_user.id"), nullable=False),
+    Column("status", TEXT(), nullable=False),
+    Column("status_description", TEXT(), nullable=False),
+    Column("copilot_notes", TEXT(), nullable=False),
+    schema=None,
+)
 
-Table('jobserver_repo', metadata, Column('id', INTEGER(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1)), Column('url', TEXT(), nullable=False), Column('researcher_signed_off_at', TIMESTAMP(timezone=True)), Column('researcher_signed_off_by_id', INTEGER(), ForeignKey('jobserver_user.id')), Column('internal_signed_off_at', TIMESTAMP(timezone=True)), Column('internal_signed_off_by_id', INTEGER(), ForeignKey('jobserver_user.id')), Column('has_github_outputs', BOOLEAN(), nullable=False), schema=None)
+Table(
+    "jobserver_repo",
+    metadata,
+    Column(
+        "id",
+        INTEGER(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
+        ),
+    ),
+    Column("url", TEXT(), nullable=False),
+    Column("researcher_signed_off_at", TIMESTAMP(timezone=True)),
+    Column("researcher_signed_off_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    Column("internal_signed_off_at", TIMESTAMP(timezone=True)),
+    Column("internal_signed_off_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    Column("has_github_outputs", BOOLEAN(), nullable=False),
+    schema=None,
+)
 
-Table('jobserver_sitealert', metadata, Column('id', INTEGER(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1)), Column('title', TEXT(), nullable=False), Column('message', TEXT(), nullable=False), Column('level', VARCHAR(length=10), nullable=False), Column('created_at', TIMESTAMP(timezone=True), nullable=False), Column('updated_at', TIMESTAMP(timezone=True), nullable=False), Column('created_by_id', INTEGER(), ForeignKey('jobserver_user.id')), Column('updated_by_id', INTEGER(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "jobserver_sitealert",
+    metadata,
+    Column(
+        "id",
+        INTEGER(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
+        ),
+    ),
+    Column("title", TEXT(), nullable=False),
+    Column("message", TEXT(), nullable=False),
+    Column("level", VARCHAR(length=10), nullable=False),
+    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("updated_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("created_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    Column("updated_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('jobserver_stats', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('api_last_seen', TIMESTAMP(timezone=True)), Column('backend_id', BIGINT(), ForeignKey('jobserver_backend.id')), Column('url', TEXT()), schema=None)
+Table(
+    "jobserver_stats",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("api_last_seen", TIMESTAMP(timezone=True)),
+    Column("backend_id", BIGINT(), ForeignKey("jobserver_backend.id")),
+    Column("url", TEXT()),
+    schema=None,
+)
 
-Table('social_auth_usersocialauth', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('provider', TEXT()), Column('user_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('created', TIMESTAMP(timezone=True)), Column('modified', TIMESTAMP(timezone=True)), Column('uid', TEXT()), Column('extra_data', JSONB(astext_type=Text()), nullable=False), schema=None)
+Table(
+    "social_auth_usersocialauth",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("provider", TEXT()),
+    Column("user_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("created", TIMESTAMP(timezone=True)),
+    Column("modified", TIMESTAMP(timezone=True)),
+    Column("uid", TEXT()),
+    Column("extra_data", JSONB(astext_type=Text()), nullable=False),
+    schema=None,
+)
 
-Table('applications_application', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('has_agreed_to_terms', BOOLEAN()), Column('created_at', TIMESTAMP(timezone=True)), Column('completed_at', TIMESTAMP(timezone=True)), Column('created_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('project_id', BIGINT(), ForeignKey('jobserver_project.id')), Column('approved_at', TIMESTAMP(timezone=True)), Column('approved_by_id', INTEGER(), ForeignKey('jobserver_user.id')), Column('status', TEXT(), nullable=False), Column('status_comment', TEXT(), nullable=False), Column('deleted_at', TIMESTAMP(timezone=True)), Column('deleted_by_id', INTEGER(), ForeignKey('jobserver_user.id')), Column('submitted_at', TIMESTAMP(timezone=True)), Column('submitted_by_id', INTEGER(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_application",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("has_agreed_to_terms", BOOLEAN()),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("completed_at", TIMESTAMP(timezone=True)),
+    Column("created_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("project_id", BIGINT(), ForeignKey("jobserver_project.id")),
+    Column("approved_at", TIMESTAMP(timezone=True)),
+    Column("approved_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    Column("status", TEXT(), nullable=False),
+    Column("status_comment", TEXT(), nullable=False),
+    Column("deleted_at", TIMESTAMP(timezone=True)),
+    Column("deleted_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    Column("submitted_at", TIMESTAMP(timezone=True)),
+    Column("submitted_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('auth_group_permissions', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('group_id', BIGINT(), ForeignKey('auth_group.id')), Column('permission_id', BIGINT(), ForeignKey('auth_permission.id')), schema=None)
+Table(
+    "auth_group_permissions",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("group_id", BIGINT(), ForeignKey("auth_group.id")),
+    Column("permission_id", BIGINT(), ForeignKey("auth_permission.id")),
+    schema=None,
+)
 
-Table('auth_user_user_permissions', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('user_id', BIGINT(), ForeignKey('auth_user.id')), Column('permission_id', BIGINT(), ForeignKey('auth_permission.id')), schema=None)
+Table(
+    "auth_user_user_permissions",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("user_id", BIGINT(), ForeignKey("auth_user.id")),
+    Column("permission_id", BIGINT(), ForeignKey("auth_permission.id")),
+    schema=None,
+)
 
-Table('jobserver_orgmembership', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('created_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('org_id', BIGINT(), ForeignKey('jobserver_org.id')), Column('user_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('created_at', TIMESTAMP(timezone=True)), schema=None)
+Table(
+    "jobserver_orgmembership",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("created_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("org_id", BIGINT(), ForeignKey("jobserver_org.id")),
+    Column("user_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    schema=None,
+)
 
-Table('jobserver_projectcollaboration', metadata, Column('id', INTEGER(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1)), Column('is_lead', BOOLEAN(), nullable=False), Column('org_id', INTEGER(), ForeignKey('jobserver_org.id'), nullable=False), Column('project_id', INTEGER(), ForeignKey('jobserver_project.id'), nullable=False), Column('created_at', TIMESTAMP(timezone=True), nullable=False), Column('created_by_id', INTEGER(), ForeignKey('jobserver_user.id'), nullable=False), Column('updated_at', TIMESTAMP(timezone=True), nullable=False), Column('updated_by_id', INTEGER(), ForeignKey('jobserver_user.id'), nullable=False), schema=None)
+Table(
+    "jobserver_projectcollaboration",
+    metadata,
+    Column(
+        "id",
+        INTEGER(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
+        ),
+    ),
+    Column("is_lead", BOOLEAN(), nullable=False),
+    Column("org_id", INTEGER(), ForeignKey("jobserver_org.id"), nullable=False),
+    Column("project_id", INTEGER(), ForeignKey("jobserver_project.id"), nullable=False),
+    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("created_by_id", INTEGER(), ForeignKey("jobserver_user.id"), nullable=False),
+    Column("updated_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("updated_by_id", INTEGER(), ForeignKey("jobserver_user.id"), nullable=False),
+    schema=None,
+)
 
-Table('jobserver_projectmembership', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('project_id', BIGINT(), ForeignKey('jobserver_project.id')), Column('user_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('created_at', TIMESTAMP(timezone=True)), Column('created_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('roles', ARRAY(TEXT()), nullable=False), schema=None)
+Table(
+    "jobserver_projectmembership",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("project_id", BIGINT(), ForeignKey("jobserver_project.id")),
+    Column("user_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("created_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("roles", ARRAY(TEXT()), nullable=False),
+    schema=None,
+)
 
-Table('jobserver_workspace', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('name', TEXT()), Column('branch', TEXT()), Column('is_archived', BOOLEAN()), Column('created_at', TIMESTAMP(timezone=True)), Column('created_by_id', BIGINT(), ForeignKey('jobserver_user.id'), nullable=False), Column('should_notify', BOOLEAN()), Column('project_id', BIGINT(), ForeignKey('jobserver_project.id')), Column('uses_new_release_flow', BOOLEAN(), nullable=False), Column('repo_id', INTEGER(), ForeignKey('jobserver_repo.id'), nullable=False), Column('signed_off_at', TIMESTAMP(timezone=True)), Column('signed_off_by_id', INTEGER(), ForeignKey('jobserver_user.id')), Column('purpose', TEXT(), nullable=False), Column('updated_at', TIMESTAMP(timezone=True), nullable=False), Column('updated_by_id', INTEGER(), ForeignKey('jobserver_user.id'), nullable=False), schema=None)
+Table(
+    "jobserver_workspace",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("name", TEXT()),
+    Column("branch", TEXT()),
+    Column("is_archived", BOOLEAN()),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("created_by_id", BIGINT(), ForeignKey("jobserver_user.id"), nullable=False),
+    Column("should_notify", BOOLEAN()),
+    Column("project_id", BIGINT(), ForeignKey("jobserver_project.id")),
+    Column("uses_new_release_flow", BOOLEAN(), nullable=False),
+    Column("repo_id", INTEGER(), ForeignKey("jobserver_repo.id"), nullable=False),
+    Column("signed_off_at", TIMESTAMP(timezone=True)),
+    Column("signed_off_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    Column("purpose", TEXT(), nullable=False),
+    Column("updated_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("updated_by_id", INTEGER(), ForeignKey("jobserver_user.id"), nullable=False),
+    schema=None,
+)
 
-Table('applications_cmoprioritylistpage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('is_on_cmo_priority_list', BOOLEAN()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_cmoprioritylistpage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("is_on_cmo_priority_list", BOOLEAN()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_commercialinvolvementpage', metadata, Column('id', INTEGER(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1)), Column('notes', TEXT(), nullable=False), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True), nullable=False), Column('updated_at', TIMESTAMP(timezone=True), nullable=False), Column('details', TEXT(), nullable=False), Column('application_id', INTEGER(), ForeignKey('applications_application.id'), nullable=False), Column('reviewed_by_id', INTEGER(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_commercialinvolvementpage",
+    metadata,
+    Column(
+        "id",
+        INTEGER(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
+        ),
+    ),
+    Column("notes", TEXT(), nullable=False),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("updated_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("details", TEXT(), nullable=False),
+    Column(
+        "application_id",
+        INTEGER(),
+        ForeignKey("applications_application.id"),
+        nullable=False,
+    ),
+    Column("reviewed_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_contactdetailspage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('full_name', TEXT()), Column('email', TEXT()), Column('telephone', TEXT()), Column('job_title', TEXT()), Column('team_name', TEXT()), Column('organisation', TEXT()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_contactdetailspage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("full_name", TEXT()),
+    Column("email", TEXT()),
+    Column("telephone", TEXT()),
+    Column("job_title", TEXT()),
+    Column("team_name", TEXT()),
+    Column("organisation", TEXT()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_datasetspage', metadata, Column('id', INTEGER(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1)), Column('notes', TEXT(), nullable=False), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True), nullable=False), Column('updated_at', TIMESTAMP(timezone=True), nullable=False), Column('needs_icnarc', BOOLEAN(), nullable=False), Column('needs_isaric', BOOLEAN(), nullable=False), Column('needs_ons_cis', BOOLEAN(), nullable=False), Column('needs_phosp', BOOLEAN(), nullable=False), Column('application_id', INTEGER(), ForeignKey('applications_application.id'), nullable=False), Column('reviewed_by_id', INTEGER(), ForeignKey('jobserver_user.id')), Column('needs_ukrr', BOOLEAN(), nullable=False), schema=None)
+Table(
+    "applications_datasetspage",
+    metadata,
+    Column(
+        "id",
+        INTEGER(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
+        ),
+    ),
+    Column("notes", TEXT(), nullable=False),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("updated_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("needs_icnarc", BOOLEAN(), nullable=False),
+    Column("needs_isaric", BOOLEAN(), nullable=False),
+    Column("needs_ons_cis", BOOLEAN(), nullable=False),
+    Column("needs_phosp", BOOLEAN(), nullable=False),
+    Column(
+        "application_id",
+        INTEGER(),
+        ForeignKey("applications_application.id"),
+        nullable=False,
+    ),
+    Column("reviewed_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    Column("needs_ukrr", BOOLEAN(), nullable=False),
+    schema=None,
+)
 
-Table('applications_legalbasispage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('legal_basis_for_accessing_data_under_dpa', TEXT()), Column('how_is_duty_of_confidentiality_satisfied', TEXT()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_legalbasispage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("legal_basis_for_accessing_data_under_dpa", TEXT()),
+    Column("how_is_duty_of_confidentiality_satisfied", TEXT()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_previousehrexperiencepage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('previous_experience_with_ehr', TEXT()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_previousehrexperiencepage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("previous_experience_with_ehr", TEXT()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_recordleveldatapage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('record_level_data_reasons', TEXT()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_recordleveldatapage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("record_level_data_reasons", TEXT()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_referencespage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('hra_ires_id', TEXT()), Column('hra_rec_reference', TEXT()), Column('institutional_rec_reference', TEXT()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_referencespage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("hra_ires_id", TEXT()),
+    Column("hra_rec_reference", TEXT()),
+    Column("institutional_rec_reference", TEXT()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_researcherdetailspage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_researcherdetailspage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_researcherregistration', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('name', TEXT()), Column('job_title', TEXT()), Column('email', TEXT()), Column('does_researcher_need_server_access', BOOLEAN()), Column('telephone', TEXT()), Column('phone_type', TEXT()), Column('has_taken_safe_researcher_training', BOOLEAN()), Column('training_with_org', TEXT()), Column('training_passed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('user_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('daa', VARCHAR(length=200)), Column('github_username', TEXT(), nullable=False), schema=None)
+Table(
+    "applications_researcherregistration",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("name", TEXT()),
+    Column("job_title", TEXT()),
+    Column("email", TEXT()),
+    Column("does_researcher_need_server_access", BOOLEAN()),
+    Column("telephone", TEXT()),
+    Column("phone_type", TEXT()),
+    Column("has_taken_safe_researcher_training", BOOLEAN()),
+    Column("training_with_org", TEXT()),
+    Column("training_passed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("user_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("daa", VARCHAR(length=200)),
+    Column("github_username", TEXT(), nullable=False),
+    schema=None,
+)
 
-Table('applications_sharingcodepage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('evidence_of_sharing_in_public_domain_before', TEXT()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_sharingcodepage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("evidence_of_sharing_in_public_domain_before", TEXT()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_shortdatareportpage', metadata, Column('id', INTEGER(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1)), Column('notes', TEXT(), nullable=False), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True), nullable=False), Column('updated_at', TIMESTAMP(timezone=True), nullable=False), Column('application_id', INTEGER(), ForeignKey('applications_application.id'), nullable=False), Column('reviewed_by_id', INTEGER(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_shortdatareportpage",
+    metadata,
+    Column(
+        "id",
+        INTEGER(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
+        ),
+    ),
+    Column("notes", TEXT(), nullable=False),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("updated_at", TIMESTAMP(timezone=True), nullable=False),
+    Column(
+        "application_id",
+        INTEGER(),
+        ForeignKey("applications_application.id"),
+        nullable=False,
+    ),
+    Column("reviewed_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_softwaredevelopmentexperiencepage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('evidence_of_coding', TEXT()), Column('all_applicants_completed_getting_started', BOOLEAN()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_softwaredevelopmentexperiencepage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("evidence_of_coding", TEXT()),
+    Column("all_applicants_completed_getting_started", BOOLEAN()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_sponsordetailspage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('sponsor_name', TEXT()), Column('sponsor_email', TEXT()), Column('sponsor_job_role', TEXT()), Column('institutional_rec_reference', TEXT()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('is_member_of_bennett_or_lshtm', BOOLEAN(), nullable=False), schema=None)
+Table(
+    "applications_sponsordetailspage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("sponsor_name", TEXT()),
+    Column("sponsor_email", TEXT()),
+    Column("sponsor_job_role", TEXT()),
+    Column("institutional_rec_reference", TEXT()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("is_member_of_bennett_or_lshtm", BOOLEAN(), nullable=False),
+    schema=None,
+)
 
-Table('applications_studydatapage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('data_meets_purpose', TEXT()), Column('need_record_level_data', BOOLEAN()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_studydatapage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("data_meets_purpose", TEXT()),
+    Column("need_record_level_data", BOOLEAN()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_studyfundingpage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('funding_details', TEXT()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_studyfundingpage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("funding_details", TEXT()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_studyinformationpage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('study_name', TEXT()), Column('study_purpose', TEXT()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('read_analytic_methods_policy', BOOLEAN()), schema=None)
+Table(
+    "applications_studyinformationpage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("study_name", TEXT()),
+    Column("study_purpose", TEXT()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("read_analytic_methods_policy", BOOLEAN()),
+    schema=None,
+)
 
-Table('applications_studypurposepage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('description', TEXT()), Column('author_name', TEXT()), Column('author_email', TEXT()), Column('author_organisation', TEXT()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('is_covid_prevention', BOOLEAN(), nullable=False), Column('is_covid_vaccine_effectiveness_or_safety', BOOLEAN(), nullable=False), Column('is_covid_vaccine_eligibility_or_coverage', BOOLEAN(), nullable=False), Column('is_other_impacts_of_covid', BOOLEAN(), nullable=False), Column('is_post_covid_health_impacts', BOOLEAN(), nullable=False), Column('is_risk_from_covid', BOOLEAN(), nullable=False), schema=None)
+Table(
+    "applications_studypurposepage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("description", TEXT()),
+    Column("author_name", TEXT()),
+    Column("author_email", TEXT()),
+    Column("author_organisation", TEXT()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("is_covid_prevention", BOOLEAN(), nullable=False),
+    Column("is_covid_vaccine_effectiveness_or_safety", BOOLEAN(), nullable=False),
+    Column("is_covid_vaccine_eligibility_or_coverage", BOOLEAN(), nullable=False),
+    Column("is_other_impacts_of_covid", BOOLEAN(), nullable=False),
+    Column("is_post_covid_health_impacts", BOOLEAN(), nullable=False),
+    Column("is_risk_from_covid", BOOLEAN(), nullable=False),
+    schema=None,
+)
 
-Table('applications_teamdetailspage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('team_details', TEXT()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), schema=None)
+Table(
+    "applications_teamdetailspage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("team_details", TEXT()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    schema=None,
+)
 
-Table('applications_typeofstudypage', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('notes', TEXT()), Column('is_approved', BOOLEAN()), Column('last_reviewed_at', TIMESTAMP(timezone=True)), Column('created_at', TIMESTAMP(timezone=True)), Column('updated_at', TIMESTAMP(timezone=True)), Column('is_study_research', BOOLEAN()), Column('is_study_service_evaluation', BOOLEAN()), Column('is_study_audit', BOOLEAN()), Column('application_id', BIGINT(), ForeignKey('applications_application.id')), Column('reviewed_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('is_study_short_data_report', BOOLEAN(), nullable=False), schema=None)
+Table(
+    "applications_typeofstudypage",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("notes", TEXT()),
+    Column("is_approved", BOOLEAN()),
+    Column("last_reviewed_at", TIMESTAMP(timezone=True)),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("is_study_research", BOOLEAN()),
+    Column("is_study_service_evaluation", BOOLEAN()),
+    Column("is_study_audit", BOOLEAN()),
+    Column("application_id", BIGINT(), ForeignKey("applications_application.id")),
+    Column("reviewed_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("is_study_short_data_report", BOOLEAN(), nullable=False),
+    schema=None,
+)
 
-Table('jobserver_jobrequest', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('force_run_dependencies', BOOLEAN()), Column('sha', TEXT()), Column('identifier', TEXT()), Column('created_at', TIMESTAMP(timezone=True)), Column('backend_id', BIGINT(), ForeignKey('jobserver_backend.id'), nullable=False), Column('created_by_id', BIGINT(), ForeignKey('jobserver_user.id'), nullable=False), Column('workspace_id', BIGINT(), ForeignKey('jobserver_workspace.id')), Column('cancelled_actions', TEXT()), Column('will_notify', BOOLEAN()), Column('project_definition', TEXT()), Column('requested_actions', ARRAY(TEXT()), nullable=False), Column('codelists_ok', BOOLEAN(), nullable=False), schema=None)
+Table(
+    "jobserver_jobrequest",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("force_run_dependencies", BOOLEAN()),
+    Column("sha", TEXT()),
+    Column("identifier", TEXT()),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("backend_id", BIGINT(), ForeignKey("jobserver_backend.id"), nullable=False),
+    Column("created_by_id", BIGINT(), ForeignKey("jobserver_user.id"), nullable=False),
+    Column("workspace_id", BIGINT(), ForeignKey("jobserver_workspace.id")),
+    Column("cancelled_actions", TEXT()),
+    Column("will_notify", BOOLEAN()),
+    Column("project_definition", TEXT()),
+    Column("requested_actions", ARRAY(TEXT()), nullable=False),
+    Column("codelists_ok", BOOLEAN(), nullable=False),
+    schema=None,
+)
 
-Table('jobserver_release', metadata, Column('backend_id', BIGINT(), ForeignKey('jobserver_backend.id')), Column('workspace_id', BIGINT(), ForeignKey('jobserver_workspace.id')), Column('created_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('created_at', TIMESTAMP(timezone=True)), Column('requested_files', TEXT()), Column('status', TEXT()), Column('id', TEXT(), primary_key=True, nullable=False), Column('metadata', JSONB(astext_type=Text())), Column('review', JSONB(astext_type=Text())), schema=None)
+Table(
+    "jobserver_release",
+    metadata,
+    Column("backend_id", BIGINT(), ForeignKey("jobserver_backend.id")),
+    Column("workspace_id", BIGINT(), ForeignKey("jobserver_workspace.id")),
+    Column("created_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("requested_files", TEXT()),
+    Column("status", TEXT()),
+    Column("id", TEXT(), primary_key=True, nullable=False),
+    Column("metadata", JSONB(astext_type=Text())),
+    Column("review", JSONB(astext_type=Text())),
+    schema=None,
+)
 
-Table('jobserver_snapshot', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('created_at', TIMESTAMP(timezone=True)), Column('created_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('workspace_id', BIGINT(), ForeignKey('jobserver_workspace.id')), schema=None)
+Table(
+    "jobserver_snapshot",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("created_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("workspace_id", BIGINT(), ForeignKey("jobserver_workspace.id")),
+    schema=None,
+)
 
-Table('redirects_redirect', metadata, Column('id', INTEGER(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1)), Column('old_url', TEXT(), nullable=False), Column('expires_at', TIMESTAMP(timezone=True), nullable=False), Column('created_at', TIMESTAMP(timezone=True), nullable=False), Column('updated_at', TIMESTAMP(timezone=True), nullable=False), Column('deleted_at', TIMESTAMP(timezone=True)), Column('created_by_id', INTEGER(), ForeignKey('jobserver_user.id'), nullable=False), Column('deleted_by_id', INTEGER(), ForeignKey('jobserver_user.id')), Column('project_id', INTEGER(), ForeignKey('jobserver_project.id')), Column('workspace_id', INTEGER(), ForeignKey('jobserver_workspace.id')), Column('org_id', INTEGER(), ForeignKey('jobserver_org.id')), schema=None)
+Table(
+    "redirects_redirect",
+    metadata,
+    Column(
+        "id",
+        INTEGER(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
+        ),
+    ),
+    Column("old_url", TEXT(), nullable=False),
+    Column("expires_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("updated_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("deleted_at", TIMESTAMP(timezone=True)),
+    Column("created_by_id", INTEGER(), ForeignKey("jobserver_user.id"), nullable=False),
+    Column("deleted_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    Column("project_id", INTEGER(), ForeignKey("jobserver_project.id")),
+    Column("workspace_id", INTEGER(), ForeignKey("jobserver_workspace.id")),
+    Column("org_id", INTEGER(), ForeignKey("jobserver_org.id")),
+    schema=None,
+)
 
-Table('jobserver_job', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('status_message', TEXT()), Column('created_at', TIMESTAMP(timezone=True)), Column('started_at', TIMESTAMP(timezone=True)), Column('completed_at', TIMESTAMP(timezone=True)), Column('job_request_id', BIGINT(), ForeignKey('jobserver_jobrequest.id')), Column('action', TEXT()), Column('updated_at', TIMESTAMP(timezone=True)), Column('identifier', TEXT()), Column('status', TEXT()), Column('status_code', TEXT()), Column('trace_context', JSONB(astext_type=Text())), Column('run_command', TEXT(), nullable=False), Column('metrics', JSONB(astext_type=Text())), schema=None)
+Table(
+    "jobserver_job",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("status_message", TEXT()),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("started_at", TIMESTAMP(timezone=True)),
+    Column("completed_at", TIMESTAMP(timezone=True)),
+    Column("job_request_id", BIGINT(), ForeignKey("jobserver_jobrequest.id")),
+    Column("action", TEXT()),
+    Column("updated_at", TIMESTAMP(timezone=True)),
+    Column("identifier", TEXT()),
+    Column("status", TEXT()),
+    Column("status_code", TEXT()),
+    Column("trace_context", JSONB(astext_type=Text())),
+    Column("run_command", TEXT(), nullable=False),
+    Column("metrics", JSONB(astext_type=Text())),
+    schema=None,
+)
 
-Table('jobserver_publishrequest', metadata, Column('id', INTEGER(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1)), Column('created_at', TIMESTAMP(timezone=True), nullable=False), Column('created_by_id', INTEGER(), ForeignKey('jobserver_user.id'), nullable=False), Column('snapshot_id', INTEGER(), ForeignKey('jobserver_snapshot.id'), nullable=False), Column('workspace_id', INTEGER(), ForeignKey('jobserver_workspace.id'), nullable=False), Column('decision', TEXT()), Column('decision_at', TIMESTAMP(timezone=True)), Column('decision_by_id', INTEGER(), ForeignKey('jobserver_user.id')), Column('updated_at', TIMESTAMP(timezone=True), nullable=False), Column('updated_by_id', INTEGER(), ForeignKey('jobserver_user.id'), nullable=False), schema=None)
+Table(
+    "jobserver_publishrequest",
+    metadata,
+    Column(
+        "id",
+        INTEGER(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
+        ),
+    ),
+    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("created_by_id", INTEGER(), ForeignKey("jobserver_user.id"), nullable=False),
+    Column(
+        "snapshot_id", INTEGER(), ForeignKey("jobserver_snapshot.id"), nullable=False
+    ),
+    Column(
+        "workspace_id", INTEGER(), ForeignKey("jobserver_workspace.id"), nullable=False
+    ),
+    Column("decision", TEXT()),
+    Column("decision_at", TIMESTAMP(timezone=True)),
+    Column("decision_by_id", INTEGER(), ForeignKey("jobserver_user.id")),
+    Column("updated_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("updated_by_id", INTEGER(), ForeignKey("jobserver_user.id"), nullable=False),
+    schema=None,
+)
 
-Table('jobserver_releasefile', metadata, Column('id', TEXT(), primary_key=True, nullable=False), Column('name', TEXT()), Column('path', TEXT()), Column('release_id', TEXT(), ForeignKey('jobserver_release.id')), Column('workspace_id', BIGINT(), ForeignKey('jobserver_workspace.id')), Column('created_at', TIMESTAMP(timezone=True)), Column('created_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('filehash', TEXT()), Column('deleted_at', TIMESTAMP(timezone=True)), Column('deleted_by_id', BIGINT(), ForeignKey('jobserver_user.id')), Column('size', INTEGER(), nullable=False), Column('mtime', TIMESTAMP(timezone=True), nullable=False), Column('uploaded_at', TIMESTAMP(timezone=True)), Column('metadata', JSONB(astext_type=Text())), schema=None)
+Table(
+    "jobserver_releasefile",
+    metadata,
+    Column("id", TEXT(), primary_key=True, nullable=False),
+    Column("name", TEXT()),
+    Column("path", TEXT()),
+    Column("release_id", TEXT(), ForeignKey("jobserver_release.id")),
+    Column("workspace_id", BIGINT(), ForeignKey("jobserver_workspace.id")),
+    Column("created_at", TIMESTAMP(timezone=True)),
+    Column("created_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("filehash", TEXT()),
+    Column("deleted_at", TIMESTAMP(timezone=True)),
+    Column("deleted_by_id", BIGINT(), ForeignKey("jobserver_user.id")),
+    Column("size", INTEGER(), nullable=False),
+    Column("mtime", TIMESTAMP(timezone=True), nullable=False),
+    Column("uploaded_at", TIMESTAMP(timezone=True)),
+    Column("metadata", JSONB(astext_type=Text())),
+    schema=None,
+)
 
-Table('jobserver_releasefilereview', metadata, Column('id', INTEGER(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1)), Column('status', TEXT(), nullable=False), Column('comments', JSONB(astext_type=Text()), nullable=False), Column('created_at', TIMESTAMP(timezone=True), nullable=False), Column('created_by_id', INTEGER(), ForeignKey('jobserver_user.id'), nullable=False), Column('release_file_id', VARCHAR(length=26), ForeignKey('jobserver_releasefile.id'), nullable=False), schema=None)
+Table(
+    "jobserver_releasefilereview",
+    metadata,
+    Column(
+        "id",
+        INTEGER(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
+        ),
+    ),
+    Column("status", TEXT(), nullable=False),
+    Column("comments", JSONB(astext_type=Text()), nullable=False),
+    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+    Column("created_by_id", INTEGER(), ForeignKey("jobserver_user.id"), nullable=False),
+    Column(
+        "release_file_id",
+        VARCHAR(length=26),
+        ForeignKey("jobserver_releasefile.id"),
+        nullable=False,
+    ),
+    schema=None,
+)
 
-Table('jobserver_snapshot_files', metadata, Column('id', BIGINT(), primary_key=True, nullable=False, server_default=Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1)), Column('snapshot_id', BIGINT(), ForeignKey('jobserver_snapshot.id')), Column('releasefile_id', TEXT(), ForeignKey('jobserver_releasefile.id')), schema=None)
+Table(
+    "jobserver_snapshot_files",
+    metadata,
+    Column(
+        "id",
+        BIGINT(),
+        primary_key=True,
+        nullable=False,
+        server_default=Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+    ),
+    Column("snapshot_id", BIGINT(), ForeignKey("jobserver_snapshot.id")),
+    Column("releasefile_id", TEXT(), ForeignKey("jobserver_releasefile.id")),
+    schema=None,
+)
