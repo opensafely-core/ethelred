@@ -2,8 +2,6 @@
 
 A lightweight alternative to [Architectural Decision Records][].
 
-[Architectural Decision Records]: https://adr.github.io/
-
 ## 001: Two applications, one codebase
 
 The `tasks` and `app` modules are, in effect,
@@ -53,6 +51,7 @@ Some process guidance may be helpful:
 
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
 [Apache Airflow]: https://airflow.apache.org/
+[Architectural Decision Records]: https://adr.github.io/
 [Continuous Integration]: https://martinfowler.com/articles/continuousIntegration.html
 [Dagster]: https://dagster.io/
 [Prefect]: https://www.prefect.io/
