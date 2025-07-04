@@ -1,0 +1,7 @@
+# List available recipes and their arguments
+default:
+    @{{ just_executable() }} --list
+
+# Start the services configured in `docker-compose.yaml`
+up:
+    docker compose up --detach
