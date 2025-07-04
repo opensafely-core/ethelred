@@ -14,19 +14,19 @@ def extract(engine, metadata):  # pragma: no cover
     # This is hard to test without a Job Server DB, so we exclude it from coverage.
     job = metadata.tables["jobserver_job"]
     job_request = metadata.tables["jobserver_jobrequest"]
-    stmt = (
-        sqlalchemy.select(
-            job.c.id,
-            job.c.job_request_id,
-            job.c.created_at,
-            job.c.run_command,
-        )
-        # Techincally we can just do job.c.created_at >= INDEX_DATE
-        # (since jobs are created after their job request),
-        # but this is more explicit and consistent with other tasks.
-        .join(job_request)
-        .where(job_request.c.created_at >= INDEX_DATE)
+
+    subq = sqlalchemy.select(job_request.c.id).where(
+        job_request.c.created_at >= INDEX_DATE
     )
+    stmt = sqlalchemy.select(
+        job.c.id,
+        job.c.job_request_id,
+        job.c.created_at,
+        job.c.run_command,
+        job.c.status,
+        job.c.status_message,
+    ).where(job.c.job_request_id.in_(subq))
+
     with engine.connect() as conn:
         yield from conn.execute(stmt)
 
