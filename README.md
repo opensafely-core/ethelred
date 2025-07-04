@@ -24,6 +24,7 @@ just devenv
 source .venv/bin/activate
 python -m tasks.get_project_definitions
 python -m tasks.get_job_requests
+python -m tasks.get_jobs
 just run app/app.py
 ```
 
