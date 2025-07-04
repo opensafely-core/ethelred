@@ -2,6 +2,29 @@
 
 A lightweight alternative to [Architectural Decision Records][].
 
+## 000: Decisions and their records
+
+We will try to reach decisions by consensus,
+recognising that *a* decision is better than *no* decision.
+Later decisions my supersede earlier decisions.
+
+We will record our decisions, as they are made, in this document.
+We will try not to record our decisions retrospectively.
+One decision will correspond to one section;
+section headings will follow the observable pattern.
+The record should be concise.
+It should describe the decision (What?)
+and explain the rationale for the decision (Why?).
+If a later decision supersedes an earlier decision,
+then link to each from the other.
+
+We will link to records as follows:
+[DR001](#001-two-applications-one-codebase).
+
+Links and typos aside,
+we will treat *records* as immutable.
+(We will treat *decisions* as mutable, as later decisions my supersede earlier decisions.)
+
 ## 001: Two applications, one codebase
 
 The `tasks` and `app` modules are, in effect,
