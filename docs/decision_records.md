@@ -49,9 +49,32 @@ Some process guidance may be helpful:
 * If the **checks fail**, close the PR.
   Address the cause of the failure on your local branch and push your commits again.
 
+## 005: Maintain a linear history
+
+> I've always loved the idea of a linear history,
+> of rewriting a series until it's perfect
+> and getting that nice useful blame and bisecting power.
+> Getting rid of that subway map history graph in favor of a nice simple series of patches.
+>
+> [Fearless rebasing][], Scott Chacon
+
+Continuous integration (see [DR003](#003-continuous-integration)) should make it easier to maintain a linear history,
+because there will be fewer opportunities for feature/bugfix branches to diverge from the mainline branch.
+Why bother, though?
+
+* It's easier to reason about the output of `git log`.
+  There's no need to remember to add `--graph`.
+* It's easier to specify a revision correctly.
+  There's no need to remember the difference between `~` and `^`.
+* If you need to revert, then do you revert the commit?
+  The merge commit?
+  Both?
+  There's no need to ask -- or to answer -- this question.
+
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
 [Apache Airflow]: https://airflow.apache.org/
 [Architectural Decision Records]: https://adr.github.io/
 [Continuous Integration]: https://martinfowler.com/articles/continuousIntegration.html
 [Dagster]: https://dagster.io/
+[Fearless rebasing]: https://blog.gitbutler.com/fearless-rebasing/
 [Prefect]: https://www.prefect.io/
