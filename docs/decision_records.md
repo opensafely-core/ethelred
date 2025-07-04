@@ -35,6 +35,22 @@ which makes it hard to maintain a [healthy mainline branch][1] --
 so a GitHub action will automatically open a pull request (PR) for any commits pushed to a non-mainline branch.
 We expect this PR to be approved and merged quickly, without comment.
 
+## 004: Treat pull requests as immutable
+
+To facilitate "push to mainline" continuous integration,
+a GitHub action will automatically open a pull request (PR) for any commits pushed to a non-mainline branch (see [DR003](#003-continuous-integration)).
+These PRs are side-effects of GitHub.
+We don't want them to increase the time we spend integrating feature/bugfix branches,
+so we will treat them as immutable.
+
+Some process guidance may be helpful:
+
+* If the **checks pass**, approve and merge the PR.
+  The branch will be rebased on the mainline branch,
+  so either reset your local branch or switch to a new local branch to continue your work.
+* If the **checks fail**, close the PR.
+  Address the cause of the failure on your local branch and push your commits again.
+
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
 [Apache Airflow]: https://airflow.apache.org/
 [Continuous Integration]: https://martinfowler.com/articles/continuousIntegration.html
