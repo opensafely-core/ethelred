@@ -78,4 +78,5 @@ fix *args=".": devenv
 
 # Check code
 check *args=".": devenv
+    {{ RUFF }} format --check {{ args }}
     {{ RUFF }} check {{ args }}
