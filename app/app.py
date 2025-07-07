@@ -6,7 +6,7 @@ import pandas
 import streamlit
 
 
-DATA_DIR = pathlib.Path(os.environ["DATA_DIR"])
+DATA_DIR = pathlib.Path(os.environ.get("DATA_DIR", "data"))
 
 
 def get_job_requests(f_path):
