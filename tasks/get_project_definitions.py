@@ -9,8 +9,7 @@ from . import DATA_DIR, INDEX_DATE, io, utils
 Record = collections.namedtuple("Record", ["repo", "sha", "project_definition"])
 
 
-def get_query(metadata):  # pragma: no cover
-    # This is hard to test without a Job Server DB, so we exclude it from coverage.
+def get_query(metadata):
     job_request = metadata.tables["jobserver_jobrequest"]
     workspace = metadata.tables["jobserver_workspace"]
     repo = metadata.tables["jobserver_repo"]
