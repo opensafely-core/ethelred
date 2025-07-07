@@ -37,5 +37,5 @@ def test_calculate_proportions():
             ],
         }
     )
-    df = app.calculate_proportions(jobs)
-    assert df.to_dict() == {"proportion": {123: 1 / 2, 456: 0.0}}
+    job_requests = app.calculate_proportions(jobs)
+    assert job_requests.to_dict() == {"proportion": {123: 1 / 2, 456: 0.0}}
