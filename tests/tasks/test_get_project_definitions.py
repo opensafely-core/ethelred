@@ -1,9 +1,83 @@
 import collections
+import datetime
+
+import sqlalchemy
 
 from tasks import get_project_definitions, io
 
 
 Row = collections.namedtuple("Row", ["url", "sha", "project_definition"])
+
+
+def test_get_query(jobserver_engine, jobserver_metadata):
+    # arrange
+    a_foreign_key = 99
+
+    repo_table = jobserver_metadata.tables["jobserver_repo"]
+    repo_id = 1
+    insert_into_repo_table = sqlalchemy.insert(repo_table).values(
+        id=repo_id,
+        url="https://github.com/opensafely/my-repo",
+        has_github_outputs=False,
+    )
+
+    workspace_table = jobserver_metadata.tables["jobserver_workspace"]
+    workspace_id = 1
+    insert_into_workspace_table = sqlalchemy.insert(workspace_table).values(
+        id=workspace_id,
+        created_by_id=a_foreign_key,
+        project_id=a_foreign_key,
+        uses_new_release_flow=True,
+        repo_id=repo_id,
+        signed_off_by_id=a_foreign_key,
+        purpose="a purpose",
+        updated_at=datetime.datetime(2025, 1, 1),
+        updated_by_id=a_foreign_key,
+    )
+
+    jobrequest_table = jobserver_metadata.tables["jobserver_jobrequest"]
+    template_jobrequest = {
+        "id": None,  # replace me
+        "sha": "0000000",
+        "created_at": None,  # replace me
+        "backend_id": a_foreign_key,
+        "created_by_id": a_foreign_key,
+        "workspace_id": workspace_id,
+        "requested_actions": ["a1"],
+        "project_definition": "actions: {a1: {}, a2: {}}",
+        "codelists_ok": True,
+    }
+    # before index date
+    jobrequest_1 = template_jobrequest | {
+        "id": 1,
+        "created_at": datetime.datetime(2024, 1, 1),
+    }
+    # on or after index date
+    jobrequest_2 = template_jobrequest | {
+        "id": 2,
+        "created_at": datetime.datetime(2025, 1, 1),
+    }
+    insert_into_jobrequest_table = sqlalchemy.insert(jobrequest_table).values(
+        [jobrequest_1, jobrequest_2]
+    )
+
+    with jobserver_engine.connect() as conn:
+        conn.execute(insert_into_repo_table)
+        conn.execute(insert_into_workspace_table)
+        conn.execute(insert_into_jobrequest_table)
+        conn.commit()
+
+    # act
+    query = get_project_definitions.get_query(jobserver_metadata)
+    with jobserver_engine.connect() as conn:
+        rows = list(conn.execute(query))
+
+    # assert
+    assert len(rows) == 1
+    row = rows[0]
+    assert row.url == "https://github.com/opensafely/my-repo"
+    assert row.sha == "0000000"
+    assert row.project_definition == "actions: {a1: {}, a2: {}}"
 
 
 def test_get_record():
