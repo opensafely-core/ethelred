@@ -1,4 +1,5 @@
 import collections
+from enum import Enum
 
 import sqlalchemy
 
@@ -9,6 +10,9 @@ Record = collections.namedtuple(
     "Record",
     ["id", "job_request_id", "created_at", "stage", "outcome"],
 )
+
+Stage = Enum("Stage", ["ANALYSIS", "DATABASE"])
+Outcome = Enum("Outcome", ["CANCELLED_BY_DEPENDENCY", "ERRORED", "OTHER"])
 
 
 def extract(engine, metadata):  # pragma: no cover
@@ -46,22 +50,22 @@ def transform(rows):
 def get_stage(run_command):
     database_commands = ["ehrql"]
     if run_command.split(":")[0] in database_commands:
-        return "database"
-    return "analysis"
+        return Stage.DATABASE.value
+    return Stage.ANALYSIS.value
 
 
 def get_outcome(status, status_message):
     if status == "failed":
         if status_message.startswith("Not starting as dependency failed"):
-            return "cancelled by dependency"
+            return Outcome.CANCELLED_BY_DEPENDENCY.value
         elif (
             status_message.startswith("Job exited with an error")
             or status_message.startswith("Internal error")
             or status_message.startswith("No outputs found matching patterns")
             or status_message.startswith("GitRepoNotReachableError")
         ):
-            return "errored"
-    return "other"
+            return Outcome.ERRORED.value
+    return Outcome.OTHER.value
 
 
 def main():  # pragma: no cover
