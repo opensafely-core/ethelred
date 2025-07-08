@@ -91,6 +91,13 @@ def main():
     )
     streamlit.write(measure_histogram)
 
+    scatter_plot = get_scatter_plot(
+        job_requests,
+        ("num_actions", "measure"),
+        ("Number of actions", "Number of jobs / Number of actions"),
+    )
+    streamlit.write(scatter_plot)
+
     proportion_histogram = get_histogram(
         calculate_proportions(jobs),
         "proportion",
@@ -100,13 +107,6 @@ def main():
         ),
     )
     streamlit.write(proportion_histogram)
-
-    scatter_plot = get_scatter_plot(
-        job_requests,
-        ("num_actions", "measure"),
-        ("Number of actions", "Number of jobs / Number of actions"),
-    )
-    streamlit.write(scatter_plot)
 
 
 if __name__ == "__main__":
