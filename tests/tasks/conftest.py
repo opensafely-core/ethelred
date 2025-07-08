@@ -31,6 +31,17 @@ def example_workspace(a_foreign_key, example_repo):
 
 
 @pytest.fixture
+def example_user(a_foreign_key):
+    return {
+        "id": 1,
+        "username": "my-username",
+        "created_by_id": a_foreign_key,
+        "fullname": "Some User",
+        "roles": ["some role"],
+    }
+
+
+@pytest.fixture
 def make_jobrequest(a_foreign_key):
     def _make_jobrequest(id_, created_at, **kwargs):
         return {
