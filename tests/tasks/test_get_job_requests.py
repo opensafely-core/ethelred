@@ -4,7 +4,9 @@ import datetime
 from tasks import get_job_requests, io
 
 
-Row = collections.namedtuple("Row", ["url", "sha", "created_at", "num_jobs"])
+Row = collections.namedtuple(
+    "Row", ["url", "sha", "created_at", "num_jobs", "username"]
+)
 
 
 def test_load_project_definition(tmp_path):
@@ -21,6 +23,7 @@ def test_get_records():
         "0000000",
         datetime.datetime(2025, 1, 1),
         1,
+        "my-username",
     )
 
     def load_project_definition(repo, sha):
