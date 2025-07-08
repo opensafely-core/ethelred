@@ -9,30 +9,20 @@ from tasks import get_project_definitions, io
 Row = collections.namedtuple("Row", ["url", "sha", "project_definition"])
 
 
-def test_get_query(jobserver_engine, jobserver_metadata, make_jobrequest):
+def test_get_query(
+    jobserver_engine,
+    jobserver_metadata,
+    example_repo,
+    example_workspace,
+    make_jobrequest,
+):
     # arrange
-    a_foreign_key = 99
-
     repo_table = jobserver_metadata.tables["jobserver_repo"]
-    repo_id = 1
-    insert_into_repo_table = sqlalchemy.insert(repo_table).values(
-        id=repo_id,
-        url="https://github.com/opensafely/my-repo",
-        has_github_outputs=False,
-    )
+    insert_into_repo_table = sqlalchemy.insert(repo_table).values(example_repo)
 
     workspace_table = jobserver_metadata.tables["jobserver_workspace"]
-    workspace_id = 1
     insert_into_workspace_table = sqlalchemy.insert(workspace_table).values(
-        id=workspace_id,
-        created_by_id=a_foreign_key,
-        project_id=a_foreign_key,
-        uses_new_release_flow=True,
-        repo_id=repo_id,
-        signed_off_by_id=a_foreign_key,
-        purpose="a purpose",
-        updated_at=datetime.datetime(2025, 1, 1),
-        updated_by_id=a_foreign_key,
+        example_workspace,
     )
 
     jobrequest_table = jobserver_metadata.tables["jobserver_jobrequest"]
@@ -40,7 +30,7 @@ def test_get_query(jobserver_engine, jobserver_metadata, make_jobrequest):
     jobrequest_1 = make_jobrequest(
         id_=1,
         created_at=datetime.datetime(2024, 1, 1),
-        workspace_id=workspace_id,
+        workspace_id=example_workspace["id"],
         sha="0000000",
         project_definition="actions: {a1: {}, a2: {}}",
     )
@@ -48,7 +38,7 @@ def test_get_query(jobserver_engine, jobserver_metadata, make_jobrequest):
     jobrequest_2 = make_jobrequest(
         id_=2,
         created_at=datetime.datetime(2025, 1, 1),
-        workspace_id=workspace_id,
+        workspace_id=example_workspace["id"],
         sha="0000000",
         project_definition="actions: {a1: {}, a2: {}}",
     )
