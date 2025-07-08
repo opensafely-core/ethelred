@@ -66,6 +66,7 @@ def get_scatter_plot(job_requests, column_names, axis_titles):
         .encode(
             x=altair.X(encode_x).title(title_x),
             y=altair.Y(encode_y).title(title_y),
+            tooltip=altair.Tooltip(list(job_requests.columns)),
         )
     )
 
