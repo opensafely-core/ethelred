@@ -61,7 +61,7 @@ def main():
         calculate_proportions(jobs),
         "proportion",
         (
-            "Number jobs that were cancelled by a dependency / Total number of jobs that errored",
+            "Number of jobs that were cancelled by a dependency / Total number of jobs that errored",
             "Number of job requests",
         ),
     )
