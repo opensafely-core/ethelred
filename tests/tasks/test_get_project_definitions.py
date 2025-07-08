@@ -9,7 +9,7 @@ from tasks import get_project_definitions, io
 Row = collections.namedtuple("Row", ["url", "sha", "project_definition"])
 
 
-def test_get_query(jobserver_engine, jobserver_metadata):
+def test_get_query(jobserver_engine, jobserver_metadata, make_jobrequest):
     # arrange
     a_foreign_key = 99
 
@@ -36,27 +36,22 @@ def test_get_query(jobserver_engine, jobserver_metadata):
     )
 
     jobrequest_table = jobserver_metadata.tables["jobserver_jobrequest"]
-    template_jobrequest = {
-        "id": None,  # replace me
-        "sha": "0000000",
-        "created_at": None,  # replace me
-        "backend_id": a_foreign_key,
-        "created_by_id": a_foreign_key,
-        "workspace_id": workspace_id,
-        "requested_actions": ["a1"],
-        "project_definition": "actions: {a1: {}, a2: {}}",
-        "codelists_ok": True,
-    }
     # before index date
-    jobrequest_1 = template_jobrequest | {
-        "id": 1,
-        "created_at": datetime.datetime(2024, 1, 1),
-    }
+    jobrequest_1 = make_jobrequest(
+        id_=1,
+        created_at=datetime.datetime(2024, 1, 1),
+        workspace_id=workspace_id,
+        sha="0000000",
+        project_definition="actions: {a1: {}, a2: {}}",
+    )
     # on or after index date
-    jobrequest_2 = template_jobrequest | {
-        "id": 2,
-        "created_at": datetime.datetime(2025, 1, 1),
-    }
+    jobrequest_2 = make_jobrequest(
+        id_=2,
+        created_at=datetime.datetime(2025, 1, 1),
+        workspace_id=workspace_id,
+        sha="0000000",
+        project_definition="actions: {a1: {}, a2: {}}",
+    )
     insert_into_jobrequest_table = sqlalchemy.insert(jobrequest_table).values(
         [jobrequest_1, jobrequest_2]
     )
