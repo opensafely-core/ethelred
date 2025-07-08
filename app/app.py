@@ -89,15 +89,15 @@ def main():
 
     streamlit.subheader("Jobs and actions")
 
-    num_actions_histogram = get_histogram(
-        job_requests, "num_actions", ("Number of actions", "Number of job requests")
-    )
-    streamlit.write(num_actions_histogram)
-
     num_jobs_histogram = get_histogram(
         job_requests, "num_jobs", ("Number of jobs", "Number of job requests")
     )
     streamlit.write(num_jobs_histogram)
+
+    num_actions_histogram = get_histogram(
+        job_requests, "num_actions", ("Number of actions", "Number of job requests")
+    )
+    streamlit.write(num_actions_histogram)
 
     measure_histogram = get_histogram(
         job_requests,
