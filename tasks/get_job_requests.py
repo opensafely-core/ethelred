@@ -11,8 +11,7 @@ Record = collections.namedtuple(
 )
 
 
-def extract(engine, metadata):  # pragma: no cover
-    # This is hard to test without a Job Server DB, so we exclude it from coverage.
+def get_query(metadata):
     job = metadata.tables["jobserver_job"]
     job_request = metadata.tables["jobserver_jobrequest"]
     workspace = metadata.tables["jobserver_workspace"]
@@ -38,6 +37,10 @@ def extract(engine, metadata):  # pragma: no cover
         .where(job_request.c.created_at >= INDEX_DATE)
     )
 
+    return stmt
+
+
+def extract(engine, stmt):
     with engine.connect() as conn:
         yield from conn.execute(stmt)
 
@@ -58,8 +61,9 @@ def main():  # pragma: no cover
     # This is hard to test without a Job Server DB, so we exclude it from coverage.
     engine = utils.get_engine()
     metadata = utils.get_metadata(engine)
-    rows = extract(engine, metadata)
 
+    query = get_query(metadata)
+    rows = extract(engine, query)
     project_definition_loader = functools.partial(
         load_project_definition, DATA_DIR / "project_definitions"
     )
