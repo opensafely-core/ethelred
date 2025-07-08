@@ -15,8 +15,7 @@ Stage = Enum("Stage", ["ANALYSIS", "DATABASE"])
 Outcome = Enum("Outcome", ["CANCELLED_BY_DEPENDENCY", "ERRORED", "OTHER"])
 
 
-def extract(engine, metadata):  # pragma: no cover
-    # This is hard to test without a Job Server DB, so we exclude it from coverage.
+def get_query(metadata):
     job = metadata.tables["jobserver_job"]
     job_request = metadata.tables["jobserver_jobrequest"]
 
@@ -32,6 +31,10 @@ def extract(engine, metadata):  # pragma: no cover
         job.c.status_message,
     ).where(job.c.job_request_id.in_(subq))
 
+    return stmt
+
+
+def extract(engine, stmt):
     with engine.connect() as conn:
         yield from conn.execute(stmt)
 
@@ -72,7 +75,9 @@ def main():  # pragma: no cover
     # This is hard to test without a Job Server DB, so we exclude it from coverage.
     engine = utils.get_engine()
     metadata = utils.get_metadata(engine)
-    rows = extract(engine, metadata)
+
+    query = get_query(metadata)
+    rows = extract(engine, query)
     records = transform(rows)
     io.write(records, DATA_DIR / "jobs" / "jobs.csv")
 
