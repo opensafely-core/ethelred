@@ -75,6 +75,18 @@ def main():
     jobs = get_jobs(DATA_DIR / "jobs" / "jobs.csv")
 
     streamlit.header("Job requests")
+    streamlit.subheader("Jobs that errored")
+
+    proportion_histogram = get_histogram(
+        calculate_proportions(jobs),
+        "proportion",
+        (
+            "Number jobs that were cancelled by a dependency / Total number of jobs that errored",
+            "Number of job requests",
+        ),
+    )
+    streamlit.write(proportion_histogram)
+
     streamlit.subheader("Jobs and actions")
 
     num_actions_histogram = get_histogram(
@@ -100,18 +112,6 @@ def main():
         ("Number of actions", "Number of jobs / Number of actions"),
     )
     streamlit.write(scatter_plot)
-
-    streamlit.subheader("Jobs that errored")
-
-    proportion_histogram = get_histogram(
-        calculate_proportions(jobs),
-        "proportion",
-        (
-            "Number jobs that were cancelled by a dependency / Total number of jobs that errored",
-            "Number of job requests",
-        ),
-    )
-    streamlit.write(proportion_histogram)
 
 
 if __name__ == "__main__":
