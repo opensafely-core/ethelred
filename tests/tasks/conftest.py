@@ -45,3 +45,20 @@ def make_jobrequest(a_foreign_key):
         } | kwargs
 
     return _make_jobrequest
+
+
+@pytest.fixture
+def make_job():
+    def _make_job(id_, job_request_id, created_at):
+        return {
+            "id": id_,
+            "job_request_id": job_request_id,
+            "created_at": created_at,
+            "action": "do_something",
+            "run_command": "command:version some_script.py",
+            "status": "some status",
+            "status_code": "000",
+            "status_message": "some status message",
+        }
+
+    return _make_job
