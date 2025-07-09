@@ -9,7 +9,7 @@ from tasks import get_project_definitions, io
 Row = collections.namedtuple("Row", ["url", "sha", "project_definition"])
 
 
-def test_get_query(jobserver_engine, jobserver_metadata):
+def test_extract(jobserver_engine, jobserver_metadata):
     # arrange
     a_foreign_key = 99
 
@@ -68,9 +68,7 @@ def test_get_query(jobserver_engine, jobserver_metadata):
         conn.commit()
 
     # act
-    query = get_project_definitions.get_query(jobserver_metadata)
-    with jobserver_engine.connect() as conn:
-        rows = list(conn.execute(query))
+    rows = list(get_project_definitions.extract(jobserver_engine, jobserver_metadata))
 
     # assert
     assert len(rows) == 1
