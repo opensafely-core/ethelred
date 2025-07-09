@@ -13,6 +13,23 @@ Row = collections.namedtuple(
 )
 
 
+@pytest.fixture
+def make_job():
+    def _make_job(id_, job_request_id, created_at):
+        return {
+            "id": id_,
+            "job_request_id": job_request_id,
+            "created_at": created_at,
+            "action": "do_something",
+            "run_command": "command:version some_script.py",
+            "status": "some status",
+            "status_code": "000",
+            "status_message": "some status message",
+        }
+
+    return _make_job
+
+
 def test_get_query(jobserver_engine, jobserver_metadata, make_job, make_jobrequest):
     # arrange
     job_request_table = jobserver_metadata.tables["jobserver_jobrequest"]
