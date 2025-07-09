@@ -9,7 +9,8 @@ from . import DATA_DIR, INDEX_DATE, io, utils
 Record = collections.namedtuple("Record", ["repo", "sha", "project_definition"])
 
 
-def get_query(metadata):
+def extract(engine, metadata):  # pragma: no cover
+    # This is hard to test without a Job Server DB, so we exclude it from coverage.
     job_request = metadata.tables["jobserver_jobrequest"]
     workspace = metadata.tables["jobserver_workspace"]
     repo = metadata.tables["jobserver_repo"]
@@ -24,11 +25,7 @@ def get_query(metadata):
         .join(repo, repo.c.id == workspace.c.repo_id)
         .where(job_request.c.created_at >= INDEX_DATE)
     )
-    return stmt
 
-
-def extract(engine, stmt):  # pragma: no cover
-    # This is hard to test without a Job Server DB, so we exclude it from coverage.
     with engine.connect() as conn:
         yield from conn.execute(stmt)
 
@@ -50,8 +47,7 @@ def main():  # pragma: no cover
     engine = utils.get_engine()
     metadata = utils.get_metadata(engine)
 
-    query = get_query(metadata)
-    rows = extract(engine, query)
+    rows = extract(engine, metadata)
     records = (get_record(row) for row in rows)
     write_pickle(records, DATA_DIR / "project_definitions")
 
