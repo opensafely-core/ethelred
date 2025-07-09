@@ -38,7 +38,7 @@ def test_extract(jobserver_engine, jobserver_metadata):
     jobrequest_table = jobserver_metadata.tables["jobserver_jobrequest"]
     template_jobrequest = {
         "id": None,  # replace me
-        "sha": "0000000",
+        "sha": None,  # replace me
         "created_at": None,  # replace me
         "backend_id": a_foreign_key,
         "created_by_id": a_foreign_key,
@@ -50,11 +50,13 @@ def test_extract(jobserver_engine, jobserver_metadata):
     # before index date
     jobrequest_1 = template_jobrequest | {
         "id": 1,
+        "sha": "1111111",
         "created_at": datetime.datetime(2024, 1, 1),
     }
     # on or after index date
     jobrequest_2 = template_jobrequest | {
         "id": 2,
+        "sha": "2222222",
         "created_at": datetime.datetime(2025, 1, 1),
     }
     insert_into_jobrequest_table = sqlalchemy.insert(jobrequest_table).values(
@@ -73,9 +75,8 @@ def test_extract(jobserver_engine, jobserver_metadata):
     # assert
     assert len(rows) == 1
     row = rows[0]
-    assert row.url == "https://github.com/opensafely/my-repo"
-    assert row.sha == "0000000"
-    assert row.project_definition == "actions: {a1: {}, a2: {}}"
+    assert row._fields == ("url", "sha", "project_definition")
+    assert row.sha == "2222222"
 
 
 def test_get_record():
