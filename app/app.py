@@ -1,6 +1,5 @@
 import os
 import pathlib
-from enum import Enum
 
 import charts
 import pandas
@@ -8,8 +7,6 @@ import streamlit
 
 
 DATA_DIR = pathlib.Path(os.environ.get("DATA_DIR", "data"))
-
-Outcome = Enum("Outcome", ["CANCELLED_BY_DEPENDENCY", "ERRORED", "OTHER"])
 
 
 def get_job_requests(f_path):
@@ -36,16 +33,14 @@ def calculate_proportions(jobs):
         jobs.groupby(["job_request_id", "outcome"])
         .size()
         .unstack(fill_value=0)
-        .rename(columns={outcome.value: f"num_{outcome}" for outcome in Outcome})
+        .add_prefix("num_")
     )
     job_requests["denominator"] = (
-        job_requests[f"num_{Outcome.ERRORED}"]
-        + job_requests[f"num_{Outcome.CANCELLED_BY_DEPENDENCY}"]
+        job_requests["num_errored"] + job_requests["num_cancelled by dependency"]
     )
     job_requests = job_requests.loc[job_requests["denominator"] > 0]
     job_requests["proportion"] = (
-        job_requests[f"num_{Outcome.CANCELLED_BY_DEPENDENCY}"]
-        / job_requests["denominator"]
+        job_requests["num_cancelled by dependency"] / job_requests["denominator"]
     )
     return job_requests.loc[:, "proportion"].to_frame()
 

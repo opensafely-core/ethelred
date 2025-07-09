@@ -12,7 +12,9 @@ def test_app(tmp_path, monkeypatch):
     )
     jobs_path = tmp_path / "jobs" / "jobs.csv"
     jobs_path.parent.mkdir()
-    jobs_path.write_text("job_request_id,outcome\n123,1\n123,2\n")
+    jobs_path.write_text(
+        "job_request_id,outcome\n123,errored\n123,cancelled by dependency\n"
+    )
     monkeypatch.setenv("DATA_DIR", str(tmp_path))
 
     app_test = AppTest.from_file("app/app.py")
@@ -25,7 +27,14 @@ def test_calculate_proportions():
     jobs = pd.DataFrame(
         {
             "job_request_id": [123, 123, 123, 456, 456, 789],
-            "outcome": [1, 2, 3, 2, 3, 3],
+            "outcome": [
+                "errored",
+                "cancelled by dependency",
+                "other",
+                "errored",
+                "other",
+                "other",
+            ],
         }
     )
     job_requests = app.calculate_proportions(jobs)
