@@ -15,4 +15,4 @@ def test_get_metadata(monkeypatch):
 
 def test_get_repo():
     repo = utils.get_repo("https://github.com/opensafely/my-repo")
-    repo == "my-repo"
+    assert repo == "my-repo"
