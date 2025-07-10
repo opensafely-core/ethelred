@@ -95,6 +95,7 @@ def test_transform():
     "run_command,stage",
     [
         ("ehrql:v1", "database"),
+        ("cohortextractor:latest", "database"),
         ("python:v1", "analysis"),
         ("r:v1", "analysis"),
         ("stata:latest", "analysis"),
