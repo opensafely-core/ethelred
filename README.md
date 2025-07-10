@@ -28,6 +28,11 @@ python -m tasks.get_jobs
 just run app/app.py
 ```
 
+## Docs
+
+Glad you asked!
+See the [README](docs/README.md) in the `docs` directory.
+
 [1]: https://en.wikipedia.org/wiki/%C3%86thelred
 [2]: https://en.wikipedia.org/wiki/%C3%86thelred_the_Unready
 [3]: https://github.com/opensafely-core/job-server/blob/main/DEVELOPERS.md
