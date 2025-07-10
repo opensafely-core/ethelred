@@ -44,17 +44,22 @@ def get_stage(run_command):
 
 
 def get_outcome(status, status_message):
-    if status == "failed":
-        if status_message.startswith("Not starting as dependency failed"):
-            return "cancelled by dependency"
-        elif (
-            status_message.startswith("Job exited with an error")
-            or status_message.startswith("Internal error")
-            or status_message.startswith("No outputs found matching patterns")
-            or status_message.startswith("GitRepoNotReachableError")
-        ):
-            return "errored"
-    return "other"
+    match status:
+        case "failed":
+            match status_message.split(":")[0]:
+                case "Not starting as dependency failed":
+                    return "cancelled by dependency"
+                case (
+                    "Job exited with an error"
+                    | "Internal error"
+                    | "No outputs found matching patterns"
+                    | "GitRepoNotReachableError"
+                ):
+                    return "errored"
+                case _:
+                    return "other"
+        case _:
+            return "other"
 
 
 def main():  # pragma: no cover
