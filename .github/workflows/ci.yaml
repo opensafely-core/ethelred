@@ -50,7 +50,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    if: github.ref != 'refs/heads/main'
+    if: github.ref != 'refs/heads/main' && github.actor != 'dependabot'
     steps:
       - uses: actions/checkout@v4
         with:
