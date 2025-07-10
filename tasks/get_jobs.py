@@ -33,13 +33,9 @@ def extract(engine, metadata):
 
 def transform(rows):
     for row in rows:
-        yield Record(
-            row.id,
-            row.job_request_id,
-            row.created_at,
-            get_stage(row.run_command),
-            get_outcome(row.status, row.status_message),
-        )
+        stage = get_stage(row.run_command)
+        outcome = get_outcome(row.status, row.status_message)
+        yield Record(row.id, row.job_request_id, row.created_at, stage, outcome)
 
 
 def get_stage(run_command):
