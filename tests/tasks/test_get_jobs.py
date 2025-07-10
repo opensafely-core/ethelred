@@ -94,10 +94,10 @@ def test_transform():
 @pytest.mark.parametrize(
     "run_command,stage",
     [
-        ("ehrql:latest", "database"),
         ("ehrql:v1", "database"),
         ("python:v1", "analysis"),
-        ("r:latest", "analysis"),
+        ("r:v1", "analysis"),
+        ("stata:latest", "analysis"),
     ],
 )
 def test_get_stage(run_command, stage):
