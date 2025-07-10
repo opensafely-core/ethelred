@@ -11,8 +11,7 @@ Record = collections.namedtuple(
 )
 
 
-def extract(engine, metadata):  # pragma: no cover
-    # This is hard to test without a Job Server DB, so we exclude it from coverage.
+def extract(engine, metadata):
     job = metadata.tables["jobserver_job"]
     job_request = metadata.tables["jobserver_jobrequest"]
 
