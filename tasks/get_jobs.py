@@ -49,6 +49,8 @@ def get_outcome(status, status_message):
             match status_message.split(":")[0]:
                 case "Not starting as dependency failed":
                     return "cancelled by dependency"
+                case "Cancelled by user":
+                    return "other"
                 case (
                     "Job exited with an error"
                     | "Internal error"
