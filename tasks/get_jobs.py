@@ -43,10 +43,8 @@ def transform(rows):
 
 
 def get_stage(run_command):
-    database_commands = ["ehrql"]
-    if run_command.split(":")[0] in database_commands:
-        return "database"
-    return "analysis"
+    action_name, _ = run_command.split(":", maxsplit=1)
+    return "database" if action_name == "ehrql" else "analysis"
 
 
 def get_outcome(status, status_message):
