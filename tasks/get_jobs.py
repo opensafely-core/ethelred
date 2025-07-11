@@ -39,6 +39,8 @@ def transform(rows):
 
 
 def get_stage(run_command):
+    if not run_command:
+        return ""
     action_name, _ = run_command.split(":", maxsplit=1)
     return "database" if action_name in {"cohortextractor", "ehrql"} else "analysis"
 

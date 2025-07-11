@@ -94,6 +94,7 @@ def test_transform():
 @pytest.mark.parametrize(
     "run_command,stage",
     [
+        ("", ""),
         ("ehrql:v1", "database"),
         ("cohortextractor:latest", "database"),
         ("python:v1", "analysis"),
