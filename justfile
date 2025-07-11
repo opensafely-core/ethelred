@@ -64,12 +64,12 @@ devenv: requirements-dev prodenv (_install 'dev') && install-pre-commit
 
 # Run a streamlit app
 run *args: prodenv
-    PYTHONPATH={{ justfile_directory() }} {{ STREAMLIT }} run {{ args }}
+    {{ STREAMLIT }} run {{ args }}
 
 # Run tests
 test *args: devenv
     PYTHONPATH={{ justfile_directory() }}/app {{ BIN_DIR }}/coverage run --source {{ justfile_directory() }} --module pytest {{ args }}
-    PYTHONPATH={{ justfile_directory() }}/app {{ BIN_DIR }}/coverage report || {{ BIN_DIR }}/coverage html
+    {{ BIN_DIR }}/coverage report || {{ BIN_DIR }}/coverage html
 
 # Fix code
 fix *args=".": devenv
