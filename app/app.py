@@ -1,9 +1,10 @@
 import os
 import pathlib
 
-import charts
 import pandas
 import streamlit
+
+import charts
 
 
 DATA_DIR = pathlib.Path(os.environ.get("DATA_DIR", "data"))
