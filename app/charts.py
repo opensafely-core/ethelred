@@ -1,6 +1,18 @@
 import altair
 
 
+def get_counts_bar_chart(job_requests, column_name, axis_titles):
+    title_x, title_y = axis_titles
+    return (
+        altair.Chart(job_requests)
+        .mark_bar()
+        .encode(
+            altair.X(column_name).title(title_x).sort("-y"),
+            altair.Y("count()").title(title_y),
+        )
+    )
+
+
 def get_histogram(job_requests, column_name, axis_titles):
     title_x, title_y = axis_titles
     return (
