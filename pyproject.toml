@@ -25,6 +25,7 @@ filterwarnings = [
 ]
 
 [tool.ruff]
+src = [".", "app"]
 target-version = "py312"
 
 [tool.ruff.lint]
