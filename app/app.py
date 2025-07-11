@@ -92,6 +92,13 @@ def main():
     )
     streamlit.write(scatter_plot)
 
+    users_bar_chart = charts.get_counts_bar_chart(
+        job_requests,
+        "username:N",
+        ("User", "Number of job requests"),
+    )
+    streamlit.write(users_bar_chart)
+
 
 if __name__ == "__main__":
     main()
