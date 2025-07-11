@@ -37,3 +37,20 @@ def get_scatter_plot(job_requests, column_names, axis_titles):
             tooltip=altair.Tooltip(list(job_requests.columns)),
         )
     )
+
+
+def grey_out_unselected(chart, selection):
+    color = chart.encoding.color
+    color = color if color is not altair.Undefined else ""
+    return chart.encode(
+        color=altair.condition(selection, color, altair.value("lightgray"))
+    )
+
+
+def highlight_focus_by_selection_in_context(focus, context, selection_encodings):
+    selection = altair.selection_point(encodings=selection_encodings)
+    context = context.add_params(selection)
+
+    focus = grey_out_unselected(focus, selection)
+    context = grey_out_unselected(context, selection)
+    return focus, context

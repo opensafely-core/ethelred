@@ -90,14 +90,15 @@ def main():
         ("num_actions", "measure"),
         ("Number of actions", "Number of jobs / Number of actions"),
     )
-    streamlit.write(scatter_plot)
-
     users_bar_chart = charts.get_counts_bar_chart(
         job_requests,
         "username:N",
         ("User", "Number of job requests"),
     )
-    streamlit.write(users_bar_chart)
+    scatter_plot, users_bar_chart = charts.highlight_focus_by_selection_in_context(
+        scatter_plot, users_bar_chart, selection_encodings=["x"]
+    )
+    streamlit.write(scatter_plot & users_bar_chart)
 
 
 if __name__ == "__main__":
