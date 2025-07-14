@@ -1,7 +1,16 @@
+import pytest
+
 from app import repositories
 
 
-def test_get_job_requests(tmp_path):
+def test_abstract_repository():
+    class FakeRepository(repositories.AbstractRepository): ...
+
+    with pytest.raises(TypeError):
+        FakeRepository()
+
+
+def test_repository_get_job_requests(tmp_path):
     job_requests_path = tmp_path / "job_requests" / "job_requests.csv"
     job_requests_path.parent.mkdir()
     job_requests_path.write_text(
@@ -12,7 +21,7 @@ def test_get_job_requests(tmp_path):
     assert list(job_requests["measure"]) == [1]
 
 
-def test_get_jobs(tmp_path):
+def test_repository_get_jobs(tmp_path):
     jobs_path = tmp_path / "jobs" / "jobs.csv"
     jobs_path.parent.mkdir()
     jobs_path.write_text(
