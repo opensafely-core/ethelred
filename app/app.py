@@ -5,15 +5,10 @@ import pandas
 import streamlit
 
 import charts
+import repositories
 
 
 DATA_DIR = pathlib.Path(os.environ.get("DATA_DIR", "data"))
-
-
-def get_job_requests(f_path):
-    job_requests = pandas.read_csv(f_path)
-    job_requests["measure"] = job_requests["num_jobs"] / job_requests["num_actions"]
-    return job_requests
 
 
 def get_jobs(f_path):
@@ -47,7 +42,9 @@ def calculate_proportions(jobs):
 
 
 def main():
-    job_requests = get_job_requests(DATA_DIR / "job_requests" / "job_requests.csv")
+    repository = repositories.Repository(DATA_DIR)
+
+    job_requests = repository.get_job_requests()
     jobs = get_jobs(DATA_DIR / "jobs" / "jobs.csv")
 
     streamlit.header("Job requests")
