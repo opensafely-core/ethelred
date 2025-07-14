@@ -1,7 +1,23 @@
+import abc
+
 import pandas
 
 
-class Repository:
+class AbstractRepository(abc.ABC):
+    @abc.abstractmethod
+    def get_job_requests(self):
+        # It's not possible to inherit from this class without overriding this method,
+        # but coverage doesn't seem to realise.
+        raise NotImplementedError  # pragma: no cover
+
+    @abc.abstractmethod
+    def get_jobs(self):
+        # It's not possible to inherit from this class without overriding this method,
+        # but coverage doesn't seem to realise.
+        raise NotImplementedError  # pragma: no cover
+
+
+class Repository(AbstractRepository):
     def __init__(self, root_dir):
         self.job_requests_csv = root_dir / "job_requests" / "job_requests.csv"
         self.jobs_csv = root_dir / "jobs" / "jobs.csv"
