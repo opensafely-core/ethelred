@@ -15,7 +15,7 @@ def get_counts_bar_chart(job_requests, column_name, axis_titles):
 
 def get_histogram(job_requests, column_name, axis_titles):
     title_x, title_y = axis_titles
-    return (
+    histogram = (
         altair.Chart(job_requests)
         .mark_bar()
         .encode(
@@ -23,6 +23,14 @@ def get_histogram(job_requests, column_name, axis_titles):
             altair.Y("count()").title(title_y),
         )
     )
+    strip_plot = (
+        altair.Chart(job_requests)
+        .mark_tick()
+        .encode(
+            altair.X(column_name).title(title_x),
+        )
+    )
+    return histogram & strip_plot
 
 
 def get_scatter_plot(job_requests, column_names, axis_titles):

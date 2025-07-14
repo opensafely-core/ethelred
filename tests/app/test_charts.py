@@ -22,9 +22,14 @@ def test_get_histogram():
     table = pandas.DataFrame({"column_1": range(10), "column_2": range(10)})
     chart = charts.get_histogram(table, "column_1", ("Title for x", "Title for y"))
     chart_dict = chart.to_dict()
-    assert chart_dict["encoding"]["x"]["field"] == "column_1"
-    assert chart_dict["encoding"]["x"]["title"] == "Title for x"
-    assert chart_dict["encoding"]["y"]["title"] == "Title for y"
+    histogram_dict, strip_plot_dict = chart_dict["vconcat"]
+
+    assert histogram_dict["encoding"]["x"]["field"] == "column_1"
+    assert histogram_dict["encoding"]["x"]["title"] == "Title for x"
+    assert histogram_dict["encoding"]["y"]["title"] == "Title for y"
+
+    assert strip_plot_dict["encoding"]["x"]["field"] == "column_1"
+    assert strip_plot_dict["encoding"]["x"]["title"] == "Title for x"
 
 
 def test_get_scatter_plot():
