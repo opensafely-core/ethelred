@@ -25,7 +25,7 @@ def test_get_histogram():
     histogram_dict, strip_plot_dict = chart_dict["vconcat"]
 
     assert histogram_dict["encoding"]["x"]["field"] == "column_1"
-    assert histogram_dict["encoding"]["x"]["title"] == "Title for x"
+    assert histogram_dict["encoding"]["x"]["title"] == ""
     assert histogram_dict["encoding"]["y"]["title"] == "Title for y"
 
     assert strip_plot_dict["encoding"]["x"]["field"] == "column_1"
