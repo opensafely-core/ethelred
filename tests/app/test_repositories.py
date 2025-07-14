@@ -10,3 +10,15 @@ def test_get_job_requests(tmp_path):
     repository = repositories.Repository(tmp_path)
     job_requests = repository.get_job_requests()
     assert list(job_requests["measure"]) == [1]
+
+
+def test_get_jobs(tmp_path):
+    jobs_path = tmp_path / "jobs" / "jobs.csv"
+    jobs_path.parent.mkdir()
+    jobs_path.write_text(
+        "job_request_id,outcome\n123,errored\n123,cancelled by dependency\n"
+    )
+    repository = repositories.Repository(tmp_path)
+    jobs = repository.get_jobs()
+    assert list(jobs["job_request_id"]) == [123, 123]
+    assert list(jobs["outcome"]) == ["errored", "cancelled by dependency"]
