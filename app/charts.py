@@ -19,7 +19,7 @@ def get_histogram(job_requests, column_name, axis_titles):
         altair.Chart(job_requests)
         .mark_bar()
         .encode(
-            altair.X(column_name, bin=True).title(title_x),
+            altair.X(column_name, bin=True).title(""),
             altair.Y("count()").title(title_y),
         )
     )
