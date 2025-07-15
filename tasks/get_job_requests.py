@@ -7,7 +7,7 @@ from . import DATA_DIR, INDEX_DATE, io, utils
 
 
 Record = collections.namedtuple(
-    "Record", ["created_at", "num_actions", "num_jobs", "username"]
+    "Record", ["created_at", "num_actions", "num_jobs", "username", "measure"]
 )
 
 
@@ -50,7 +50,8 @@ def get_records(rows, project_definition_loader):
         repo = utils.get_repo(row.url)
         project_definition = project_definition_loader(repo, row.sha)
         num_actions = len(project_definition["actions"])
-        yield Record(row.created_at, num_actions, row.num_jobs, row.username)
+        measure = row.num_jobs / num_actions
+        yield Record(row.created_at, num_actions, row.num_jobs, row.username, measure)
 
 
 def main():  # pragma: no cover

@@ -24,7 +24,6 @@ class Repository(AbstractRepository):
 
     def get_job_requests(self):
         job_requests = pandas.read_csv(self.job_requests_csv)
-        job_requests["measure"] = job_requests["num_jobs"] / job_requests["num_actions"]
         return job_requests
 
     def get_jobs(self):
