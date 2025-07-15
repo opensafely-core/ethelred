@@ -75,7 +75,7 @@ def test_extract(jobserver_engine, jobserver_metadata):
     # assert
     assert len(rows) == 1
     row = rows[0]
-    assert row._fields == ("url", "sha", "project_definition")
+    assert row._fields == Row._fields
     assert row.sha == "2222222"
 
 
