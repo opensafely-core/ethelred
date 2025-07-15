@@ -59,14 +59,7 @@ def test_extract(jobserver_engine, jobserver_metadata):
     # assert
     assert len(rows) == 1
     row = rows[0]
-    assert row._fields == (
-        "id",
-        "job_request_id",
-        "created_at",
-        "run_command",
-        "status",
-        "status_message",
-    )
+    assert row._fields == Row._fields
     assert row.id == 2
 
 
