@@ -4,10 +4,10 @@ import pandas
 from app import charts
 
 
-def test_get_counts_bar_chart():
+def test_get_bar_chart():
     table = pandas.DataFrame({"column_1": range(10), "column_2": range(10)})
     selection = altair.selection_point(name="my_selection")
-    chart = charts.get_counts_bar_chart(
+    chart = charts.get_bar_chart(
         table, "column_1", ("Title for x", "Title for y"), selection
     )
     chart_dict = chart.to_dict()
