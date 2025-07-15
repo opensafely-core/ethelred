@@ -57,7 +57,7 @@ def main(repository):  # pragma: no cover
         ("Number of actions", "Number of jobs / Number of actions"),
         username_selection,
     )
-    users_bar_chart = charts.get_counts_bar_chart(
+    users_bar_chart = charts.get_bar_chart(
         job_requests,
         "username:N",
         ("User", "Number of job requests"),

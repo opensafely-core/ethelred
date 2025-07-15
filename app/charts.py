@@ -1,7 +1,7 @@
 import altair
 
 
-def get_counts_bar_chart(job_requests, column_name, axis_titles, selection):
+def get_bar_chart(job_requests, column_name, axis_titles, selection):
     title_x, title_y = axis_titles
     return (
         altair.Chart(job_requests)
