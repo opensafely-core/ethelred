@@ -7,6 +7,7 @@ import repositories
 def main(repository):  # pragma: no cover
     # This is tested by tests.app.test_app.test_app, but coverage doesn't seem to
     # realise.
+    import altair
     import streamlit
 
     import charts
@@ -49,19 +50,20 @@ def main(repository):  # pragma: no cover
     )
     streamlit.write(measure_histogram)
 
+    username_selection = altair.selection_point(fields=["username"])
     scatter_plot = charts.get_scatter_plot(
         job_requests,
         ("num_actions", "measure"),
         ("Number of actions", "Number of jobs / Number of actions"),
+        username_selection,
     )
     users_bar_chart = charts.get_counts_bar_chart(
         job_requests,
         "username:N",
         ("User", "Number of job requests"),
+        username_selection,
     )
-    scatter_plot, users_bar_chart = charts.highlight_focus_by_selection_in_context(
-        scatter_plot, users_bar_chart, selection_encodings=["x"]
-    )
+
     streamlit.write(scatter_plot & users_bar_chart)
 
 

@@ -1,14 +1,14 @@
 import altair
 import pandas
-import pytest
 
 from app import charts
 
 
 def test_get_counts_bar_chart():
     table = pandas.DataFrame({"column_1": range(10), "column_2": range(10)})
+    selection = altair.selection_point(name="my_selection")
     chart = charts.get_counts_bar_chart(
-        table, "column_1", ("Title for x", "Title for y")
+        table, "column_1", ("Title for x", "Title for y"), selection
     )
     chart_dict = chart.to_dict()
     assert chart_dict["encoding"]["x"]["field"] == "column_1"
@@ -16,6 +16,11 @@ def test_get_counts_bar_chart():
     assert chart_dict["encoding"]["x"]["sort"] == "-y"
     assert chart_dict["encoding"]["y"]["aggregate"] == "count"
     assert chart_dict["encoding"]["y"]["title"] == "Title for y"
+    assert chart_dict["encoding"]["color"] == {
+        "condition": {"param": "my_selection"},
+        "value": "lightgray",
+    }
+    assert chart_dict["params"][0]["name"] == "my_selection"
 
 
 def test_get_histogram():
@@ -38,58 +43,16 @@ def test_get_histogram():
 
 def test_get_scatter_plot():
     table = pandas.DataFrame({"column_1": range(10), "column_2": range(10)})
+    selection = altair.selection_point(name="my_selection")
     chart = charts.get_scatter_plot(
-        table, ("column_1", "column_2"), ("Title for x", "Title for y")
+        table, ("column_1", "column_2"), ("Title for x", "Title for y"), selection
     )
     chart_dict = chart.to_dict()
     assert chart_dict["encoding"]["x"]["field"] == "column_1"
     assert chart_dict["encoding"]["x"]["title"] == "Title for x"
     assert chart_dict["encoding"]["y"]["field"] == "column_2"
     assert chart_dict["encoding"]["y"]["title"] == "Title for y"
-
-
-@pytest.mark.parametrize(
-    "encodings,color_dict",
-    [
-        (
-            dict(x="column_1", y="column_2", color="column_3:O"),
-            {"field": "column_3", "type": "ordinal"},
-        ),
-        (
-            dict(x="column_1", y="column_2"),
-            {},
-        ),
-    ],
-)
-def test_grey_out_unselected(encodings, color_dict):
-    table = pandas.DataFrame(
-        {"column_1": range(10), "column_2": range(10), "column_3": range(10)}
-    )
-    chart = altair.Chart(table).mark_circle().encode(**encodings)
-    selection = altair.selection_point(encodings=["x"], name="selection")
-    chart = charts.grey_out_unselected(chart, selection)
-    chart_dict = chart.to_dict()
-
     assert chart_dict["encoding"]["color"] == {
-        "condition": {"param": "selection", **color_dict},
+        "condition": {"param": "my_selection"},
         "value": "lightgray",
     }
-
-
-def test_highlight_focus_by_selection_in_context():
-    table = pandas.DataFrame(
-        {"column_1": range(10), "column_2": range(10), "column_3": range(10)}
-    )
-    chart = altair.Chart(table).mark_circle().encode(x="column_1", y="column_2")
-    focus, context = charts.highlight_focus_by_selection_in_context(
-        chart, chart, ["x", "y"]
-    )
-    focus_dict = focus.to_dict()
-    context_dict = context.to_dict()
-    (param,) = context_dict["params"]
-
-    assert param["select"] == {"type": "point", "encodings": ["x", "y"]}
-
-    expected = {"condition": {"param": param["name"]}, "value": "lightgray"}
-    assert focus_dict["encoding"]["color"] == expected
-    assert context_dict["encoding"]["color"] == expected
