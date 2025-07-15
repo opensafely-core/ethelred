@@ -1,24 +1,36 @@
+import datetime
+
+import pandas
 from streamlit.testing.v1 import AppTest
 
 from app import app, repositories
 
 
-def test_app(tmp_path, monkeypatch):
-    job_requests_path = tmp_path / "job_requests" / "job_requests.csv"
-    job_requests_path.parent.mkdir()
-    job_requests_path.write_text(
-        "created_at,num_actions,num_jobs\n2025-01-01 00:00:00.0+00:00,1,1\n"
-    )
-    jobs_path = tmp_path / "jobs" / "jobs.csv"
-    jobs_path.parent.mkdir()
-    jobs_path.write_text(
-        "job_request_id,outcome\n123,errored\n123,cancelled by dependency\n"
-    )
-    monkeypatch.setenv("DATA_DIR", str(tmp_path))
+class FakeRepository(repositories.AbstractRepository):
+    def get_job_requests(self):
+        return pandas.DataFrame(
+            {
+                "created_at": [datetime.datetime(2025, 1, 1)],
+                "num_actions": [1],
+                "num_jobs": [1],
+                "measure": [1],
+            }
+        )
 
-    app_test = AppTest.from_function(
-        app.main, args=(repositories.Repository(tmp_path),)
-    )
+    def get_jobs(self):
+        return pandas.DataFrame(
+            {
+                "job_request_id": [123, 123],
+                "outcome": ["errored", "cancelled by dependency"],
+            }
+        )
+
+    @staticmethod
+    def calculate_proportions(jobs):
+        return repositories.Repository.calculate_proportions(jobs)
+
+
+def test_app():
+    app_test = AppTest.from_function(app.main, args=(FakeRepository(),))
     app_test.run()
-
     assert not app_test.exception
