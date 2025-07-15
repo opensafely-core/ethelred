@@ -1,16 +1,15 @@
-def main():  # pragma: no cover
+import os
+import pathlib
+
+import repositories
+
+
+def main(repository):  # pragma: no cover
     # This is tested by tests.app.test_app.test_app, but coverage doesn't seem to
     # realise.
-    import os
-    import pathlib
-
     import streamlit
 
     import charts
-    import repositories
-
-    DATA_DIR = pathlib.Path(os.environ.get("DATA_DIR", "data"))
-    repository = repositories.Repository(DATA_DIR)
 
     job_requests = repository.get_job_requests()
     jobs = repository.get_jobs()
@@ -67,4 +66,6 @@ def main():  # pragma: no cover
 
 
 if __name__ == "__main__":
-    main()
+    DATA_DIR = pathlib.Path(os.environ.get("DATA_DIR", "data"))
+    repository = repositories.Repository(DATA_DIR)
+    main(repository)
