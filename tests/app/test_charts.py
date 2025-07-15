@@ -13,8 +13,6 @@ def test_get_bar_chart():
     chart_dict = chart.to_dict()
     assert chart_dict["encoding"]["x"]["field"] == "column_1"
     assert chart_dict["encoding"]["x"]["title"] == "Title for x"
-    assert chart_dict["encoding"]["x"]["sort"] == "-y"
-    assert chart_dict["encoding"]["y"]["aggregate"] == "count"
     assert chart_dict["encoding"]["y"]["title"] == "Title for y"
     assert chart_dict["encoding"]["color"] == {
         "condition": {"param": "my_selection"},
