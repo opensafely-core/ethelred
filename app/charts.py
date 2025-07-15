@@ -38,6 +38,7 @@ def get_histogram(data_frame, column_name, axis_titles):
 def get_scatter_plot(data_frame, column_names, axis_titles, selection):
     encode_x, encode_y = column_names
     title_x, title_y = axis_titles
+    when_selected = altair.when(selection)
     return (
         altair.Chart(data_frame)
         .mark_circle()
@@ -46,5 +47,6 @@ def get_scatter_plot(data_frame, column_names, axis_titles, selection):
             y=altair.Y(encode_y).title(title_y),
             color=altair.condition(selection, "", altair.value("lightgray")),
             tooltip=altair.Tooltip(list(data_frame.columns)),
+            order=when_selected.then(altair.value(1)).otherwise(altair.value(0)),
         )
     )
