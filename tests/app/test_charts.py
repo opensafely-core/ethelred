@@ -5,10 +5,10 @@ from app import charts
 
 
 def test_get_bar_chart():
-    table = pandas.DataFrame({"column_1": range(10), "column_2": range(10)})
+    data_frame = pandas.DataFrame({"column_1": range(10), "column_2": range(10)})
     selection = altair.selection_point(name="my_selection")
     chart = charts.get_bar_chart(
-        table, "column_1", ("Title for x", "Title for y"), selection
+        data_frame, "column_1", ("Title for x", "Title for y"), selection
     )
     chart_dict = chart.to_dict()
     assert chart_dict["encoding"]["x"]["field"] == "column_1"
@@ -22,8 +22,8 @@ def test_get_bar_chart():
 
 
 def test_get_histogram():
-    table = pandas.DataFrame({"column_1": range(10), "column_2": range(10)})
-    chart = charts.get_histogram(table, "column_1", ("Title for x", "Title for y"))
+    data_frame = pandas.DataFrame({"column_1": range(10), "column_2": range(10)})
+    chart = charts.get_histogram(data_frame, "column_1", ("Title for x", "Title for y"))
     chart_dict = chart.to_dict()
     (param,) = chart_dict["params"]
     histogram_dict, strip_plot_dict = chart_dict["vconcat"]
@@ -40,10 +40,10 @@ def test_get_histogram():
 
 
 def test_get_scatter_plot():
-    table = pandas.DataFrame({"column_1": range(10), "column_2": range(10)})
+    data_frame = pandas.DataFrame({"column_1": range(10), "column_2": range(10)})
     selection = altair.selection_point(name="my_selection")
     chart = charts.get_scatter_plot(
-        table, ("column_1", "column_2"), ("Title for x", "Title for y"), selection
+        data_frame, ("column_1", "column_2"), ("Title for x", "Title for y"), selection
     )
     chart_dict = chart.to_dict()
     assert chart_dict["encoding"]["x"]["field"] == "column_1"
