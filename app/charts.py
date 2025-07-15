@@ -18,9 +18,9 @@ def get_bar_chart(data_frame, column_name, axis_titles, selection):
 def get_histogram(data_frame, column_name, axis_titles):
     title_x, title_y = axis_titles
     selection = altair.selection_interval(encodings=["x"])
+    base = altair.Chart(data_frame)
     histogram = (
-        altair.Chart(data_frame)
-        .mark_bar()
+        base.mark_bar()
         .encode(
             altair.X(column_name, bin=True).title(""),
             altair.Y("count()").title(title_y),
@@ -28,11 +28,8 @@ def get_histogram(data_frame, column_name, axis_titles):
         .transform_filter(selection)
     )
     strip_plot = (
-        altair.Chart(data_frame)
-        .mark_tick()
-        .encode(
-            altair.X(column_name).title(title_x),
-        )
+        base.mark_tick()
+        .encode(altair.X(column_name).title(title_x))
         .add_params(selection)
     )
     return histogram & strip_plot
