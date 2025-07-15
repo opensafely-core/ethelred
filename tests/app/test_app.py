@@ -1,6 +1,6 @@
 from streamlit.testing.v1 import AppTest
 
-from app import app
+from app import app, repositories
 
 
 def test_app(tmp_path, monkeypatch):
@@ -16,7 +16,9 @@ def test_app(tmp_path, monkeypatch):
     )
     monkeypatch.setenv("DATA_DIR", str(tmp_path))
 
-    app_test = AppTest.from_function(app.main)
+    app_test = AppTest.from_function(
+        app.main, args=(repositories.Repository(tmp_path),)
+    )
     app_test.run()
 
     assert not app_test.exception
