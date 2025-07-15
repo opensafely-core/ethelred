@@ -1,7 +1,4 @@
-import pandas as pd
 from streamlit.testing.v1 import AppTest
-
-from app import app
 
 
 def test_app(tmp_path, monkeypatch):
@@ -21,21 +18,3 @@ def test_app(tmp_path, monkeypatch):
     app_test.run()
 
     assert not app_test.exception
-
-
-def test_calculate_proportions():
-    jobs = pd.DataFrame(
-        {
-            "job_request_id": [123, 123, 123, 456, 456, 789],
-            "outcome": [
-                "errored",
-                "cancelled by dependency",
-                "other",
-                "errored",
-                "other",
-                "other",
-            ],
-        }
-    )
-    job_requests = app.calculate_proportions(jobs)
-    assert job_requests.to_dict() == {"proportion": {123: 1 / 2, 456: 0.0}}

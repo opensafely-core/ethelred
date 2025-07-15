@@ -1,3 +1,4 @@
+import pandas
 import pytest
 
 from app import repositories
@@ -31,3 +32,21 @@ def test_repository_get_jobs(tmp_path):
     jobs = repository.get_jobs()
     assert list(jobs["job_request_id"]) == [123, 123]
     assert list(jobs["outcome"]) == ["errored", "cancelled by dependency"]
+
+
+def test_repository_calculate_proportions():
+    jobs = pandas.DataFrame(
+        {
+            "job_request_id": [123, 123, 123, 456, 456, 789],
+            "outcome": [
+                "errored",
+                "cancelled by dependency",
+                "other",
+                "errored",
+                "other",
+                "other",
+            ],
+        }
+    )
+    job_requests = repositories.Repository.calculate_proportions(jobs)
+    assert job_requests.to_dict() == {"proportion": {123: 1 / 2, 456: 0.0}}
