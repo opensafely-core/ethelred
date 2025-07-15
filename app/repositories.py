@@ -23,12 +23,10 @@ class Repository(AbstractRepository):
         self.jobs_csv = root_dir / "jobs" / "jobs.csv"
 
     def get_job_requests(self):
-        job_requests = pandas.read_csv(self.job_requests_csv)
-        return job_requests
+        return pandas.read_csv(self.job_requests_csv)
 
     def get_jobs(self):
-        jobs = pandas.read_csv(self.jobs_csv)
-        return jobs
+        return pandas.read_csv(self.jobs_csv)
 
     @staticmethod
     def calculate_proportions(jobs):
