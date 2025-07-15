@@ -57,14 +57,13 @@ def main(repository):  # pragma: no cover
         ("Number of actions", "Number of jobs / Number of actions"),
         username_selection,
     )
-    users_bar_chart = charts.get_bar_chart(
+    username_bar_chart = charts.get_bar_chart(
         job_requests,
         "username:N",
-        ("User", "Number of job requests"),
+        ("Username", "Number of job requests"),
         username_selection,
     )
-
-    streamlit.write(scatter_plot & users_bar_chart)
+    streamlit.write(scatter_plot & username_bar_chart)
 
 
 if __name__ == "__main__":
