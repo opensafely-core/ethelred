@@ -7,7 +7,7 @@ def get_bar_chart(data_frame, column_name, axis_titles, selection):
         altair.Chart(data_frame)
         .mark_bar()
         .encode(
-            altair.X(column_name).title(title_x).sort("-y"),
+            altair.X(f"{column_name}:N").title(title_x).sort("-y"),
             altair.Y("count()").title(title_y),
             color=altair.condition(selection, "", altair.value("lightgray")),
         )

@@ -59,7 +59,7 @@ def main(repository):  # pragma: no cover
     )
     username_bar_chart = charts.get_bar_chart(
         job_requests,
-        "username:N",
+        "username",
         ("Username", "Number of job requests"),
         username_selection,
     )
