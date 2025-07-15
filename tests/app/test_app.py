@@ -1,5 +1,7 @@
 from streamlit.testing.v1 import AppTest
 
+from app import app
+
 
 def test_app(tmp_path, monkeypatch):
     job_requests_path = tmp_path / "job_requests" / "job_requests.csv"
@@ -14,7 +16,7 @@ def test_app(tmp_path, monkeypatch):
     )
     monkeypatch.setenv("DATA_DIR", str(tmp_path))
 
-    app_test = AppTest.from_file("app/app.py")
+    app_test = AppTest.from_function(app.main)
     app_test.run()
 
     assert not app_test.exception
