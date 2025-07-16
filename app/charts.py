@@ -35,6 +35,7 @@ def get_histogram(data_frame, column_name, axis_titles):
         base.mark_tick()
         .encode(altair.X(column_name).title(title_x), tooltip=[])
         .add_params(selection)
+        .properties(view=altair.ViewConfig(cursor="crosshair"))
     )
     return histogram & strip_plot
 
