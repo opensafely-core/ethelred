@@ -46,12 +46,20 @@ def load_project_definition(project_definitions_dir, repo, sha):
     return io.read(project_definitions_dir / repo / f"{sha}.pickle")
 
 
+def get_num_jobs_over_num_actions(num_jobs, num_actions):
+    assert num_jobs > 0
+    assert num_actions > 0
+    return num_jobs / num_actions
+
+
 def get_records(rows, project_definition_loader):
     for row in rows:
         repo = utils.get_repo(row.url)
         project_definition = project_definition_loader(repo, row.sha)
         num_actions = len(project_definition["actions"])
-        num_jobs_over_num_actions = row.num_jobs / num_actions
+        num_jobs_over_num_actions = get_num_jobs_over_num_actions(
+            row.num_jobs, num_actions
+        )
         yield Record(
             row.created_at,
             num_actions,
