@@ -1,6 +1,7 @@
 import collections
 import datetime
 
+import pytest
 import sqlalchemy
 
 from tasks import get_job_requests, io
@@ -101,6 +102,12 @@ def test_load_project_definition(tmp_path):
         tmp_path, "my-repo", "0000000"
     )
     assert project_definition == {}
+
+
+@pytest.mark.parametrize("num_jobs,num_actions", [(0, 1), (1, 0)])
+def test_get_num_jobs_over_num_actions(num_jobs, num_actions):
+    with pytest.raises(AssertionError):
+        get_job_requests.get_num_jobs_over_num_actions(num_jobs, num_actions)
 
 
 def test_get_records():
