@@ -44,6 +44,12 @@ class Repository(AbstractRepository):
             .unstack(fill_value=0)
             .add_prefix("num_")
         )
+        if "num_errored" not in job_requests.columns:
+            job_requests["num_errored"] = 0
+
+        if "num_cancelled by dependency" not in job_requests.columns:
+            job_requests["num_cancelled by dependency"] = 0
+
         job_requests["denominator"] = (
             job_requests["num_errored"] + job_requests["num_cancelled by dependency"]
         )
