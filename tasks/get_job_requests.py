@@ -8,7 +8,14 @@ from . import DATA_DIR, INDEX_DATE, io, utils
 
 Record = collections.namedtuple(
     "Record",
-    ["created_at", "num_actions", "num_jobs", "username", "num_jobs_over_num_actions"],
+    [
+        "created_at",
+        "num_actions",
+        "num_jobs",
+        "username",
+        "num_jobs_over_num_actions",
+        "num_failed_jobs",
+    ],
 )
 
 
@@ -19,9 +26,15 @@ def extract(engine, metadata):
     repo = metadata.tables["jobserver_repo"]
     user = metadata.tables["jobserver_user"]
 
-    subq = (
+    num_jobs_subq = (
         sqlalchemy.select(sqlalchemy.func.count(job.c.id))
         .where(job_request.c.id == job.c.job_request_id)
+        .scalar_subquery()
+    )
+    num_failed_jobs_subq = (
+        sqlalchemy.select(sqlalchemy.func.count(job.c.id))
+        .where(job_request.c.id == job.c.job_request_id)
+        .where(sqlalchemy.func.lower(job.c.status) == "failed")
         .scalar_subquery()
     )
     stmt = (
@@ -29,8 +42,9 @@ def extract(engine, metadata):
             repo.c.url,
             job_request.c.sha,
             job_request.c.created_at,
-            subq.label("num_jobs"),
+            num_jobs_subq.label("num_jobs"),
             user.c.username,
+            num_failed_jobs_subq.label("num_failed_jobs"),
         )
         .join(workspace, workspace.c.id == job_request.c.workspace_id)
         .join(repo, repo.c.id == workspace.c.repo_id)
@@ -66,6 +80,7 @@ def get_records(rows, project_definition_loader):
             row.num_jobs,
             row.username,
             num_jobs_over_num_actions,
+            row.num_failed_jobs,
         )
 
 
