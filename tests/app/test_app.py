@@ -11,7 +11,9 @@ class FakeRepository(repositories.AbstractRepository):
         return pandas.DataFrame(
             {
                 "id": [1],
-                "created_at": [datetime.datetime(2025, 1, 1)],
+                "created_at": [
+                    datetime.datetime(2025, 1, 1, tzinfo=datetime.timezone.utc)
+                ],
                 "num_actions": [1],
                 "num_jobs": [1],
                 "num_jobs_over_num_actions": [1],
