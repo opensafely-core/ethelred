@@ -105,11 +105,11 @@ def test_load_project_definition(tmp_path):
 
 def test_get_records():
     row = Row(
-        "https://github.com/opensafely/my-repo",
-        "0000000",
-        datetime.datetime(2025, 1, 1),
-        1,
-        "my-username",
+        url="https://github.com/opensafely/my-repo",
+        sha="0000000",
+        created_at=datetime.datetime(2025, 1, 1),
+        num_jobs=1,
+        username="my-username",
     )
 
     def load_project_definition(repo, sha):
