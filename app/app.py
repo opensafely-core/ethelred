@@ -43,17 +43,17 @@ def main(repository):  # pragma: no cover
         )
         streamlit.write(num_actions_histogram)
 
-    measure_histogram = charts.get_histogram(
+    num_jobs_over_num_actions_histogram = charts.get_histogram(
         job_requests,
-        "measure",
+        "num_jobs_over_num_actions",
         ("Number of jobs / Number of actions", "Number of job requests"),
     )
-    streamlit.write(measure_histogram)
+    streamlit.write(num_jobs_over_num_actions_histogram)
 
     username_selection = altair.selection_point(fields=["username"])
     scatter_plot = charts.get_scatter_plot(
         job_requests,
-        ("num_actions", "measure"),
+        ("num_actions", "num_jobs_over_num_actions"),
         ("Number of actions", "Number of jobs / Number of actions"),
         username_selection,
     )
