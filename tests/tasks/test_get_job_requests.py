@@ -8,7 +8,7 @@ from tasks import get_job_requests, io
 
 
 Row = collections.namedtuple(
-    "Row", ["url", "sha", "created_at", "num_jobs", "username", "num_failed_jobs"]
+    "Row", ["id", "url", "sha", "created_at", "num_jobs", "username", "num_failed_jobs"]
 )
 
 
@@ -113,6 +113,7 @@ def test_get_num_jobs_over_num_actions(num_jobs, num_actions):
 
 def test_get_records():
     row = Row(
+        id=1,
         url="https://github.com/opensafely/my-repo",
         sha="0000000",
         created_at=datetime.datetime(2025, 1, 1),
@@ -127,6 +128,7 @@ def test_get_records():
     records = list(get_job_requests.get_records([row], load_project_definition))
     record = records[0]
 
+    assert record.id == 1
     assert record.created_at == datetime.datetime(2025, 1, 1)
     assert record.num_actions == 2
     assert record.num_jobs == 1

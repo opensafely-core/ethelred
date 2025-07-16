@@ -10,6 +10,7 @@ class FakeRepository(repositories.AbstractRepository):
     def get_job_requests(self):
         return pandas.DataFrame(
             {
+                "id": [1],
                 "created_at": [datetime.datetime(2025, 1, 1)],
                 "num_actions": [1],
                 "num_jobs": [1],
