@@ -30,6 +30,7 @@ def test_get_histogram():
     assert histogram_dict["encoding"]["y"]["title"] == "Title for y"
     assert strip_plot_dict["encoding"]["x"]["field"] == "column_1"
     assert strip_plot_dict["encoding"]["x"]["title"] == "Title for x"
+    assert strip_plot_dict["encoding"]["tooltip"] == []  # no tooltip
 
 
 def test_get_scatter_plot():

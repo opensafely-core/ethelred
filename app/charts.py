@@ -29,7 +29,7 @@ def get_histogram(data_frame, column_name, axis_titles):
     )
     strip_plot = (
         base.mark_tick()
-        .encode(altair.X(column_name).title(title_x))
+        .encode(altair.X(column_name).title(title_x), tooltip=[])
         .add_params(selection)
     )
     return histogram & strip_plot
