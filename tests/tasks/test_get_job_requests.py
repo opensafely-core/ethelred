@@ -121,4 +121,4 @@ def test_get_records():
     assert record.created_at == datetime.datetime(2025, 1, 1)
     assert record.num_actions == 2
     assert record.num_jobs == 1
-    assert record.measure == 0.5
+    assert record.num_jobs_over_num_actions == 0.5
