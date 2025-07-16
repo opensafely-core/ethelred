@@ -28,6 +28,8 @@ def test_get_histogram():
     assert histogram_dict["encoding"]["x"]["field"] == "column_1"
     assert histogram_dict["encoding"]["x"]["title"] == ""
     assert histogram_dict["encoding"]["y"]["title"] == "Title for y"
+    assert histogram_dict["encoding"]["tooltip"][0]["title"] == "Title for y"
+    assert histogram_dict["encoding"]["tooltip"][1]["title"] == "Bin"
     assert strip_plot_dict["encoding"]["x"]["field"] == "column_1"
     assert strip_plot_dict["encoding"]["x"]["title"] == "Title for x"
     assert strip_plot_dict["encoding"]["tooltip"] == []  # no tooltip

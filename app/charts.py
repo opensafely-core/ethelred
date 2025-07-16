@@ -24,6 +24,10 @@ def get_histogram(data_frame, column_name, axis_titles):
         .encode(
             altair.X(column_name, bin=True).title(""),
             altair.Y("count()").title(title_y),
+            tooltip=[
+                altair.Tooltip("count()").title(title_y),
+                altair.Tooltip(column_name, bin=True).title("Bin"),
+            ],
         )
         .transform_filter(selection)
     )
