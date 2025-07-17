@@ -1,14 +1,6 @@
 import pandas
-import pytest
 
 from app import repositories
-
-
-def test_abstract_repository():
-    class FakeRepository(repositories.AbstractRepository): ...
-
-    with pytest.raises(TypeError):
-        FakeRepository()
 
 
 def test_repository_get_job_requests(tmp_path):

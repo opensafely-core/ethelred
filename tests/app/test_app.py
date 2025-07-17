@@ -6,7 +6,7 @@ from streamlit.testing.v1 import AppTest
 from app import app, repositories
 
 
-class FakeRepository(repositories.AbstractRepository):
+class FakeRepository:
     def get_job_requests(self):
         return pandas.DataFrame(
             {
