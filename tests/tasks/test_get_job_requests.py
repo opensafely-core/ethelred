@@ -8,7 +8,16 @@ from tasks import get_job_requests, io
 
 
 Row = collections.namedtuple(
-    "Row", ["url", "sha", "created_at", "num_jobs", "username", "num_failed_jobs"]
+    "Row",
+    [
+        "url",
+        "sha",
+        "created_at",
+        "num_jobs",
+        "username",
+        "num_failed_jobs",
+        "num_dependency_failed_jobs",
+    ],
 )
 
 
@@ -95,6 +104,7 @@ def test_extract(jobserver_engine, jobserver_metadata):
     assert row.sha == "2222222"
     assert row.num_jobs == 1
     assert row.num_failed_jobs == 0
+    assert row.num_dependency_failed_jobs == 0
 
 
 def test_load_project_definition(tmp_path):
@@ -119,6 +129,7 @@ def test_get_records():
         num_jobs=1,
         username="my-username",
         num_failed_jobs=0,
+        num_dependency_failed_jobs=0,
     )
 
     def load_project_definition(repo, sha):
@@ -133,3 +144,4 @@ def test_get_records():
     assert record.username == "my-username"
     assert record.num_jobs_over_num_actions == 0.5
     assert record.num_failed_jobs == 0
+    assert record.num_dependency_failed_jobs == 0
