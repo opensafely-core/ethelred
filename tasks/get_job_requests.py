@@ -15,6 +15,7 @@ Record = collections.namedtuple(
         "username",
         "num_jobs_over_num_actions",
         "num_failed_jobs",
+        "num_dependency_failed_jobs",
     ],
 )
 
@@ -37,6 +38,12 @@ def extract(engine, metadata):
         .where(sqlalchemy.func.lower(job.c.status) == "failed")
         .scalar_subquery()
     )
+    num_dependency_failed_jobs_subq = (
+        sqlalchemy.select(sqlalchemy.func.count(job.c.id))
+        .where(job_request.c.id == job.c.job_request_id)
+        .where(job.c.status_message.ilike("Not starting as dependency failed"))
+        .scalar_subquery()
+    )
     stmt = (
         sqlalchemy.select(
             repo.c.url,
@@ -45,6 +52,7 @@ def extract(engine, metadata):
             num_jobs_subq.label("num_jobs"),
             user.c.username,
             num_failed_jobs_subq.label("num_failed_jobs"),
+            num_dependency_failed_jobs_subq.label("num_dependency_failed_jobs"),
         )
         .join(workspace, workspace.c.id == job_request.c.workspace_id)
         .join(repo, repo.c.id == workspace.c.repo_id)
@@ -81,6 +89,7 @@ def get_records(rows, project_definition_loader):
             row.username,
             num_jobs_over_num_actions,
             row.num_failed_jobs,
+            row.num_dependency_failed_jobs,
         )
 
 
