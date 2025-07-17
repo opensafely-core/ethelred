@@ -1,5 +1,3 @@
-import datetime
-
 import pandas
 from streamlit.testing.v1 import AppTest
 
@@ -10,7 +8,6 @@ class FakeRepository:
     def get_job_requests(self):
         return pandas.DataFrame(
             {
-                "created_at": [datetime.datetime(2025, 1, 1)],
                 "num_actions": [1],
                 "num_jobs": [1],
                 "username": ["a_user"],
