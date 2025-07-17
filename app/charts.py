@@ -7,8 +7,8 @@ def get_bar_chart(data_frame, column_name, axis_titles, selection):
         altair.Chart(data_frame)
         .mark_bar()
         .encode(
-            altair.X(f"{column_name}:N").title(title_x).sort("-y"),
-            altair.Y("count()").title(title_y),
+            x=altair.X(f"{column_name}:N").title(title_x).sort("-y"),
+            y=altair.Y("count()").title(title_y),
             color=altair.condition(selection, "", altair.value("lightgray")),
         )
         .add_params(selection)
@@ -22,8 +22,8 @@ def get_histogram(data_frame, column_name, axis_titles):
     histogram = (
         base.mark_bar()
         .encode(
-            altair.X(column_name, bin=True).title(""),
-            altair.Y("count()").title(title_y),
+            x=altair.X(column_name, bin=True).title(""),
+            y=altair.Y("count()").title(title_y),
             tooltip=[
                 altair.Tooltip("count()").title(title_y),
                 altair.Tooltip(column_name, bin=True).title("Bin"),
