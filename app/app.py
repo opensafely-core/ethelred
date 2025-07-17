@@ -13,20 +13,21 @@ def main(repository):  # pragma: no cover
     import charts
 
     job_requests = repository.get_job_requests()
-    jobs = repository.get_jobs()
 
     streamlit.header("Job requests")
-    streamlit.subheader("Jobs that errored")
+    streamlit.subheader("Jobs that failed")
 
-    proportion_histogram = charts.get_histogram(
-        repository.calculate_proportions(jobs),
-        "proportion",
+    prop_dependency_failed_jobs_histogram = charts.get_histogram(
+        job_requests,
+        "prop:Q",
         (
-            "Number of jobs that were cancelled by a dependency / Total number of jobs that errored",
+            "Number of jobs where a dependency failed / Number of failed jobs",
             "Number of job requests",
         ),
+    ).transform_calculate(
+        prop=altair.datum.num_dependency_failed_jobs / altair.datum.num_failed_jobs
     )
-    streamlit.write(proportion_histogram)
+    streamlit.write(prop_dependency_failed_jobs_histogram)
 
     streamlit.subheader("Jobs and actions")
     col_1, col_2 = streamlit.columns(2)
