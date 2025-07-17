@@ -15,8 +15,8 @@ def test_repository_get_job_requests(tmp_path):
     job_requests_path = tmp_path / "job_requests" / "job_requests.csv"
     job_requests_path.parent.mkdir()
     job_requests_path.write_text(
-        "id,created_at,num_actions,num_jobs,username,measure\n"
-        + "1,2025-01-01 00:00:00.0+00:00,1,1,a_user,1\n"
+        "created_at,num_actions,num_jobs,username,measure\n"
+        + "2025-01-01 00:00:00.0+00:00,1,1,a_user,1\n"
     )
     repository = repositories.Repository(tmp_path)
     job_requests = repository.get_job_requests()
@@ -24,7 +24,6 @@ def test_repository_get_job_requests(tmp_path):
     # much to test. Nevertheless, it's important that it is tested. Let's start by
     # testing the column index labels.
     assert list(job_requests.columns) == [
-        "id",
         "created_at",
         "num_actions",
         "num_jobs",

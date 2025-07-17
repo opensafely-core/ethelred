@@ -9,7 +9,6 @@ from . import DATA_DIR, INDEX_DATE, io, utils
 Record = collections.namedtuple(
     "Record",
     [
-        "id",
         "created_at",
         "num_actions",
         "num_jobs",
@@ -40,7 +39,6 @@ def extract(engine, metadata):
     )
     stmt = (
         sqlalchemy.select(
-            job_request.c.id,
             repo.c.url,
             job_request.c.sha,
             job_request.c.created_at,
@@ -77,7 +75,6 @@ def get_records(rows, project_definition_loader):
             row.num_jobs, num_actions
         )
         yield Record(
-            row.id,
             row.created_at,
             num_actions,
             row.num_jobs,
