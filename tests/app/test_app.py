@@ -13,6 +13,7 @@ class FakeRepository:
                 "created_at": [datetime.datetime(2025, 1, 1)],
                 "num_actions": [1],
                 "num_jobs": [1],
+                "username": ["a_user"],
                 "num_jobs_over_num_actions": [1],
             }
         )
