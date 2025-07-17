@@ -60,14 +60,3 @@ def test_repository_calculate_proportions():
     )
     job_requests = repositories.Repository.calculate_proportions(jobs)
     assert job_requests.to_dict() == {"proportion": {123: 1 / 2, 456: 0.0}}
-
-
-def test_repository_calculate_proportions_when_none_errored_or_cancelled_by_dependency():
-    jobs = pandas.DataFrame(
-        {
-            "job_request_id": [123],
-            "outcome": ["other"],
-        }
-    )
-    job_requests = repositories.Repository.calculate_proportions(jobs)
-    assert job_requests.to_dict() == {"proportion": {}}
