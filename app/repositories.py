@@ -11,28 +11,3 @@ class Repository:
 
     def get_jobs(self):
         return pandas.read_csv(self.jobs_csv)
-
-    @staticmethod
-    def calculate_proportions(jobs):
-        """
-        Returns a one row per job request DataFrame with a single column "proportion"
-        that contains the proportion of jobs cancelled by dependency out of all
-        jobs that either errored or were cancelled by dependency.
-
-        Job requests with no jobs that errored or were cancelled by dependency
-        are filtered out.
-        """
-        job_requests = (
-            jobs.groupby(["job_request_id", "outcome"])
-            .size()
-            .unstack(fill_value=0)
-            .add_prefix("num_")
-        )
-        job_requests["denominator"] = (
-            job_requests["num_errored"] + job_requests["num_cancelled by dependency"]
-        )
-        job_requests = job_requests.loc[job_requests["denominator"] > 0]
-        job_requests["proportion"] = (
-            job_requests["num_cancelled by dependency"] / job_requests["denominator"]
-        )
-        return job_requests.loc[:, "proportion"].to_frame()
