@@ -21,7 +21,7 @@ def main(repository):  # pragma: no cover
         job_requests,
         "prop:Q",
         (
-            "Number of jobs where a dependency failed / Number of failed jobs",
+            "Number of jobs where a dependency failed / Number of jobs that failed",
             "Number of job requests",
         ),
     ).transform_calculate(
