@@ -44,20 +44,20 @@ def main(repository):  # pragma: no cover
         )
         streamlit.write(num_actions_histogram)
 
-    num_jobs_over_num_actions_histogram = charts.get_histogram(
+    prop_jobs_histogram = charts.get_histogram(
         job_requests,
-        "num_jobs_over_num_actions",
+        "prop:Q",
         ("Number of jobs / Number of actions", "Number of job requests"),
-    )
-    streamlit.write(num_jobs_over_num_actions_histogram)
+    ).transform_calculate(prop=altair.datum.num_jobs / altair.datum.num_actions)
+    streamlit.write(prop_jobs_histogram)
 
     username_selection = altair.selection_point(fields=["username"])
     scatter_plot = charts.get_scatter_plot(
         job_requests,
-        ("num_actions", "num_jobs_over_num_actions"),
+        ("num_actions", "prop:Q"),
         ("Number of actions", "Number of jobs / Number of actions"),
         username_selection,
-    )
+    ).transform_calculate(prop=altair.datum.num_jobs / altair.datum.num_actions)
     username_bar_chart = charts.get_bar_chart(
         job_requests,
         "username",

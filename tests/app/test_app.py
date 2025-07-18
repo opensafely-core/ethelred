@@ -11,7 +11,6 @@ class FakeRepository:
                 "num_actions": [1],
                 "num_jobs": [1],
                 "username": ["a_user"],
-                "num_jobs_over_num_actions": [1],
             }
         )
 
