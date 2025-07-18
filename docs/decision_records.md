@@ -94,7 +94,32 @@ Why bother, though?
   Both?
   There's no need to ask -- or to answer -- this question.
 
+## 006: Push down or pull up
+
+Pushing down or pulling up computation are [common refactorings][2].
+They can also help us decide where computation should take place *before* refactoring is necessary.
+
+An example may help.
+Let's say we want to count the number of jobs associated with each job request.
+We could write each job to a file,
+and group by job request ID and count job ID.
+Writing a file should probably take place in a task.
+What about aggregation?
+Aggregation could take place at several levels in the codebase:
+
+* the Streamlit app with Altair
+* the Streamlit app with Pandas
+* a task with Pandas
+* a task with an SQL query (i.e. the database)
+
+To decide,
+we should mentally push down and pull up computation,
+considering the implementation effort required at each level.
+Databases were made for aggregation,
+so in this case pushing down to a task with an SQL query is reasonable.
+
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
+[2]: https://refactoring.com/catalog/
 [Apache Airflow]: https://airflow.apache.org/
 [Architectural Decision Records]: https://adr.github.io/
 [Continuous Integration]: https://martinfowler.com/articles/continuousIntegration.html
