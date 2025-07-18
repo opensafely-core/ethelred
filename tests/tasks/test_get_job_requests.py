@@ -1,7 +1,6 @@
 import collections
 import datetime
 
-import pytest
 import sqlalchemy
 
 from tasks import get_job_requests, io
@@ -115,12 +114,6 @@ def test_load_project_definition(tmp_path):
     assert project_definition == {}
 
 
-@pytest.mark.parametrize("num_jobs,num_actions", [(0, 1), (1, 0)])
-def test_get_num_jobs_over_num_actions(num_jobs, num_actions):
-    with pytest.raises(AssertionError):
-        get_job_requests.get_num_jobs_over_num_actions(num_jobs, num_actions)
-
-
 def test_get_records():
     row = Row(
         url="https://github.com/opensafely/my-repo",
@@ -142,6 +135,5 @@ def test_get_records():
     assert record.num_actions == 2
     assert record.num_jobs == 1
     assert record.username == "my-username"
-    assert record.num_jobs_over_num_actions == 0.5
     assert record.num_failed_jobs == 0
     assert record.num_dependency_failed_jobs == 0
