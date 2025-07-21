@@ -1,10 +1,10 @@
 import pandas
 from streamlit.testing.v1 import AppTest
 
-from app import app
+from app import app, repositories
 
 
-class FakeRepository:
+class FakeRepository(repositories.AbstractRepository):
     def get_job_requests(self):
         return pandas.DataFrame(
             {
@@ -13,6 +13,8 @@ class FakeRepository:
                 "username": ["a_user"],
             }
         )
+
+    def get_jobs(self): ...  # pragma: no cover
 
 
 def test_app():
