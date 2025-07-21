@@ -22,7 +22,7 @@ def repository(tmp_path):
     jobs_path.parent.mkdir()
     # This fixture doesn't have to correspond to whatever tasks/get_jobs.py
     # would write. It just has to exercise Repository.get_jobs.
-    jobs_path.write_text("id,job_request_id\n" + "1,3\n" + "2,4\n")
+    jobs_path.write_text("id,job_request_id\n" + "10,1\n" + "20,2\n" + "30,3")
 
     return repositories.Repository(tmp_path)
 
@@ -48,5 +48,5 @@ def test_repository_get_job_requests(repository):
 
 def test_repository_get_jobs(repository):
     jobs = repository.get_jobs()
-    assert list(jobs["id"]) == [1, 2]
-    assert list(jobs["job_request_id"]) == [3, 4]
+    assert list(jobs["id"]) == [10, 20, 30]
+    assert list(jobs["job_request_id"]) == [1, 2, 3]
