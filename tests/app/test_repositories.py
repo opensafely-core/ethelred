@@ -19,10 +19,11 @@ def repository(tmp_path):
     # This fixture doesn't have to correspond to whatever tasks/get_job_requests.py
     # would write. It just has to exercise Repository.get_job_requests.
     job_requests_path.write_text(
+        # rows are intentionally not sorted
         "id,created_at\n"
         + "1,2025-01-01T00:00:00Z\n"
-        + "2,2025-03-01T00:00:00Z\n"
         + "3,2025-06-01T00:00:00Z\n"
+        + "2,2025-03-01T00:00:00Z\n"
     )
 
     jobs_path = tmp_path / "jobs" / "jobs.csv"
@@ -45,8 +46,10 @@ def test_get_date_latest_job_request_created(repository):
 
 
 def test_repository_get_job_requests(repository):
-    job_requests = repository.get_job_requests()
-    assert list(job_requests["id"]) == [1, 2, 3]
+    from_ = datetime.date(2025, 1, 1)
+    to_ = datetime.date(2025, 3, 1)
+    job_requests = repository.get_job_requests(from_, to_)
+    assert list(job_requests["id"]) == [1, 2]
     # Accessing .dt on a series that doesn't contain datetimelike values will raise an
     # AttributeError. The assertion isn't important; it's here because we expect to see
     # an assertion.

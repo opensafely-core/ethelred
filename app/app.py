@@ -12,7 +12,9 @@ def main(repository):  # pragma: no cover
 
     import charts
 
-    job_requests = repository.get_job_requests()
+    from_ = repository.get_date_earliest_job_request_created()
+    to_ = repository.get_date_latest_job_request_created()
+    job_requests = repository.get_job_requests(from_, to_)
 
     streamlit.header("Job requests")
     streamlit.subheader("Jobs that failed")
