@@ -6,11 +6,19 @@ def test_repository_get_job_requests(tmp_path):
     job_requests_path.parent.mkdir()
     # This fixture doesn't have to correspond to whatever tasks/get_job_requests.py
     # would write. It just has to exercise Repository.get_job_requests.
-    job_requests_path.write_text("id,sha\n1,1111111\n2,2222222")
+    job_requests_path.write_text(
+        "id,created_at\n"
+        + "1,2025-01-01T00:00:00Z\n"
+        + "2,2025-03-01T00:00:00Z\n"
+        + "3,2025-06-01T00:00:00Z\n"
+    )
     repository = repositories.Repository(tmp_path)
     job_requests = repository.get_job_requests()
-    assert list(job_requests["id"]) == [1, 2]
-    assert list(job_requests["sha"]) == [1111111, 2222222]
+    assert list(job_requests["id"]) == [1, 2, 3]
+    # Accessing .dt on a series that doesn't contain datetimelike values will raise an
+    # AttributeError. The assertion isn't important; it's here because we expect to see
+    # an assertion.
+    assert job_requests["created_at"].dt.name == "created_at"
 
 
 def test_repository_get_jobs(tmp_path):
