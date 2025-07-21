@@ -101,20 +101,25 @@ They can also help us decide where computation should take place *before* refact
 
 An example may help.
 Let's say we want to count the number of jobs associated with each job request.
-We could write each job to a file,
+We could produce a table of jobs
 and group by job request ID and count job ID.
-Writing a file should probably take place in a task.
+Producing a table of jobs should probably take place in a task.
 What about aggregation?
 Aggregation could take place at several levels in the codebase:
 
-* the Streamlit app with Altair
-* the Streamlit app with Pandas
+* the Streamlit app with Altair (see "[Data Transformations][]")
+* the Streamlit app with Pandas (see "[Group by: split-apply-combine][]")
 * a task with Pandas
 * a task with an SQL query (i.e. the database)
 
 To decide,
 we should mentally push down and pull up computation,
 considering the implementation effort required at each level.
+How much implementation effort is required to address the essential complexity of the problem?
+And the accidental complexity?
+The *essential complexity* is inherent to the problem.
+The *accidental complexity* isn't;
+our decisions can increase and decrease the accidental complexity.
 Databases were made for aggregation,
 so in this case pushing down to a task with an SQL query is reasonable.
 
@@ -124,5 +129,7 @@ so in this case pushing down to a task with an SQL query is reasonable.
 [Architectural Decision Records]: https://adr.github.io/
 [Continuous Integration]: https://martinfowler.com/articles/continuousIntegration.html
 [Dagster]: https://dagster.io/
+[Data Transformations]: https://altair-viz.github.io/user_guide/transform/index.html
 [Fearless rebasing]: https://blog.gitbutler.com/fearless-rebasing/
+[Group by: split-apply-combine]: https://pandas.pydata.org/pandas-docs/stable/user_guide/groupby.html
 [Prefect]: https://www.prefect.io/
