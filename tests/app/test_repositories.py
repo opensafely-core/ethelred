@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from app import repositories
@@ -16,6 +18,18 @@ def root_dir(tmp_path):
         + "3,2025-06-01T00:00:00Z\n"
     )
     return tmp_path
+
+
+def test_get_earliest_job_request_created_at(root_dir):
+    repository = repositories.Repository(root_dir)
+    created_at = repository.get_earliest_job_request_created_at()
+    assert created_at.date() == datetime.date(2025, 1, 1)
+
+
+def test_get_latest_job_request_created_at(root_dir):
+    repository = repositories.Repository(root_dir)
+    created_at = repository.get_latest_job_request_created_at()
+    assert created_at.date() == datetime.date(2025, 6, 1)
 
 
 def test_repository_get_job_requests(root_dir):

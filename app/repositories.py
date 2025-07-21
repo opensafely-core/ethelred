@@ -13,6 +13,12 @@ class Repository:
     def _job_requests(self):
         return pandas.read_csv(self.job_requests_csv, parse_dates=["created_at"])
 
+    def get_earliest_job_request_created_at(self):
+        return self._job_requests["created_at"].min().to_pydatetime()
+
+    def get_latest_job_request_created_at(self):
+        return self._job_requests["created_at"].max().to_pydatetime()
+
     def get_job_requests(self):
         return self._job_requests
 
