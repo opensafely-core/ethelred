@@ -6,7 +6,7 @@ from app import repositories
 
 
 @pytest.fixture
-def root_dir(tmp_path):
+def repository(tmp_path):
     job_requests_path = tmp_path / "job_requests" / "job_requests.csv"
     job_requests_path.parent.mkdir()
     # This fixture doesn't have to correspond to whatever tasks/get_job_requests.py
@@ -17,23 +17,20 @@ def root_dir(tmp_path):
         + "2,2025-03-01T00:00:00Z\n"
         + "3,2025-06-01T00:00:00Z\n"
     )
-    return tmp_path
+    return repositories.Repository(tmp_path)
 
 
-def test_get_earliest_job_request_created_at(root_dir):
-    repository = repositories.Repository(root_dir)
+def test_get_earliest_job_request_created_at(repository):
     created_at = repository.get_earliest_job_request_created_at()
     assert created_at.date() == datetime.date(2025, 1, 1)
 
 
-def test_get_latest_job_request_created_at(root_dir):
-    repository = repositories.Repository(root_dir)
+def test_get_latest_job_request_created_at(repository):
     created_at = repository.get_latest_job_request_created_at()
     assert created_at.date() == datetime.date(2025, 6, 1)
 
 
-def test_repository_get_job_requests(root_dir):
-    repository = repositories.Repository(root_dir)
+def test_repository_get_job_requests(repository):
     job_requests = repository.get_job_requests()
     assert list(job_requests["id"]) == [1, 2, 3]
     # Accessing .dt on a series that doesn't contain datetimelike values will raise an
