@@ -12,8 +12,35 @@ def main(repository):  # pragma: no cover
 
     import charts
 
-    from_ = repository.get_date_earliest_job_request_created()
-    to_ = repository.get_date_latest_job_request_created()
+    date_earliest = repository.get_date_earliest_job_request_created()
+    date_latest = repository.get_date_latest_job_request_created()
+
+    with streamlit.sidebar:
+        from_ = streamlit.date_input(
+            "From",
+            value=date_earliest,
+            min_value=date_earliest,
+            max_value=date_latest,
+            help=(
+                "Include job requests and their associated jobs "
+                + "that were created on or after this date"
+            ),
+        )
+        to_ = streamlit.date_input(
+            "To",
+            value=date_latest,
+            min_value=date_earliest,
+            max_value=date_latest,
+            help=(
+                "Include job requests and their associated jobs "
+                + "that were created on or before this date"
+            ),
+        )
+        if not from_ < to_:
+            streamlit.error("The *From* date must come before the *To* date.")
+            from_ = date_earliest
+            to_ = date_latest
+
     job_requests = repository.get_job_requests(from_, to_)
 
     streamlit.header("Job requests")
