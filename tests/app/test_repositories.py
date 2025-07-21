@@ -1,7 +1,10 @@
+import pytest
+
 from app import repositories
 
 
-def test_repository_get_job_requests(tmp_path):
+@pytest.fixture
+def root_dir(tmp_path):
     job_requests_path = tmp_path / "job_requests" / "job_requests.csv"
     job_requests_path.parent.mkdir()
     # This fixture doesn't have to correspond to whatever tasks/get_job_requests.py
@@ -12,7 +15,11 @@ def test_repository_get_job_requests(tmp_path):
         + "2,2025-03-01T00:00:00Z\n"
         + "3,2025-06-01T00:00:00Z\n"
     )
-    repository = repositories.Repository(tmp_path)
+    return tmp_path
+
+
+def test_repository_get_job_requests(root_dir):
+    repository = repositories.Repository(root_dir)
     job_requests = repository.get_job_requests()
     assert list(job_requests["id"]) == [1, 2, 3]
     # Accessing .dt on a series that doesn't contain datetimelike values will raise an
