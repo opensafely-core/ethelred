@@ -5,7 +5,7 @@ from app import app, repositories
 
 
 class FakeRepository(repositories.AbstractRepository):
-    def get_job_requests(self):
+    def get_job_requests(self, from_, to_):
         return pandas.DataFrame(
             {
                 "num_actions": [1],

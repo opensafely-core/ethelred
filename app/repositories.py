@@ -34,8 +34,15 @@ class Repository(AbstractRepository):
     def get_date_latest_job_request_created(self):
         return self._job_requests["created_at"].max().to_pydatetime().date()
 
-    def get_job_requests(self):
-        return self._job_requests
+    def get_job_requests(self, from_, to_):
+        assert from_ <= to_
+        # Indexing into a DatetimeIndex with a string when a datetime.date is available
+        # feels wrong, but the alternatives are cumbersome.
+        from_, to_ = [x.isoformat() for x in (from_, to_)]
+        by_created_at = self._job_requests.set_index(
+            "created_at", drop=False
+        ).sort_index()
+        return by_created_at.loc[from_:to_].reset_index(drop=True)
 
     def get_jobs(self):
         return pandas.read_csv(self.jobs_csv)
