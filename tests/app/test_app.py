@@ -5,6 +5,9 @@ from app import app, repositories
 
 
 class FakeRepository(repositories.AbstractRepository):
+    def get_date_earliest_job_request_created(self): ...
+    def get_date_latest_job_request_created(self): ...
+
     def get_job_requests(self, from_, to_):
         return pandas.DataFrame(
             {
