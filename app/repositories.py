@@ -6,6 +6,18 @@ import pandas
 
 class AbstractRepository(abc.ABC):
     @abc.abstractmethod
+    def get_date_earliest_job_request_created(self):
+        # It's not possible to inherit from this class without overriding this method,
+        # but coverage doesn't seem to realise.
+        raise NotImplementedError  # pragma: no cover
+
+    @abc.abstractmethod
+    def get_date_latest_job_request_created(self):
+        # It's not possible to inherit from this class without overriding this method,
+        # but coverage doesn't seem to realise.
+        raise NotImplementedError  # pragma: no cover
+
+    @abc.abstractmethod
     def get_job_requests(self):
         # It's not possible to inherit from this class without overriding this method,
         # but coverage doesn't seem to realise.
