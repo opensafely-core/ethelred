@@ -27,14 +27,14 @@ def repository(tmp_path):
     return repositories.Repository(tmp_path)
 
 
-def test_get_earliest_job_request_created_at(repository):
-    created_at = repository.get_earliest_job_request_created_at()
-    assert created_at.date() == datetime.date(2025, 1, 1)
+def test_get_date_earliest_job_request_created(repository):
+    created_at = repository.get_date_earliest_job_request_created()
+    assert created_at == datetime.date(2025, 1, 1)
 
 
-def test_get_latest_job_request_created_at(repository):
-    created_at = repository.get_latest_job_request_created_at()
-    assert created_at.date() == datetime.date(2025, 6, 1)
+def test_get_date_latest_job_request_created(repository):
+    created_at = repository.get_date_latest_job_request_created()
+    assert created_at == datetime.date(2025, 6, 1)
 
 
 def test_repository_get_job_requests(repository):
