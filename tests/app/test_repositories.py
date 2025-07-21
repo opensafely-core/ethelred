@@ -5,6 +5,13 @@ import pytest
 from app import repositories
 
 
+def test_abstract_repository():
+    class FakeRepository(repositories.AbstractRepository): ...
+
+    with pytest.raises(TypeError):
+        FakeRepository()
+
+
 @pytest.fixture
 def repository(tmp_path):
     job_requests_path = tmp_path / "job_requests" / "job_requests.csv"
