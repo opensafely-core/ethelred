@@ -17,6 +17,13 @@ def repository(tmp_path):
         + "2,2025-03-01T00:00:00Z\n"
         + "3,2025-06-01T00:00:00Z\n"
     )
+
+    jobs_path = tmp_path / "jobs" / "jobs.csv"
+    jobs_path.parent.mkdir()
+    # This fixture doesn't have to correspond to whatever tasks/get_jobs.py
+    # would write. It just has to exercise Repository.get_jobs.
+    jobs_path.write_text("id,job_request_id\n" + "1,3\n" + "2,4\n")
+
     return repositories.Repository(tmp_path)
 
 
@@ -39,13 +46,7 @@ def test_repository_get_job_requests(repository):
     assert job_requests["created_at"].dt.name == "created_at"
 
 
-def test_repository_get_jobs(tmp_path):
-    jobs_path = tmp_path / "jobs" / "jobs.csv"
-    jobs_path.parent.mkdir()
-    # This fixture doesn't have to correspond to whatever tasks/get_jobs.py
-    # would write. It just has to exercise Repository.get_jobs.
-    jobs_path.write_text("id,job_request_id\n1,3\n2,4")
-    repository = repositories.Repository(tmp_path)
+def test_repository_get_jobs(repository):
     jobs = repository.get_jobs()
     assert list(jobs["id"]) == [1, 2]
     assert list(jobs["job_request_id"]) == [3, 4]
