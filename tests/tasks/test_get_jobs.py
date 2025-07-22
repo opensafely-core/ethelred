@@ -63,7 +63,7 @@ def test_extract(jobserver_engine, jobserver_metadata):
     assert row.id == 2
 
 
-def test_transform():
+def test_get_records():
     rows = [
         Row(
             123,
@@ -74,7 +74,7 @@ def test_transform():
             "Completed successfully",
         )
     ]
-    records = list(get_jobs.transform(rows))
+    records = list(get_jobs.get_records(rows))
     record = records[0]
 
     assert record.id == 123

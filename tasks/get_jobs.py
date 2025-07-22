@@ -31,7 +31,7 @@ def extract(engine, metadata):
         yield from conn.execute(stmt)
 
 
-def transform(rows):
+def get_records(rows):
     for row in rows:
         stage = get_stage(row.run_command)
         outcome = get_outcome(row.status, row.status_message)
@@ -71,7 +71,7 @@ def main():  # pragma: no cover
     engine = utils.get_engine()
     metadata = utils.get_metadata(engine)
     rows = extract(engine, metadata)
-    records = transform(rows)
+    records = get_records(rows)
     io.write(records, DATA_DIR / "jobs" / "jobs.csv")
 
 
