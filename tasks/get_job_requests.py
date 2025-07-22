@@ -63,10 +63,6 @@ def extract(engine, metadata):
         yield from conn.execute(stmt)
 
 
-def load_project_definition(project_definitions_dir, repo, sha):
-    return io.read(project_definitions_dir / repo / f"{sha}.pickle")
-
-
 def get_records(rows, project_definition_loader):
     for row in rows:
         repo = utils.get_repo(row.url)
@@ -89,7 +85,7 @@ def main():  # pragma: no cover
     rows = extract(engine, metadata)
 
     project_definition_loader = functools.partial(
-        load_project_definition, DATA_DIR / "project_definitions"
+        utils.load_project_definition, DATA_DIR / "project_definitions"
     )
     records = get_records(rows, project_definition_loader)
 
