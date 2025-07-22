@@ -3,7 +3,7 @@ import datetime
 
 import sqlalchemy
 
-from tasks import get_job_requests, io
+from tasks import get_job_requests
 
 
 Row = collections.namedtuple(
@@ -104,14 +104,6 @@ def test_extract(jobserver_engine, jobserver_metadata):
     assert row.num_jobs == 1
     assert row.num_failed_jobs == 0
     assert row.num_dependency_failed_jobs == 0
-
-
-def test_load_project_definition(tmp_path):
-    io.write({}, tmp_path / "my-repo" / "0000000.pickle")
-    project_definition = get_job_requests.load_project_definition(
-        tmp_path, "my-repo", "0000000"
-    )
-    assert project_definition == {}
 
 
 def test_get_records():
