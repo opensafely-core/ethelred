@@ -123,8 +123,37 @@ our decisions can increase and decrease the accidental complexity.
 Databases were made for aggregation,
 so in this case pushing down to a task with an SQL query is reasonable.
 
+## 007: Contain Pandas
+
+Not pandas, but [Pandas][]: The Python Data Analysis Library.
+Wes McKinney,
+creator and BDFL of Pandas,
+recognises several shortcomings in "[Apache Arrow and the '10 things I hate about Pandas'][3]".
+He describes group by operations as "awkward",
+but it's not just group by operations;
+*many* operations are awkward.
+What does `.loc` return?
+And `.iloc`?
+Why is it possible to index into a `DatetimeIndex` with a string,
+but not a `datetime.date`?
+Why does "[Reshaping and pivot tables][]" use different words to describe the same concepts?
+
+It's unfortunate that Pandas' `DataFrame` has become the *de facto* tabular data structure.
+It's even more unfortunate that it's hard to work with Streamlit and Altair without it.
+For these reasons, we can't remove Pandas.
+However, we can contain it.
+
+A repository is a good place to contain Pandas (`app.repositories.Repository`).
+Not only can a repository's methods be tested in isolation,
+but a repository can be faked when necessary.
+And, when we decide to replace Ethelred's data store,
+then we need only modify a repository's methods.
+If we find ourselves writing `import pandas` anywhere other than in `app/repositories.py`,
+then we should either push down or pull up ([DR006](#006-push-down-or-pull-up)).
+
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
 [2]: https://refactoring.com/catalog/
+[3]: https://wesmckinney.com/blog/apache-arrow-pandas-internals/
 [Apache Airflow]: https://airflow.apache.org/
 [Architectural Decision Records]: https://adr.github.io/
 [Continuous Integration]: https://martinfowler.com/articles/continuousIntegration.html
@@ -132,4 +161,6 @@ so in this case pushing down to a task with an SQL query is reasonable.
 [Data Transformations]: https://altair-viz.github.io/user_guide/transform/index.html
 [Fearless rebasing]: https://blog.gitbutler.com/fearless-rebasing/
 [Group by: split-apply-combine]: https://pandas.pydata.org/pandas-docs/stable/user_guide/groupby.html
+[Pandas]: https://pandas.pydata.org/
 [Prefect]: https://www.prefect.io/
+[Reshaping and pivot tables]: https://pandas.pydata.org/pandas-docs/stable/user_guide/reshaping.html
