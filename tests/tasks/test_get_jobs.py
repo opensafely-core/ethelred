@@ -44,8 +44,18 @@ def test_extract(jobserver_engine, jobserver_metadata):
     )
 
     job_table = jobserver_metadata.tables["jobserver_job"]
-    job_1 = {"id": 1, "job_request_id": 1, "run_command": "my-command:v1"}
-    job_2 = {"id": 2, "job_request_id": 2, "run_command": "my-command:v1"}
+    job_1 = {
+        "id": 1,
+        "job_request_id": 1,
+        "run_command": "my-command:v1",
+        "status": "Succeeded",  # upper case
+    }
+    job_2 = {
+        "id": 2,
+        "job_request_id": 2,
+        "run_command": "my-command:v1",
+        "status": "Failed",  # upper case
+    }
     insert_into_job_table = sqlalchemy.insert(job_table).values([job_1, job_2])
 
     with jobserver_engine.connect() as conn:
@@ -61,6 +71,7 @@ def test_extract(jobserver_engine, jobserver_metadata):
     row = rows[0]
     assert row._fields == Row._fields
     assert row.id == 2
+    assert row.status == "failed"  # lower case
 
 
 def test_get_action():

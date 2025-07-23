@@ -23,7 +23,7 @@ def extract(engine, metadata):
         job.c.job_request_id,
         job.c.created_at,
         job.c.run_command,
-        job.c.status,
+        sqlalchemy.func.lower(job.c.status).label("status"),
         job.c.status_message,
     ).where(job.c.job_request_id.in_(subq))
 
