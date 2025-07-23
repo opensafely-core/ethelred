@@ -63,6 +63,11 @@ def test_extract(jobserver_engine, jobserver_metadata):
     assert row.id == 2
 
 
+def test_get_action():
+    run_command = "ehrql:v1 generate-dataset analysis/dataset_definition.py"
+    assert get_jobs.get_action(run_command) == ("ehrql", "v1")
+
+
 def test_get_records():
     rows = [
         Row(

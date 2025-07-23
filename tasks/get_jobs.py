@@ -31,6 +31,12 @@ def extract(engine, metadata):
         yield from conn.execute(stmt)
 
 
+def get_action(run_command):
+    action, *_ = run_command.split()
+    action_name, action_version = action.split(":")
+    return action_name, action_version
+
+
 def get_records(rows):
     for row in rows:
         stage = get_stage(row.run_command)
