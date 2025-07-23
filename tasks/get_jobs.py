@@ -7,7 +7,7 @@ from . import DATA_DIR, INDEX_DATE, io, utils
 
 Record = collections.namedtuple(
     "Record",
-    ["id", "job_request_id", "created_at", "action_type", "outcome"],
+    ["id", "job_request_id", "created_at", "action_type", "status", "outcome"],
 )
 
 
@@ -53,7 +53,9 @@ def get_records(rows):
         else:
             action_type = ""
         outcome = get_outcome(row.status, row.status_message)
-        yield Record(row.id, row.job_request_id, row.created_at, action_type, outcome)
+        yield Record(
+            row.id, row.job_request_id, row.created_at, action_type, row.status, outcome
+        )
 
 
 def get_outcome(status, status_message):
