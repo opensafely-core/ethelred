@@ -106,6 +106,7 @@ def test_get_records(run_command, action_type):
     assert record.job_request_id == 2
     assert record.created_at == datetime.datetime(2025, 1, 1)
     assert record.action_type == action_type
+    assert record.status == "succeeded"
     assert record.outcome == "other"
 
 
