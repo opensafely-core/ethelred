@@ -91,8 +91,8 @@ def test_get_action_type(action_name, action_type):
 )
 def test_get_records(run_command, action_type):
     row = Row(
-        id=123,
-        job_request_id=4567,
+        id=1,
+        job_request_id=2,
         created_at=datetime.datetime(2025, 1, 1),
         run_command=run_command,
         status="succeeded",
@@ -102,8 +102,8 @@ def test_get_records(run_command, action_type):
     records = list(get_jobs.get_records([row]))
     record = records[0]
 
-    assert record.id == 123
-    assert record.job_request_id == 4567
+    assert record.id == 1
+    assert record.job_request_id == 2
     assert record.created_at == datetime.datetime(2025, 1, 1)
     assert record.action_type == action_type
     assert record.outcome == "other"
