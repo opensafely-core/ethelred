@@ -91,12 +91,12 @@ def test_get_action_type(action_name, action_type):
 )
 def test_get_records(run_command, action_type):
     row = Row(
-        123,
-        4567,
-        datetime.datetime(2025, 1, 1),
-        run_command,
-        "succeeded",
-        "Completed successfully",
+        id=123,
+        job_request_id=4567,
+        created_at=datetime.datetime(2025, 1, 1),
+        run_command=run_command,
+        status="succeeded",
+        status_message="Completed successfully",
     )
 
     records = list(get_jobs.get_records([row]))
