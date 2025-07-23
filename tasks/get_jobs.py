@@ -37,18 +37,18 @@ def get_action(run_command):
     return action_name, action_version
 
 
-def get_records(rows):
-    for row in rows:
-        stage = get_stage(row.run_command)
-        outcome = get_outcome(row.status, row.status_message)
-        yield Record(row.id, row.job_request_id, row.created_at, stage, outcome)
-
-
 def get_stage(run_command):
     if not run_command:
         return ""
     action_name, _ = run_command.split(":", maxsplit=1)
     return "database" if action_name in {"cohortextractor", "ehrql"} else "analysis"
+
+
+def get_records(rows):
+    for row in rows:
+        stage = get_stage(row.run_command)
+        outcome = get_outcome(row.status, row.status_message)
+        yield Record(row.id, row.job_request_id, row.created_at, stage, outcome)
 
 
 def get_outcome(status, status_message):

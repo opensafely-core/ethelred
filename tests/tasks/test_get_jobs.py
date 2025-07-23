@@ -68,6 +68,21 @@ def test_get_action():
     assert get_jobs.get_action(run_command) == ("ehrql", "v1")
 
 
+@pytest.mark.parametrize(
+    "run_command,stage",
+    [
+        ("", ""),
+        ("ehrql:v1", "database"),
+        ("cohortextractor:latest", "database"),
+        ("python:v1", "analysis"),
+        ("r:v1", "analysis"),
+        ("stata:latest", "analysis"),
+    ],
+)
+def test_get_stage(run_command, stage):
+    assert get_jobs.get_stage(run_command) == stage
+
+
 def test_get_records():
     rows = [
         Row(
@@ -87,21 +102,6 @@ def test_get_records():
     assert record.created_at == datetime.datetime(2025, 1, 1)
     assert record.stage == "analysis"
     assert record.outcome == "other"
-
-
-@pytest.mark.parametrize(
-    "run_command,stage",
-    [
-        ("", ""),
-        ("ehrql:v1", "database"),
-        ("cohortextractor:latest", "database"),
-        ("python:v1", "analysis"),
-        ("r:v1", "analysis"),
-        ("stata:latest", "analysis"),
-    ],
-)
-def test_get_stage(run_command, stage):
-    assert get_jobs.get_stage(run_command) == stage
 
 
 @pytest.mark.parametrize(
