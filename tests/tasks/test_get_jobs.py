@@ -69,7 +69,7 @@ def test_get_action():
 
 
 @pytest.mark.parametrize(
-    "action_name,stage",
+    "action_name,action_type",
     [
         ("ehrql", "database"),
         ("cohortextractor", "database"),
@@ -78,18 +78,18 @@ def test_get_action():
         ("stata", "analysis"),
     ],
 )
-def test_get_stage(action_name, stage):
-    assert get_jobs.get_stage(action_name) == stage
+def test_get_action_type(action_name, action_type):
+    assert get_jobs.get_action_type(action_name) == action_type
 
 
 @pytest.mark.parametrize(
-    "run_command,stage",
+    "run_command,action_type",
     [
         ("ehrql:v1 generate-dataset analysis/dataset_definition.py", "database"),
         ("", ""),  # some jobs don't have run commands
     ],
 )
-def test_get_records(run_command, stage):
+def test_get_records(run_command, action_type):
     rows = [
         Row(
             123,
@@ -106,7 +106,7 @@ def test_get_records(run_command, stage):
     assert record.id == 123
     assert record.job_request_id == 4567
     assert record.created_at == datetime.datetime(2025, 1, 1)
-    assert record.stage == stage
+    assert record.action_type == action_type
     assert record.outcome == "other"
 
 

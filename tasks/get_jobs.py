@@ -7,7 +7,7 @@ from . import DATA_DIR, INDEX_DATE, io, utils
 
 Record = collections.namedtuple(
     "Record",
-    ["id", "job_request_id", "created_at", "stage", "outcome"],
+    ["id", "job_request_id", "created_at", "action_type", "outcome"],
 )
 
 
@@ -37,7 +37,7 @@ def get_action(run_command):
     return action_name, action_version
 
 
-def get_stage(action_name):
+def get_action_type(action_name):
     match action_name:
         case "ehrql" | "cohortextractor":
             return "database"
@@ -49,11 +49,11 @@ def get_records(rows):
     for row in rows:
         if row.run_command:
             action_name, _ = get_action(row.run_command)
-            stage = get_stage(action_name)
+            action_type = get_action_type(action_name)
         else:
-            stage = ""
+            action_type = ""
         outcome = get_outcome(row.status, row.status_message)
-        yield Record(row.id, row.job_request_id, row.created_at, stage, outcome)
+        yield Record(row.id, row.job_request_id, row.created_at, action_type, outcome)
 
 
 def get_outcome(status, status_message):
