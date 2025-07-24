@@ -128,7 +128,7 @@ def test_get_status_message_type(status_message, status_message_type):
     "run_command,action_type",
     [
         ("ehrql:v1 generate-dataset analysis/dataset_definition.py", "database"),
-        ("", ""),  # some jobs don't have run commands
+        ("", "other"),  # some jobs don't have run commands
     ],
 )
 def test_get_records(run_command, action_type):
