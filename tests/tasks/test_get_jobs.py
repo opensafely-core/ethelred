@@ -125,13 +125,13 @@ def test_get_status_message_type(status_message, status_message_type):
 
 
 @pytest.mark.parametrize(
-    "run_command,action_type",
+    "run_command,action_name,action_type",
     [
-        ("ehrql:v1 generate-dataset analysis/dataset_definition.py", "database"),
-        ("", "other"),  # some jobs don't have run commands
+        ("ehrql:v1 generate-dataset dataset_definition.py", "ehrql", "database"),
+        ("", "", "other"),  # some jobs don't have run commands
     ],
 )
-def test_get_records(run_command, action_type):
+def test_get_records(run_command, action_name, action_type):
     row = Row(
         id=1,
         job_request_id=2,
@@ -147,6 +147,7 @@ def test_get_records(run_command, action_type):
     assert record.id == 1
     assert record.job_request_id == 2
     assert record.created_at == datetime.datetime(2025, 1, 1)
+    assert record.action_name == action_name
     assert record.action_type == action_type
     assert record.status == "succeeded"
     assert record.status_message_type == "other"
