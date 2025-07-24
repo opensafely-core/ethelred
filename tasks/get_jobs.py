@@ -49,6 +49,7 @@ class ActionType(enum.StrEnum):
     DATABASE = enum.auto()
     REUSABLE = enum.auto()
     SCRIPTED = enum.auto()
+    OTHER = enum.auto()
 
 
 _DATABASE_ACTIONS = {"cohortextractor", "ehrql"}
@@ -67,6 +68,8 @@ _REUSABLE_ACTIONS = {
     "safetab",
 }
 
+_SCRIPTED_ACTIONS = {"python", "r", "stata"}
+
 
 def get_action_type(action_name):
     if action_name in _DATABASE_ACTIONS:
@@ -75,7 +78,10 @@ def get_action_type(action_name):
     if action_name in _REUSABLE_ACTIONS:
         return ActionType.REUSABLE
 
-    return ActionType.SCRIPTED
+    if action_name in _SCRIPTED_ACTIONS:
+        return ActionType.SCRIPTED
+
+    return ActionType.OTHER
 
 
 class StatusMessageType(enum.StrEnum):

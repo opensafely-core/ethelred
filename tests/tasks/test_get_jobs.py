@@ -101,6 +101,8 @@ def test_get_action():
         ("matching", "reusable"),
         ("project-dag", "reusable"),
         ("safetab", "reusable"),
+        ("my-reusable-action", "other"),  # the wildcard case
+        ("", "other"),  # the wildcard case, no status message
     ],
 )
 def test_get_action_type(action_name, action_type):
