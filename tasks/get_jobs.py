@@ -101,9 +101,9 @@ def get_records(rows):
     for row in rows:
         if row.run_command:
             action_name, _ = get_action(row.run_command)
-            action_type = get_action_type(action_name)
         else:
-            action_type = ""
+            action_name = ""
+        action_type = get_action_type(action_name)
         status_message_type = get_status_message_type(row.status_message)
         yield Record(
             row.id,
