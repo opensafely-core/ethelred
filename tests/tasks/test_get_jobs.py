@@ -87,6 +87,7 @@ def test_get_action():
     [
         ("ehrql", "database"),
         ("cohortextractor", "database"),
+        ("sqlrunner", "database"),
         ("python", "scripted"),
         ("r", "scripted"),
         ("stata", "scripted"),
