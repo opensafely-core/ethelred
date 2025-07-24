@@ -50,12 +50,14 @@ class ActionType(enum.StrEnum):
     SCRIPTED = enum.auto()
 
 
+_DATABASE_ACTIONS = {"cohortextractor", "ehrql"}
+
+
 def get_action_type(action_name):
-    match action_name:
-        case "ehrql" | "cohortextractor":
-            return ActionType.DATABASE
-        case _:
-            return ActionType.SCRIPTED
+    if action_name in _DATABASE_ACTIONS:
+        return ActionType.DATABASE
+
+    return ActionType.SCRIPTED
 
 
 class StatusMessageType(enum.StrEnum):
