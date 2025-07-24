@@ -47,15 +47,33 @@ def get_action(run_command):
 
 class ActionType(enum.StrEnum):
     DATABASE = enum.auto()
+    REUSABLE = enum.auto()
     SCRIPTED = enum.auto()
 
 
 _DATABASE_ACTIONS = {"cohortextractor", "ehrql"}
 
+_REUSABLE_ACTIONS = {
+    "cohort-joiner",
+    "cohort-report",
+    "cox-ipw",
+    "dataset-report",
+    "deciles-charts",
+    "demographic-standardisation",
+    "diabetes-algo",
+    "kaplan-meier-function",
+    "matching",
+    "project-dag",
+    "safetab",
+}
+
 
 def get_action_type(action_name):
     if action_name in _DATABASE_ACTIONS:
         return ActionType.DATABASE
+
+    if action_name in _REUSABLE_ACTIONS:
+        return ActionType.REUSABLE
 
     return ActionType.SCRIPTED
 
