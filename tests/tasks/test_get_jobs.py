@@ -79,6 +79,9 @@ def test_get_action():
     assert get_jobs.get_action(run_command) == ("ehrql", "v1")
 
 
+# We test against strings rather than ActionType members to test that
+# ActionType is a subclass of StrEnum and so using auto results in
+# lower-case member names as values.
 @pytest.mark.parametrize(
     "action_name,action_type",
     [
