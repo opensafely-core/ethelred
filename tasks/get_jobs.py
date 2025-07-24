@@ -53,7 +53,7 @@ class ActionType(enum.StrEnum):
     OTHER = enum.auto()
 
 
-_DATABASE_ACTIONS = {"cohortextractor", "ehrql"}
+_DATABASE_ACTIONS = {"cohortextractor", "ehrql", "sqlrunner"}
 
 _REUSABLE_ACTIONS = {
     "cohort-joiner",
