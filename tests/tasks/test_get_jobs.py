@@ -93,6 +93,21 @@ def test_get_action_type(action_name, action_type):
     assert get_jobs.get_action_type(action_name) == action_type
 
 
+# We test against strings rather than StatusMessageType members to test that
+# StatusMessageType is a subclass of StrEnum and so using auto results in
+# lower-case member names as values.
+@pytest.mark.parametrize(
+    "status_message,status_message_type",
+    [
+        ("Not starting as dependency failed", "dependency_failed"),
+        ("Not starting as no coffee", "other"),  # the wildcard case
+        ("", "other"),  # the wildcard case, no status message
+    ],
+)
+def test_get_status_message_type(status_message, status_message_type):
+    assert get_jobs.get_status_message_type(status_message) == status_message_type
+
+
 @pytest.mark.parametrize(
     "run_command,action_type",
     [
@@ -118,25 +133,4 @@ def test_get_records(run_command, action_type):
     assert record.created_at == datetime.datetime(2025, 1, 1)
     assert record.action_type == action_type
     assert record.status == "succeeded"
-    assert record.outcome == "other"
-
-
-@pytest.mark.parametrize(
-    "status, status_message, outcome",
-    [
-        ("failed", "Job exited with an error", "errored"),
-        ("failed", "Job exited with an error: ...", "errored"),
-        ("failed", "Internal error: this usually means...", "errored"),
-        ("failed", "No outputs found matching patterns: ...", "errored"),
-        ("failed", "GitRepoNotReachableError: Could not read from...", "errored"),
-        ("failed", "Not starting as dependency failed", "cancelled by dependency"),
-        ("failed", "Cancelled by user", "other"),
-        ("failed", "... Branch name must not contain slashes ...", "other"),
-        ("succeeded", "Completed successfully", "other"),
-        ("running", "Job executing on the backend", "other"),
-        ("pending", "Waiting on dependencies", "other"),
-        ("pending", "Waiting on available workers", "other"),
-    ],
-)
-def test_get_outcome(status, status_message, outcome):
-    assert get_jobs.get_outcome(status, status_message) == outcome
+    assert record.status_message_type == "other"

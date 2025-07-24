@@ -1,4 +1,5 @@
 import collections
+import enum
 
 import sqlalchemy
 
@@ -7,7 +8,14 @@ from . import DATA_DIR, INDEX_DATE, io, utils
 
 Record = collections.namedtuple(
     "Record",
-    ["id", "job_request_id", "created_at", "action_type", "status", "outcome"],
+    [
+        "id",
+        "job_request_id",
+        "created_at",
+        "action_type",
+        "status",
+        "status_message_type",
+    ],
 )
 
 
@@ -45,6 +53,19 @@ def get_action_type(action_name):
             return "analysis"
 
 
+class StatusMessageType(enum.StrEnum):
+    DEPENDENCY_FAILED = enum.auto()
+    OTHER = enum.auto()
+
+
+def get_status_message_type(status_message):
+    match status_message:
+        case "Not starting as dependency failed":
+            return StatusMessageType.DEPENDENCY_FAILED
+        case _:
+            return StatusMessageType.OTHER
+
+
 def get_records(rows):
     for row in rows:
         if row.run_command:
@@ -52,31 +73,15 @@ def get_records(rows):
             action_type = get_action_type(action_name)
         else:
             action_type = ""
-        outcome = get_outcome(row.status, row.status_message)
+        status_message_type = get_status_message_type(row.status_message)
         yield Record(
-            row.id, row.job_request_id, row.created_at, action_type, row.status, outcome
+            row.id,
+            row.job_request_id,
+            row.created_at,
+            action_type,
+            row.status,
+            status_message_type,
         )
-
-
-def get_outcome(status, status_message):
-    match status:
-        case "failed":
-            match status_message.split(":")[0]:
-                case "Not starting as dependency failed":
-                    return "cancelled by dependency"
-                case "Cancelled by user":
-                    return "other"
-                case (
-                    "Job exited with an error"
-                    | "Internal error"
-                    | "No outputs found matching patterns"
-                    | "GitRepoNotReachableError"
-                ):
-                    return "errored"
-                case _:
-                    return "other"
-        case _:
-            return "other"
 
 
 def main():  # pragma: no cover
