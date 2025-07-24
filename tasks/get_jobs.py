@@ -47,7 +47,7 @@ def get_action(run_command):
 
 class ActionType(enum.StrEnum):
     DATABASE = enum.auto()
-    ANALYSIS = enum.auto()
+    SCRIPTED = enum.auto()
 
 
 def get_action_type(action_name):
@@ -55,7 +55,7 @@ def get_action_type(action_name):
         case "ehrql" | "cohortextractor":
             return ActionType.DATABASE
         case _:
-            return ActionType.ANALYSIS
+            return ActionType.SCRIPTED
 
 
 class StatusMessageType(enum.StrEnum):
