@@ -87,9 +87,9 @@ def test_get_action():
     [
         ("ehrql", "database"),
         ("cohortextractor", "database"),
-        ("python", "analysis"),
-        ("r", "analysis"),
-        ("stata", "analysis"),
+        ("python", "scripted"),
+        ("r", "scripted"),
+        ("stata", "scripted"),
     ],
 )
 def test_get_action_type(action_name, action_type):
