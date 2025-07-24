@@ -90,7 +90,7 @@ def test_get_action():
         ("sqlrunner", "database"),
         ("python", "scripted"),
         ("r", "scripted"),
-        ("stata", "scripted"),
+        ("stata-mp", "scripted"),
         ("cohort-joiner", "reusable"),
         ("cohort-report", "reusable"),
         ("cox-ipw", "reusable"),

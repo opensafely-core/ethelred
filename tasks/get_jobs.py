@@ -69,7 +69,7 @@ _REUSABLE_ACTIONS = {
     "safetab",
 }
 
-_SCRIPTED_ACTIONS = {"python", "r", "stata"}
+_SCRIPTED_ACTIONS = {"python", "r", "stata-mp"}
 
 
 def get_action_type(action_name):
