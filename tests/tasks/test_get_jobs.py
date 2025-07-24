@@ -90,6 +90,17 @@ def test_get_action():
         ("python", "scripted"),
         ("r", "scripted"),
         ("stata", "scripted"),
+        ("cohort-joiner", "scripted"),
+        ("cohort-report", "scripted"),
+        ("cox-ipw", "scripted"),
+        ("dataset-report", "scripted"),
+        ("deciles-charts", "scripted"),
+        ("demographic-standardisation", "scripted"),
+        ("diabetes-algo", "scripted"),
+        ("kaplan-meier-function", "scripted"),
+        ("matching", "scripted"),
+        ("project-dag", "scripted"),
+        ("safetab", "scripted"),
     ],
 )
 def test_get_action_type(action_name, action_type):
