@@ -10,6 +10,7 @@ class MockResponse:
         self.links = {"next": {"url": next_url}} if next_url else {}
         self.json_data = json_data
         self.error = error
+        self.status_code = 200 if not error else 404
 
     def json(self):
         return self.json_data

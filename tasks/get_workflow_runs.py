@@ -44,13 +44,12 @@ def retry(log, max_retries=3, backoff_seconds=0.5):
                         )
                         time.sleep(seconds)
                         retry_count += 1
-
                     else:
                         log(
                             f"Error fetching {url}: {error}\n"
                             f"Skipping as maximum retries reached ({max_retries})."
                         )
-                        return False
+                        return response
 
         return wrapper
 
@@ -61,8 +60,8 @@ def get_all_pages_with_retry(get_function, first_url, **kwargs):
     url = first_url
     while True:
         response = retry(print)(get_function)(url, **kwargs)
-        if not response:  # response is False on failure due to `retry`
-            break
+        if response.status_code != 200:
+            break  # give up as we have already retried
         yield response
         if next_link := response.links.get("next"):
             url = next_link["url"]
