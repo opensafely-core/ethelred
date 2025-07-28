@@ -10,6 +10,7 @@ class MockResponse:
         self.links = {"next": {"url": next_url}} if next_url else {}
         self.json_data = json_data
         self.error = error
+        self.status_code = 200 if not error else 404
 
     def json(self):
         return self.json_data
@@ -36,10 +37,11 @@ def test_retry_when_all_fail():
 
     @get_workflow_runs.retry(logs.append)
     def get(url, **kwargs):
-        return MockResponse({}, error="Not Found")
+        return MockResponse({"error": "Not Found"}, error="Not Found")
 
-    get("failure_url")
+    response = get("failure_url")
 
+    assert response.json() == {"error": "Not Found"}
     assert logs == [
         "Error fetching failure_url: Not Found\nRetrying in 0.5 seconds (retry attempt 1) ...",
         "Error fetching failure_url: Not Found\nRetrying in 1.0 seconds (retry attempt 2) ...",
