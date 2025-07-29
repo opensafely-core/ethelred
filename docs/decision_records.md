@@ -151,6 +151,13 @@ then we need only modify a repository's methods.
 If we find ourselves writing `import pandas` anywhere other than in `app/repositories.py`,
 then we should either push down or pull up ([DR006](#006-push-down-or-pull-up)).
 
+## 008: Use CSV files as the interface
+
+We will use CSV files as the interface between the two applications that comprise Ethelred ([DR001](#001-two-applications-one-codebase)).
+CSV files are quick to write (by `tasks`) and read (by `app`),
+and unlike tables in an RDBMS,
+require no up-front definition.
+
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
 [2]: https://refactoring.com/catalog/
 [3]: https://wesmckinney.com/blog/apache-arrow-pandas-internals/
