@@ -18,6 +18,11 @@ def write_json(data, filepath):  # pragma: no cover
     print(f"Writing a {type(data).__name__} of {len(data)} items to {filepath}")
 
 
+def write_log(message):  # pragma: no cover
+    # Placeholder: printing log messages to console for now.
+    print(message)
+
+
 class GitHubAPISession(requests.Session):
     def __init__(self, token=None):
         super().__init__()
@@ -47,7 +52,7 @@ def retry(log, max_retries=3, backoff_seconds=0.5):
                     else:
                         log(
                             f"Error fetching {url}: {error}\n"
-                            f"Skipping as maximum retries reached ({max_retries})."
+                            f"Maximum retries reached ({max_retries})."
                         )
                         return response
 
@@ -59,8 +64,9 @@ def retry(log, max_retries=3, backoff_seconds=0.5):
 def get_all_pages_with_retry(get_function, first_url, **kwargs):
     url = first_url
     while True:
-        response = retry(print)(get_function)(url, **kwargs)
+        response = retry(write_log)(get_function)(url, **kwargs)
         if response.status_code != 200:
+            write_log("Skipping.")
             break  # give up as we have already retried
         yield response
         if next_link := response.links.get("next"):
