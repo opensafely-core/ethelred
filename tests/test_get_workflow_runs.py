@@ -46,7 +46,7 @@ def test_retry_when_all_fail():
         "Error fetching failure_url: Not Found\nRetrying in 0.5 seconds (retry attempt 1) ...",
         "Error fetching failure_url: Not Found\nRetrying in 1.0 seconds (retry attempt 2) ...",
         "Error fetching failure_url: Not Found\nRetrying in 2.0 seconds (retry attempt 3) ...",
-        "Error fetching failure_url: Not Found\nSkipping as maximum retries reached (3).",
+        "Error fetching failure_url: Not Found\nMaximum retries reached (3).",
     ]
 
 
@@ -103,7 +103,9 @@ def test_get_all_pages_with_retry():
     assert pages[1].json() == {"data": "page2"}
 
 
-def test_get_all_pages_with_retry_when_failed():
+def test_get_all_pages_with_retry_when_failed(monkeypatch):
+    logs = []
+    monkeypatch.setattr(get_workflow_runs, "write_log", logs.append)
     urls_called = []
     responses = [
         MockResponse({"data": "page1"}, next_url="page2_url"),
@@ -122,6 +124,13 @@ def test_get_all_pages_with_retry_when_failed():
     assert urls_called == ["start_url"] + ["page2_url"] * 4
     assert len(pages) == 1
     assert pages[0].json() == {"data": "page1"}
+    assert logs == [
+        "Error fetching page2_url: Network error\nRetrying in 0.5 seconds (retry attempt 1) ...",
+        "Error fetching page2_url: Network error\nRetrying in 1.0 seconds (retry attempt 2) ...",
+        "Error fetching page2_url: Network error\nRetrying in 2.0 seconds (retry attempt 3) ...",
+        "Error fetching page2_url: Network error\nMaximum retries reached (3).",
+        "Skipping.",
+    ]
 
 
 def test_get_repo_names(monkeypatch, capsys):
