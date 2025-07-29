@@ -158,9 +158,34 @@ CSV files are quick to write (by `tasks`) and read (by `app`),
 and unlike tables in an RDBMS,
 require no up-front definition.
 
+## 009: Source directories and `PYTHONPATH`
+
+Although Streamlit apps are Python modules,
+to support reruns,
+they aren't imported using [the standard import system][4] (i.e. the `import` statement).
+
+> Reruns are a central part of every Streamlit app.
+> When users interact with widgets,
+> your script reruns from top to bottom,
+> and your app's frontend is updated.
+>
+> [Working with fragments][]
+
+Not using the standard import system means we need to add some configuration to ensure:
+
+* modules are imported correctly when the Streamlit app is run *and* when the test suite is run;
+* imports are ordered according to [the accepted conventions][5];
+* and most importantly, nobody is confused.
+
+More specifically,
+we set `tool.ruff.src` in `pyproject.toml`
+and `PYTHONPATH` when invoking Coverage.py with `just test`.
+
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
 [2]: https://refactoring.com/catalog/
 [3]: https://wesmckinney.com/blog/apache-arrow-pandas-internals/
+[4]: https://docs.python.org/3.12/reference/import.html
+[5]: https://docs.astral.sh/ruff/settings/#lint_isort_section-order
 [Apache Airflow]: https://airflow.apache.org/
 [Architectural Decision Records]: https://adr.github.io/
 [Continuous Integration]: https://martinfowler.com/articles/continuousIntegration.html
@@ -171,3 +196,4 @@ require no up-front definition.
 [Pandas]: https://pandas.pydata.org/
 [Prefect]: https://www.prefect.io/
 [Reshaping and pivot tables]: https://pandas.pydata.org/pandas-docs/stable/user_guide/reshaping.html
+[Working with fragments]: https://docs.streamlit.io/develop/concepts/architecture/fragments
