@@ -4,18 +4,13 @@ import time
 
 import requests
 
-from . import DATA_DIR
+from . import io
 
 
 REPOS_URL = "https://api.github.com/orgs/opensafely/repos"
 WORKFLOW_RUNS_URL_TEMPLATE = (
     "https://api.github.com/repos/opensafely/{repo}/actions/runs"
 )
-
-
-def write_json(data, filepath):  # pragma: no cover
-    # Placeholder: We will eventually import a `write_json` from `io`.
-    print(f"Writing a {type(data).__name__} of {len(data)} items to {filepath}")
 
 
 def write_log(message):  # pragma: no cover
@@ -61,6 +56,16 @@ def retry(log, max_retries=3, backoff_seconds=0.5):
     return decorator
 
 
+def write_page(page, output_dir, page_number):
+    filename = output_dir / "pages" / f"page_{page_number}.json"
+    io.write(page, filename)
+
+
+def write_run(run, output_dir):
+    filename = output_dir / "runs" / f"{run['id']}.json"
+    io.write(run, filename)
+
+
 def get_all_pages_with_retry(get_function, first_url, **kwargs):
     url = first_url
     while True:
@@ -75,10 +80,8 @@ def get_all_pages_with_retry(get_function, first_url, **kwargs):
             break
 
 
-def get_repo_names(session):
+def get_repo_names(session, output_dir):
     query_time = int(time.time())
-    output_dir = DATA_DIR / "workflow_runs" / "repos" / str(query_time)
-
     for page_number, response in enumerate(
         get_all_pages_with_retry(
             session.get, REPOS_URL, params={"format": "json", "per_page": 100}
@@ -86,17 +89,13 @@ def get_repo_names(session):
         start=1,
     ):
         page = response.json()
-        write_json(
-            page,
-            output_dir / "pages" / f"page_{page_number}.json",
-        )
+        write_page(page, output_dir / str(query_time), page_number)
         yield from (repo["name"] for repo in page)
 
 
-def write_workflow_runs(repo, session):
+def write_workflow_runs(repo, session, output_dir):
     first_page_url = WORKFLOW_RUNS_URL_TEMPLATE.format(repo=repo)
     query_time = int(time.time())
-    output_dir = DATA_DIR / "workflow_runs" / repo / str(query_time)
     for page_number, response in enumerate(
         get_all_pages_with_retry(
             session.get, first_page_url, params={"format": "json", "per_page": 100}
@@ -104,9 +103,6 @@ def write_workflow_runs(repo, session):
         start=1,
     ):
         page = response.json()["workflow_runs"]
-        write_json(
-            page,
-            output_dir / "pages" / f"page_{page_number}.json",
-        )
+        write_page(page, output_dir / str(query_time), page_number)
         for run in page:
-            write_json(run, output_dir / "runs" / f"{run['id']}.json")
+            write_run(run, output_dir / str(query_time))

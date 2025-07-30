@@ -2,7 +2,7 @@ import pathlib
 
 import requests
 
-from tasks import get_workflow_runs
+from tasks import get_workflow_runs, io
 
 
 class MockResponse:
@@ -84,6 +84,22 @@ def test_retry_when_successful_after_failure():
     ]
 
 
+def test_write_page(tmpdir):
+    output_dir = pathlib.Path(tmpdir)
+    get_workflow_runs.write_page([{"id": 1}, {"id": 2}], output_dir, 1)
+
+    page = io.read(output_dir / "pages" / "page_1.json")
+    assert page == [{"id": 1}, {"id": 2}]
+
+
+def test_write_run(tmpdir):
+    output_dir = pathlib.Path(tmpdir)
+    get_workflow_runs.write_run({"id": 1}, output_dir)
+
+    run = io.read(output_dir / "runs" / "1.json")
+    assert run == {"id": 1}
+
+
 def test_get_all_pages_with_retry():
     urls_called = []
     responses = [
@@ -133,7 +149,8 @@ def test_get_all_pages_with_retry_when_failed(monkeypatch):
     ]
 
 
-def test_get_repo_names(monkeypatch, capsys):
+def test_get_repo_names(monkeypatch, tmpdir):
+    output_dir = pathlib.Path(tmpdir)
     repos = [{"name": "repo1"}, {"name": "repo2"}]
 
     class MockSession:
@@ -142,18 +159,15 @@ def test_get_repo_names(monkeypatch, capsys):
 
     with monkeypatch.context() as m:
         m.setattr("time.time", lambda: 1000.1)
-        m.setattr(get_workflow_runs, "DATA_DIR", pathlib.Path("data"))
+        repo_names = list(get_workflow_runs.get_repo_names(MockSession(), output_dir))
 
-        repo_names = list(get_workflow_runs.get_repo_names(MockSession()))
-
+    page = io.read(output_dir / "1000" / "pages" / "page_1.json")
     assert repo_names == ["repo1", "repo2"]
-    # write_json is currently just a placeholder that prints to the console
-    assert capsys.readouterr().out == (
-        "Writing a list of 2 items to data/workflow_runs/repos/1000/pages/page_1.json\n"
-    )
+    assert page == [{"name": "repo1"}, {"name": "repo2"}]
 
 
-def test_write_workflow_runs(monkeypatch, capsys):
+def test_write_workflow_runs(monkeypatch, tmpdir):
+    output_dir = pathlib.Path(tmpdir)
     urls_called = []
     responses = [
         MockResponse(
@@ -170,19 +184,17 @@ def test_write_workflow_runs(monkeypatch, capsys):
 
     with monkeypatch.context() as m:
         m.setattr("time.time", lambda: 1000.1)
-        m.setattr(get_workflow_runs, "DATA_DIR", pathlib.Path("data"))
-
-        get_workflow_runs.write_workflow_runs("my_repo", MockSession())
+        get_workflow_runs.write_workflow_runs("my_repo", MockSession(), output_dir)
 
     assert urls_called == [
         "https://api.github.com/repos/opensafely/my_repo/actions/runs",
         "page2_url",
     ]
-    # write_json is currently just a placeholder that prints to the console
-    assert capsys.readouterr().out == (
-        "Writing a list of 2 items to data/workflow_runs/my_repo/1000/pages/page_1.json\n"
-        "Writing a dict of 1 items to data/workflow_runs/my_repo/1000/runs/1.json\n"
-        "Writing a dict of 1 items to data/workflow_runs/my_repo/1000/runs/2.json\n"
-        "Writing a list of 1 items to data/workflow_runs/my_repo/1000/pages/page_2.json\n"
-        "Writing a dict of 1 items to data/workflow_runs/my_repo/1000/runs/3.json\n"
-    )
+    assert io.read(output_dir / "1000" / "pages" / "page_1.json") == [
+        {"id": 1},
+        {"id": 2},
+    ]
+    assert io.read(output_dir / "1000" / "runs" / "1.json") == {"id": 1}
+    assert io.read(output_dir / "1000" / "runs" / "2.json") == {"id": 2}
+    assert io.read(output_dir / "1000" / "pages" / "page_2.json") == [{"id": 3}]
+    assert io.read(output_dir / "1000" / "runs" / "3.json") == {"id": 3}
