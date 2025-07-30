@@ -1,4 +1,6 @@
+import collections
 import functools
+import itertools
 import os
 import time
 
@@ -10,6 +12,20 @@ from . import DATA_DIR, io
 REPOS_URL = "https://api.github.com/orgs/opensafely/repos"
 WORKFLOW_RUNS_URL_TEMPLATE = (
     "https://api.github.com/repos/opensafely/{repo}/actions/runs"
+)
+Record = collections.namedtuple(
+    "Record",
+    [
+        "id",
+        "repo",
+        "name",
+        "head_sha",
+        "status",
+        "conclusion",
+        "created_at",
+        "updated_at",
+        "run_started_at",
+    ],
 )
 
 
@@ -108,10 +124,45 @@ def write_workflow_runs(repo, session, output_dir):
             write_run(run, output_dir / str(query_time))
 
 
+def get_latest_run_filepaths(repo_dir):
+    files = {}
+    timestamps = [int(d.name) for d in repo_dir.iterdir() if d.is_dir()]
+    for timestamp in sorted(timestamps, reverse=True):
+        if not (runs_dir := repo_dir / str(timestamp) / "runs").exists():
+            continue
+        dir_files = {
+            file_path.name: file_path
+            for file_path in runs_dir.iterdir()
+            if file_path.suffix == ".json"
+        }
+        files = dir_files | files  # keep the most recent files
+    return [files[filename] for filename in sorted(files.keys())]
+
+
+def get_records(repo_dir):
+    for file_path in get_latest_run_filepaths(repo_dir):
+        run = io.read(file_path)
+        yield Record(
+            id=run["id"],
+            repo=run["repository"]["name"],
+            name=run["name"],
+            head_sha=run["head_sha"],
+            status=run["status"],
+            conclusion=run["conclusion"],
+            created_at=run["created_at"],
+            updated_at=run["updated_at"],
+            run_started_at=run["run_started_at"],
+        )
+
+
 def main(session, workflows_dir):
-    repos = get_repo_names(session, workflows_dir / "repos")
-    for repo in repos:
+    repo_names = list(get_repo_names(session, workflows_dir / "repos"))
+    for repo in repo_names:
         write_workflow_runs(repo, session, workflows_dir / repo)
+    records = itertools.chain(
+        *[get_records(workflows_dir / repo) for repo in repo_names]
+    )
+    io.write(records, workflows_dir / "workflow_runs.csv")
 
 
 if __name__ == "__main__":  # pragma: no cover

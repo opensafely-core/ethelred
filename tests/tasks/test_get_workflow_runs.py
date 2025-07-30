@@ -200,12 +200,71 @@ def test_write_workflow_runs(monkeypatch, tmpdir):
     assert io.read(output_dir / "1000" / "runs" / "3.json") == {"id": 3}
 
 
+def test_get_latest_run_filepaths(tmpdir):
+    repo_dir = pathlib.Path(tmpdir)
+    io.write({"id": 1}, repo_dir / "1000" / "runs" / "1.json")
+    io.write({"id": 2}, repo_dir / "1000" / "runs" / "2.json")
+    io.write({"id": 2}, repo_dir / "2000" / "runs" / "2.json")
+
+    filepaths = get_workflow_runs.get_latest_run_filepaths(repo_dir)
+
+    assert filepaths == [
+        repo_dir / "1000" / "runs" / "1.json",
+        repo_dir / "2000" / "runs" / "2.json",
+    ]
+
+
+def test_get_records(tmpdir):
+    run_template = {
+        "id": None,  # replace me
+        "repository": {"name": "my_repo"},
+        "name": "My Workflow",
+        "head_sha": "00000000",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2025-01-01T00:00:00Z",
+        "updated_at": None,  # replace me
+        "run_started_at": "2025-01-01T00:00:00Z",
+    }
+    repo_dir = pathlib.Path(tmpdir)
+    io.write(
+        run_template | {"id": 1, "updated_at": "2025-01-01T00:00:00Z"},
+        repo_dir / "1000" / "runs" / "1.json",
+    )
+    io.write(
+        run_template | {"id": 2, "updated_at": "2025-01-01T00:00:00Z"},
+        repo_dir / "1000" / "runs" / "2.json",
+    )
+    io.write(
+        run_template | {"id": 2, "updated_at": "2025-02-01T00:00:00Z"},
+        repo_dir / "2000" / "runs" / "2.json",
+    )
+    records = list(get_workflow_runs.get_records(repo_dir))
+    run_1, run_2 = records
+    assert run_1._fields == get_workflow_runs.Record._fields
+    assert run_1.id == 1
+    assert run_1.updated_at == "2025-01-01T00:00:00Z"
+    assert run_2.id == 2
+    assert run_2.updated_at == "2025-02-01T00:00:00Z"
+
+
 def test_main(monkeypatch, tmpdir):
     workflows_dir = pathlib.Path(tmpdir)
     repos_dir = workflows_dir / "repos"
     repo_1_dir = workflows_dir / "repo_1"
     repo_2_dir = workflows_dir / "repo_2"
     urls_called = []
+    run = {
+        "id": 1,
+        "repository": {"name": "repo_2"},
+        "name": "My Workflow",
+        "head_sha": "00000000",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2025-01-01T00:00:00Z",
+        "updated_at": "2025-01-01T00:00:00Z",
+        "run_started_at": "2025-01-01T00:00:00Z",
+    }
     responses = {
         "https://api.github.com/orgs/opensafely/repos": MockResponse(
             [{"name": "repo_1"}, {"name": "repo_2"}]
@@ -214,7 +273,7 @@ def test_main(monkeypatch, tmpdir):
             {"total_count": 0, "workflow_runs": []}
         ),
         "https://api.github.com/repos/opensafely/repo_2/actions/runs": MockResponse(
-            {"total_count": 1, "workflow_runs": [{"id": 1}]}
+            {"total_count": 1, "workflow_runs": [run]}
         ),
     }
 
@@ -237,5 +296,10 @@ def test_main(monkeypatch, tmpdir):
         {"name": "repo_2"},
     ]
     assert io.read(repo_1_dir / "1000" / "pages" / "page_1.json") == []
-    assert io.read(repo_2_dir / "1000" / "pages" / "page_1.json") == [{"id": 1}]
-    assert io.read(repo_2_dir / "1000" / "runs" / "1.json") == {"id": 1}
+    assert io.read(repo_2_dir / "1000" / "pages" / "page_1.json") == [run]
+    assert io.read(repo_2_dir / "1000" / "runs" / "1.json") == run
+    with open(workflows_dir / "workflow_runs.csv", "r") as f:
+        assert f.read() == (
+            ",".join(get_workflow_runs.Record._fields) + "\n"
+            "1,repo_2,My Workflow,00000000,completed,success,2025-01-01T00:00:00Z,2025-01-01T00:00:00Z,2025-01-01T00:00:00Z\n"
+        )
