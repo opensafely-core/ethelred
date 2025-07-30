@@ -198,3 +198,44 @@ def test_write_workflow_runs(monkeypatch, tmpdir):
     assert io.read(output_dir / "1000" / "runs" / "2.json") == {"id": 2}
     assert io.read(output_dir / "1000" / "pages" / "page_2.json") == [{"id": 3}]
     assert io.read(output_dir / "1000" / "runs" / "3.json") == {"id": 3}
+
+
+def test_main(monkeypatch, tmpdir):
+    workflows_dir = pathlib.Path(tmpdir)
+    repos_dir = workflows_dir / "repos"
+    repo_1_dir = workflows_dir / "repo_1"
+    repo_2_dir = workflows_dir / "repo_2"
+    urls_called = []
+    responses = {
+        "https://api.github.com/orgs/opensafely/repos": MockResponse(
+            [{"name": "repo_1"}, {"name": "repo_2"}]
+        ),
+        "https://api.github.com/repos/opensafely/repo_1/actions/runs": MockResponse(
+            {"total_count": 0, "workflow_runs": []}
+        ),
+        "https://api.github.com/repos/opensafely/repo_2/actions/runs": MockResponse(
+            {"total_count": 1, "workflow_runs": [{"id": 1}]}
+        ),
+    }
+
+    class MockSession:
+        def get(self, url, **kwargs):
+            urls_called.append(url)
+            return responses.get(url)
+
+    with monkeypatch.context() as m:
+        m.setattr("time.time", lambda: 1000.1)
+        get_workflow_runs.main(MockSession(), workflows_dir)
+
+    assert urls_called == [
+        "https://api.github.com/orgs/opensafely/repos",
+        "https://api.github.com/repos/opensafely/repo_1/actions/runs",
+        "https://api.github.com/repos/opensafely/repo_2/actions/runs",
+    ]
+    assert io.read(repos_dir / "1000" / "pages" / "page_1.json") == [
+        {"name": "repo_1"},
+        {"name": "repo_2"},
+    ]
+    assert io.read(repo_1_dir / "1000" / "pages" / "page_1.json") == []
+    assert io.read(repo_2_dir / "1000" / "pages" / "page_1.json") == [{"id": 1}]
+    assert io.read(repo_2_dir / "1000" / "runs" / "1.json") == {"id": 1}
