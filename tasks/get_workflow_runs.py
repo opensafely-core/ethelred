@@ -4,7 +4,7 @@ import time
 
 import requests
 
-from . import io
+from . import DATA_DIR, io
 
 
 REPOS_URL = "https://api.github.com/orgs/opensafely/repos"
@@ -106,3 +106,14 @@ def write_workflow_runs(repo, session, output_dir):
         write_page(page, output_dir / str(query_time), page_number)
         for run in page:
             write_run(run, output_dir / str(query_time))
+
+
+def main(session, workflows_dir):
+    repos = get_repo_names(session, workflows_dir / "repos")
+    for repo in repos:
+        write_workflow_runs(repo, session, workflows_dir / repo)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    session = GitHubAPISession()
+    main(session, DATA_DIR / "workflow_runs")
