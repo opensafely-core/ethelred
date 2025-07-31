@@ -1,5 +1,4 @@
 import csv
-import itertools
 import json
 import pickle
 
@@ -27,7 +26,8 @@ def _write_csv(records, f_path):
     record_0 = next(records)
     with f_path.open("w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerows(itertools.chain([record_0._fields], [record_0], records))
+        writer.writerows([record_0._fields, record_0])
+        writer.writerows(records)
 
 
 def _write_json(obj, f_path):
