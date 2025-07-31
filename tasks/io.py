@@ -24,14 +24,12 @@ def _write_pickle(obj, f_path):
 def _write_csv(records, f_path):
     records = iter(records)
     record_0 = next(records)
-    f_path.parent.mkdir(parents=True, exist_ok=True)
     with f_path.open("w", newline="") as f:
         writer = csv.writer(f)
         writer.writerows(itertools.chain([record_0._fields], [record_0], records))
 
 
 def _write_json(obj, f_path):
-    f_path.parent.mkdir(parents=True, exist_ok=True)
     with f_path.open("w") as f:
         json.dump(obj, f, indent=2)
 
