@@ -15,12 +15,12 @@ This Ethelred is:
 
 Ethelred needs a Job Server database.
 [Job Server's developer documentation][3] tells you how to get one.
-When you've got one,
-copy `dotenv` to `.env` and, if necessary, update `.env`.
 
-You will also need a fine-grained [personal access token][4] with "Actions (read-only)" permissions
-and the resource owner set to the "opensafely" organisation.
-When you have one, add it to `.env` with `GITHUB_WORKFLOW_RUNS_TOKEN` as the key.
+Ethelred needs a fine-grained [Personal Access Token][4] (PAT) with the "Actions (read-only)" permission.
+The PAT should be owned by the opensafely organisation.
+
+When you've got a Job Server database and a PAT,
+copy `dotenv` to `.env` and, if necessary, update `.env`.
 
 Next, run the following commands:
 
