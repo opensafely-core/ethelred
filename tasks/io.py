@@ -32,7 +32,7 @@ def _write_csv(records, f_path):
 
 def _write_json(obj, f_path):
     with f_path.open("w") as f:
-        json.dump(obj, f, indent=2)
+        json.dump(obj, f)
 
 
 def read(f_path):
