@@ -6,14 +6,15 @@ import pickle
 
 def write(obj, f_path):
     f_path.parent.mkdir(parents=True, exist_ok=True)
-    if f_path.suffix == ".pickle":
-        _write_pickle(obj, f_path)
-    elif f_path.suffix == ".csv":
-        _write_csv(obj, f_path)
-    elif f_path.suffix == ".json":
-        _write_json(obj, f_path)
-    else:
-        raise ValueError(f"Unsupported file type {f_path.suffix}")
+    match f_path.suffix:
+        case ".pickle":
+            _write_pickle(obj, f_path)
+        case ".csv":
+            _write_csv(obj, f_path)
+        case ".json":
+            _write_json(obj, f_path)
+        case _:
+            raise ValueError(f"Unsupported file type {f_path.suffix}")
 
 
 def _write_pickle(obj, f_path):
@@ -35,12 +36,13 @@ def _write_json(obj, f_path):
 
 
 def read(f_path):
-    if f_path.suffix == ".pickle":
-        return _read_pickle(f_path)
-    elif f_path.suffix == ".json":
-        return _read_json(f_path)
-    else:
-        raise ValueError(f"Unsupported file type {f_path.suffix}")
+    match f_path.suffix:
+        case ".pickle":
+            return _read_pickle(f_path)
+        case ".json":
+            return _read_json(f_path)
+        case _:
+            raise ValueError(f"Unsupported file type {f_path.suffix}")
 
 
 def _read_pickle(f_path):
