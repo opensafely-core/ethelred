@@ -165,6 +165,6 @@ def main(session, workflows_dir):
     io.write(records, workflows_dir / "workflow_runs.csv")
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     session = GitHubAPISession()
     main(session, DATA_DIR / "workflow_runs")
