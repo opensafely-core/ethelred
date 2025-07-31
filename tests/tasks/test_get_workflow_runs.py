@@ -32,8 +32,10 @@ def test_github_api_session_init_when_no_token(monkeypatch):
     assert "Authorization" not in session.headers
 
 
-def test_retry_when_all_fail():
+def test_retry_when_all_fail(monkeypatch):
     logs = []
+    sleep_call_args = []
+    monkeypatch.setattr("time.sleep", lambda seconds: sleep_call_args.append(seconds))
 
     @get_workflow_runs.retry(logs.append)
     def get(url, **kwargs):
@@ -42,6 +44,7 @@ def test_retry_when_all_fail():
     response = get("failure_url")
 
     assert response.json() == {"error": "Not Found"}
+    assert sleep_call_args == [0.5, 1.0, 2.0]
     assert logs == [
         "Error fetching failure_url: Not Found\nRetrying in 0.5 seconds (retry attempt 1) ...",
         "Error fetching failure_url: Not Found\nRetrying in 1.0 seconds (retry attempt 2) ...",
@@ -63,8 +66,10 @@ def test_retry_when_successful_first_time():
     assert logs == []
 
 
-def test_retry_when_successful_after_failure():
+def test_retry_when_successful_after_failure(monkeypatch):
     logs = []
+    sleep_call_args = []
+    monkeypatch.setattr("time.sleep", lambda seconds: sleep_call_args.append(seconds))
     responses = [
         MockResponse({}, error="Temporary failure"),
         MockResponse({}, error="Temporary failure"),
@@ -78,6 +83,7 @@ def test_retry_when_successful_after_failure():
     response = get("flaky_url")
 
     assert response.json() == {"data": ""}
+    assert sleep_call_args == [0.5, 1.0]
     assert logs == [
         "Error fetching flaky_url: Temporary failure\nRetrying in 0.5 seconds (retry attempt 1) ...",
         "Error fetching flaky_url: Temporary failure\nRetrying in 1.0 seconds (retry attempt 2) ...",
@@ -122,6 +128,8 @@ def test_get_all_pages_with_retry():
 def test_get_all_pages_with_retry_when_failed(monkeypatch):
     logs = []
     monkeypatch.setattr(get_workflow_runs, "write_log", logs.append)
+    sleep_call_args = []
+    monkeypatch.setattr("time.sleep", lambda seconds: sleep_call_args.append(seconds))
     urls_called = []
     responses = [
         MockResponse({"data": "page1"}, next_url="page2_url"),
@@ -140,6 +148,7 @@ def test_get_all_pages_with_retry_when_failed(monkeypatch):
     assert urls_called == ["start_url"] + ["page2_url"] * 4
     assert len(pages) == 1
     assert pages[0].json() == {"data": "page1"}
+    assert sleep_call_args == [0.5, 1.0, 2.0]
     assert logs == [
         "Error fetching page2_url: Network error\nRetrying in 0.5 seconds (retry attempt 1) ...",
         "Error fetching page2_url: Network error\nRetrying in 1.0 seconds (retry attempt 2) ...",
