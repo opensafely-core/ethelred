@@ -1,6 +1,5 @@
 import collections
 import functools
-import itertools
 import os
 import time
 
@@ -130,20 +129,18 @@ def get_latest_run_filepaths(repo_dir):
     return [files[filename] for filename in sorted(files.keys())]
 
 
-def get_records(repo_dir):
-    for file_path in get_latest_run_filepaths(repo_dir):
-        run = io.read(file_path)
-        yield Record(
-            id=run["id"],
-            repo=run["repository"]["name"],
-            name=run["name"],
-            head_sha=run["head_sha"],
-            status=run["status"],
-            conclusion=run["conclusion"],
-            created_at=run["created_at"],
-            updated_at=run["updated_at"],
-            run_started_at=run["run_started_at"],
-        )
+def get_record(run):
+    return Record(
+        id=run["id"],
+        repo=run["repository"]["name"],
+        name=run["name"],
+        head_sha=run["head_sha"],
+        status=run["status"],
+        conclusion=run["conclusion"],
+        created_at=run["created_at"],
+        updated_at=run["updated_at"],
+        run_started_at=run["run_started_at"],
+    )
 
 
 def main(session, workflows_dir):
@@ -163,9 +160,14 @@ def main(session, workflows_dir):
                     write_run(run, workflows_dir / repo / str(timestamp))
             repo_names.append(repo)
 
-    records = itertools.chain(
-        *[get_records(workflows_dir / repo) for repo in repo_names]
-    )
+    filepaths = [
+        filepath
+        for filepaths in [
+            get_latest_run_filepaths(workflows_dir / repo) for repo in repo_names
+        ]
+        for filepath in filepaths
+    ]
+    records = (get_record(io.read(filepath)) for filepath in filepaths)
     io.write(records, workflows_dir / "workflow_runs.csv")
 
 

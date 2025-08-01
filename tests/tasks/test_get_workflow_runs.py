@@ -205,38 +205,22 @@ def test_get_latest_run_filepaths(tmpdir):
     ]
 
 
-def test_get_records(tmpdir):
-    run_template = {
-        "id": None,  # replace me
+def test_get_record():
+    run = {
+        "id": 1,
         "repository": {"name": "my_repo"},
         "name": "My Workflow",
         "head_sha": "00000000",
         "status": "completed",
         "conclusion": "success",
         "created_at": "2025-01-01T00:00:00Z",
-        "updated_at": None,  # replace me
+        "updated_at": "2025-01-01T00:00:00Z",
         "run_started_at": "2025-01-01T00:00:00Z",
     }
-    repo_dir = pathlib.Path(tmpdir)
-    io.write(
-        run_template | {"id": 1, "updated_at": "2025-01-01T00:00:00Z"},
-        repo_dir / "1000" / "runs" / "1.json",
-    )
-    io.write(
-        run_template | {"id": 2, "updated_at": "2025-01-01T00:00:00Z"},
-        repo_dir / "1000" / "runs" / "2.json",
-    )
-    io.write(
-        run_template | {"id": 2, "updated_at": "2025-02-01T00:00:00Z"},
-        repo_dir / "2000" / "runs" / "2.json",
-    )
-    records = list(get_workflow_runs.get_records(repo_dir))
-    run_1, run_2 = records
-    assert run_1._fields == get_workflow_runs.Record._fields
-    assert run_1.id == 1
-    assert run_1.updated_at == "2025-01-01T00:00:00Z"
-    assert run_2.id == 2
-    assert run_2.updated_at == "2025-02-01T00:00:00Z"
+    record = get_workflow_runs.get_record(run)
+    assert record._fields == get_workflow_runs.Record._fields
+    assert record.id == 1
+    assert record.repo == "my_repo"
 
 
 def test_main(monkeypatch, tmpdir):
