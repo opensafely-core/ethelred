@@ -158,25 +158,16 @@ def test_get_all_pages_with_retry_when_failed(monkeypatch):
     ]
 
 
-def test_get_repo_names(monkeypatch, tmpdir):
-    output_dir = pathlib.Path(tmpdir)
-    repos = [{"name": "repo1"}, {"name": "repo2"}]
-
+def test_get_repos_pages():
     class MockSession:
         def get(self, url, **kwargs):
-            return MockResponse(repos)
+            return MockResponse([{"name": "repo1"}, {"name": "repo2"}])
 
-    with monkeypatch.context() as m:
-        m.setattr("time.time", lambda: 1000.1)
-        repo_names = list(get_workflow_runs.get_repo_names(MockSession(), output_dir))
-
-    page = io.read(output_dir / "1000" / "pages" / "page_1.json")
-    assert repo_names == ["repo1", "repo2"]
-    assert page == [{"name": "repo1"}, {"name": "repo2"}]
+    pages = list(get_workflow_runs.get_repos_pages(MockSession()))
+    assert pages == [[{"name": "repo1"}, {"name": "repo2"}]]
 
 
-def test_write_workflow_runs(monkeypatch, tmpdir):
-    output_dir = pathlib.Path(tmpdir)
+def test_get_workflow_runs_pages():
     urls_called = []
     responses = [
         MockResponse(
@@ -191,22 +182,13 @@ def test_write_workflow_runs(monkeypatch, tmpdir):
             urls_called.append(url)
             return responses.pop(0)
 
-    with monkeypatch.context() as m:
-        m.setattr("time.time", lambda: 1000.1)
-        get_workflow_runs.write_workflow_runs("my_repo", MockSession(), output_dir)
+    pages = list(get_workflow_runs.get_workflow_runs_pages("my_repo", MockSession()))
 
     assert urls_called == [
         "https://api.github.com/repos/opensafely/my_repo/actions/runs",
         "page2_url",
     ]
-    assert io.read(output_dir / "1000" / "pages" / "page_1.json") == [
-        {"id": 1},
-        {"id": 2},
-    ]
-    assert io.read(output_dir / "1000" / "runs" / "1.json") == {"id": 1}
-    assert io.read(output_dir / "1000" / "runs" / "2.json") == {"id": 2}
-    assert io.read(output_dir / "1000" / "pages" / "page_2.json") == [{"id": 3}]
-    assert io.read(output_dir / "1000" / "runs" / "3.json") == {"id": 3}
+    assert pages == [[{"id": 1}, {"id": 2}], [{"id": 3}]]
 
 
 def test_get_latest_run_filepaths(tmpdir):

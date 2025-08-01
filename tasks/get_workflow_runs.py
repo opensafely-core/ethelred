@@ -96,32 +96,23 @@ def get_all_pages_with_retry(get_function, first_url, **kwargs):
             break
 
 
-def get_repo_names(session, output_dir):
-    query_time = int(time.time())
-    for page_number, response in enumerate(
-        get_all_pages_with_retry(
+def get_repos_pages(session):
+    yield from (
+        response.json()
+        for response in get_all_pages_with_retry(
             session.get, REPOS_URL, params={"format": "json", "per_page": 100}
-        ),
-        start=1,
-    ):
-        page = response.json()
-        write_page(page, output_dir / str(query_time), page_number)
-        yield from (repo["name"] for repo in page)
+        )
+    )
 
 
-def write_workflow_runs(repo, session, output_dir):
+def get_workflow_runs_pages(repo, session):
     first_page_url = WORKFLOW_RUNS_URL_TEMPLATE.format(repo=repo)
-    query_time = int(time.time())
-    for page_number, response in enumerate(
-        get_all_pages_with_retry(
+    yield from (
+        response.json()["workflow_runs"]
+        for response in get_all_pages_with_retry(
             session.get, first_page_url, params={"format": "json", "per_page": 100}
-        ),
-        start=1,
-    ):
-        page = response.json()["workflow_runs"]
-        write_page(page, output_dir / str(query_time), page_number)
-        for run in page:
-            write_run(run, output_dir / str(query_time))
+        )
+    )
 
 
 def get_latest_run_filepaths(repo_dir):
@@ -156,9 +147,22 @@ def get_records(repo_dir):
 
 
 def main(session, workflows_dir):
-    repo_names = list(get_repo_names(session, workflows_dir / "repos"))
-    for repo in repo_names:
-        write_workflow_runs(repo, session, workflows_dir / repo)
+    # Use the same timestamp to name all directories in this extraction
+    timestamp = int(time.time())
+    repos_pages = get_repos_pages(session)
+    repo_names = []
+    for page_number, repos_page in enumerate(repos_pages, start=1):
+        write_page(repos_page, workflows_dir / "repos" / str(timestamp), page_number)
+        for repo in (repo["name"] for repo in repos_page):
+            runs_pages = get_workflow_runs_pages(repo, session)
+            for page_number, runs_page in enumerate(runs_pages, start=1):
+                write_page(
+                    runs_page, workflows_dir / repo / str(timestamp), page_number
+                )
+                for run in runs_page:
+                    write_run(run, workflows_dir / repo / str(timestamp))
+            repo_names.append(repo)
+
     records = itertools.chain(
         *[get_records(workflows_dir / repo) for repo in repo_names]
     )
