@@ -1,5 +1,6 @@
 import pathlib
 
+import pytest
 import requests
 
 from tasks import get_workflow_runs, io
@@ -28,8 +29,8 @@ def test_github_api_session_init(monkeypatch):
 
 def test_github_api_session_init_when_no_token(monkeypatch):
     monkeypatch.delenv("GITHUB_WORKFLOW_RUNS_TOKEN", raising=False)
-    session = get_workflow_runs.GitHubAPISession()
-    assert "Authorization" not in session.headers
+    with pytest.raises(KeyError):
+        get_workflow_runs.GitHubAPISession()
 
 
 def test_retry_when_all_fail(monkeypatch):

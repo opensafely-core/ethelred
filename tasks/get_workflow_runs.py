@@ -36,8 +36,8 @@ def write_log(message):  # pragma: no cover
 class GitHubAPISession(requests.Session):
     def __init__(self, token=None):
         super().__init__()
-        if token := os.environ.get("GITHUB_WORKFLOW_RUNS_TOKEN"):
-            self.headers.update({"Authorization": f"Bearer {token}"})
+        token = os.environ["GITHUB_WORKFLOW_RUNS_TOKEN"]
+        self.headers.update({"Authorization": f"Bearer {token}"})
 
 
 def retry(log, max_retries=3, backoff_seconds=0.5):
