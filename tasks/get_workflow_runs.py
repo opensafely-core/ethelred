@@ -66,6 +66,9 @@ class SessionWithRetry:
                     print(f"Maximum retries reached ({self.max_retries}).")
                     return response
 
+    def close(self):
+        self.session.close()
+
 
 def get_pages(session, first_page_url):
     url = first_page_url
@@ -124,6 +127,7 @@ def extract(session, output_dir, datetime_, write_function):
 
     for file in itertools.chain(*file_iterables):
         write_function(file.text, file.filepath)
+    session.close()
 
 
 def get_names_of_extracted_repos(workflows_dir):

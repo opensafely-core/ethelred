@@ -32,6 +32,18 @@ class MockErrorResponse:
         raise Exception(self.error)
 
 
+class MockSession:
+    def __init__(self, responses):
+        self.responses = responses
+        self.closed = False
+
+    def get(self, url):
+        return self.responses[url]
+
+    def close(self):
+        self.closed = True
+
+
 def test_github_api_session_init(monkeypatch):
     monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "test_token")
     session = get_workflow_runs.GitHubAPISession()
@@ -181,13 +193,16 @@ def test_extract():
         {"total_count": 2, "workflow_runs": [{"id": 1}, {"id": 2}]}
     )
     repo_2_runs_page = MockResponse({"total_count": 0, "workflow_runs": []})
-    session = {
-        f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos": repos_page_1,
-        "repos?page=2": repos_page_2,
-        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_1/actions/runs": repo_1_runs_page,
-        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_2/actions/runs": repo_2_runs_page,
-    }
+
     output_dir = pathlib.Path("test_dir")
+    session = MockSession(
+        {
+            f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos": repos_page_1,
+            "repos?page=2": repos_page_2,
+            f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_1/actions/runs": repo_1_runs_page,
+            f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_2/actions/runs": repo_2_runs_page,
+        }
+    )
     get_workflow_runs.extract(
         session, output_dir, datetime.datetime(2025, 1, 1), mock_write
     )
@@ -200,6 +215,7 @@ def test_extract():
         "test_dir/repo_1/20250101-000000Z/runs/2.json": '{"id": 2}',
         "test_dir/repo_2/20250101-000000Z/pages/1.json": '{"total_count": 0, "workflow_runs": []}',
     }
+    assert session.closed
 
 
 def test_get_names_of_extracted_repos(tmpdir):
@@ -297,10 +313,12 @@ def test_main(tmpdir):
     repos_page = MockResponse([{"name": "test_repo"}])
     repo_1_runs_page = MockResponse({"total_count": 1, "workflow_runs": [run]})
 
-    session = {
-        f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos": repos_page,
-        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/test_repo/actions/runs": repo_1_runs_page,
-    }
+    session = MockSession(
+        {
+            f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos": repos_page,
+            f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/test_repo/actions/runs": repo_1_runs_page,
+        }
+    )
 
     get_workflow_runs.main(session, workflows_dir, now_function=mock_now)
 
