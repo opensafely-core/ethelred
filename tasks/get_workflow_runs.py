@@ -171,5 +171,5 @@ def main(session, workflows_dir, now_function=datetime.datetime.now):
 
 
 if __name__ == "__main__":
-    session = GitHubAPISession()
-    main(session, DATA_DIR / "workflow_runs")
+    with GitHubAPISession() as session:
+        main(session, DATA_DIR / "workflow_runs")
