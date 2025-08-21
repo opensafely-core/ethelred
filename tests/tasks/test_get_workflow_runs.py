@@ -12,10 +12,6 @@ class MockResponse:
         self.json_data = json_data
         self.status_code = 200
 
-    @property
-    def text(self):
-        return json.dumps(self.json_data)
-
     def json(self):
         return self.json_data
 
@@ -120,17 +116,16 @@ def test_get_pages():
     assert page_2.json_data == ["page", "2", "data"]
 
 
-def test_get_repo_names():
+def test_get_repos():
     page_1 = MockResponse([{"name": "repo_1"}], next_url="repos?page=2")
     page_2 = MockResponse([{"name": "repo_2"}])
     session = {
         f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos": page_1,
         "repos?page=2": page_2,
     }
-    pages, repo_names = get_workflow_runs.get_repo_names(session)
+    repos = get_workflow_runs.get_repos(session)
 
-    assert list(pages) == [page_1, page_2]
-    assert list(repo_names) == ["repo_1", "repo_2"]
+    assert list(repos) == [{"name": "repo_1"}, {"name": "repo_2"}]
 
 
 def test_get_repo_workflow_runs():
@@ -142,31 +137,9 @@ def test_get_repo_workflow_runs():
         f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_1/actions/runs": page_1,
         "page_2_url": page_2,
     }
-    pages, workflow_runs = get_workflow_runs.get_repo_workflow_runs("repo_1", session)
+    workflow_runs = get_workflow_runs.get_repo_workflow_runs("repo_1", session)
 
-    assert list(pages) == [page_1, page_2]
     assert list(workflow_runs) == [{"id": 1}, {"id": 2}]
-
-
-def test_get_page_files():
-    pages = iter([MockResponse(["data_1"]), MockResponse(["data_2"])])
-    files = get_workflow_runs.get_page_files(pages, pathlib.Path("test_dir"))
-
-    assert list(files) == [
-        get_workflow_runs.File(pathlib.Path("test_dir/pages/1.json"), '["data_1"]'),
-        get_workflow_runs.File(pathlib.Path("test_dir/pages/2.json"), '["data_2"]'),
-    ]
-
-
-def test_get_run_files():
-    files = get_workflow_runs.get_run_files(
-        [{"id": 1}, {"id": 2}], pathlib.Path("test_dir")
-    )
-
-    assert list(files) == [
-        get_workflow_runs.File(pathlib.Path("test_dir/runs/1.json"), '{"id": 1}'),
-        get_workflow_runs.File(pathlib.Path("test_dir/runs/2.json"), '{"id": 2}'),
-    ]
 
 
 def test_extract():
@@ -193,30 +166,28 @@ def test_extract():
     )
 
     assert mock_file_system == {
-        "test_dir/repos/20250101-000000Z/pages/1.json": '[{"name": "repo_1"}]',
-        "test_dir/repos/20250101-000000Z/pages/2.json": '[{"name": "repo_2"}]',
-        "test_dir/repo_1/20250101-000000Z/pages/1.json": '{"total_count": 2, "workflow_runs": [{"id": 1}, {"id": 2}]}',
-        "test_dir/repo_1/20250101-000000Z/runs/1.json": '{"id": 1}',
-        "test_dir/repo_1/20250101-000000Z/runs/2.json": '{"id": 2}',
-        "test_dir/repo_2/20250101-000000Z/pages/1.json": '{"total_count": 0, "workflow_runs": []}',
+        "test_dir/repos/20250101-000000Z/repo_1.json": '{"name": "repo_1"}',
+        "test_dir/repos/20250101-000000Z/repo_2.json": '{"name": "repo_2"}',
+        "test_dir/runs/repo_1/20250101-000000Z/1.json": '{"id": 1}',
+        "test_dir/runs/repo_1/20250101-000000Z/2.json": '{"id": 2}',
     }
 
 
 def test_get_names_of_extracted_repos(tmpdir):
-    workflows_dir = pathlib.Path(tmpdir)
-    (workflows_dir / "repo_1").mkdir(parents=True)
-    (workflows_dir / "repo_2").mkdir(parents=True)
+    runs_dir = pathlib.Path(tmpdir)
+    (runs_dir / "repo_1").mkdir(parents=True)
+    (runs_dir / "repo_2").mkdir(parents=True)
 
-    extracted_repos = get_workflow_runs.get_names_of_extracted_repos(workflows_dir)
+    extracted_repos = get_workflow_runs.get_names_of_extracted_repos(runs_dir)
 
     assert extracted_repos == ["repo_1", "repo_2"]
 
 
 def test_load_latest_workflow_runs(tmpdir):
     repo_dir = pathlib.Path(tmpdir) / "repo_1"
-    older_dir = repo_dir / "20250101-000000Z" / "runs"
+    older_dir = repo_dir / "20250101-000000Z"
     older_dir.mkdir(parents=True)
-    newer_dir = repo_dir / "20250102-000000Z" / "runs"
+    newer_dir = repo_dir / "20250102-000000Z"
     newer_dir.mkdir(parents=True)
 
     (older_dir / "1.json").write_text('{"id": 1,"status": "completed"}')
@@ -249,9 +220,9 @@ def test_get_records(tmpdir):
         },
     }
     # Timestamp handling is tested elsewhere so only one timestamp per repo here
-    workflows_dir = pathlib.Path(tmpdir)
-    repo_1_dir = workflows_dir / "repo_1" / "20250101-000000Z" / "runs"
-    repo_2_dir = workflows_dir / "repo_2" / "20250101-000000Z" / "runs"
+    runs_dir = pathlib.Path(tmpdir)
+    repo_1_dir = runs_dir / "repo_1" / "20250101-000000Z"
+    repo_2_dir = runs_dir / "repo_2" / "20250101-000000Z"
     repo_1_dir.mkdir(parents=True)
     repo_2_dir.mkdir(parents=True)
 
@@ -262,7 +233,7 @@ def test_get_records(tmpdir):
     repo_2_run_3 = template | {"id": 3, "repository": {"name": "repo_2"}}
     (repo_2_dir / "3.json").write_text(json.dumps(repo_2_run_3))
 
-    records = get_workflow_runs.get_records(workflows_dir)
+    records = get_workflow_runs.get_records(runs_dir)
     record_1, record_2, record_3 = sorted(records, key=lambda r: r.id)
 
     assert isinstance(records, types.GeneratorType)
@@ -304,24 +275,18 @@ def test_main(tmpdir):
 
     get_workflow_runs.main(session, workflows_dir, now_function=mock_now)
 
-    with open(workflows_dir / "repos" / "20250101-000000Z" / "pages" / "1.json") as f:
+    with open(workflows_dir / "repos" / "20250101-000000Z" / "test_repo.json") as f:
         repo_page = json.load(f)
 
     with open(
-        workflows_dir / "test_repo" / "20250101-000000Z" / "pages" / "1.json"
-    ) as f:
-        run_page = json.load(f)
-
-    with open(
-        workflows_dir / "test_repo" / "20250101-000000Z" / "runs" / "1.json"
+        workflows_dir / "runs" / "test_repo" / "20250101-000000Z" / "1.json"
     ) as f:
         run_file = json.load(f)
 
     with open(workflows_dir / "workflow_runs.csv") as f:
         csv_file = f.read()
 
-    assert repo_page == [{"name": "test_repo"}]
-    assert run_page == {"total_count": 1, "workflow_runs": [run]}
+    assert repo_page == {"name": "test_repo"}
     assert run_file == run
     assert csv_file == (
         "id,repo,name,head_sha,status,conclusion,created_at,updated_at,run_started_at\n"
