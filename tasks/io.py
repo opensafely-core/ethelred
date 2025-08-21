@@ -32,10 +32,7 @@ def _write_csv(records, f_path):
 
 def _write_json(obj, f_path):
     with f_path.open("w") as f:
-        if isinstance(obj, str):  # may already be serialized
-            f.write(obj)
-        else:
-            json.dump(obj, f)
+        json.dump(obj, f)
 
 
 def read(f_path):
