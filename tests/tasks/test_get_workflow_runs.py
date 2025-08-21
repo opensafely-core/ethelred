@@ -112,8 +112,8 @@ def test_get_pages():
 
     assert isinstance(pages, types.GeneratorType)
     page_1, page_2 = list(pages)
-    assert page_1.json_data == ["page", "1", "data"]
-    assert page_2.json_data == ["page", "2", "data"]
+    assert page_1 == ["page", "1", "data"]
+    assert page_2 == ["page", "2", "data"]
 
 
 def test_get_repos():

@@ -68,7 +68,7 @@ def get_pages(session, first_page_url):
     url = first_page_url
     while True:
         response = session.get(url)
-        yield response
+        yield response.json()
         if next_link := response.links.get("next"):
             url = next_link["url"]
         else:
@@ -77,14 +77,14 @@ def get_pages(session, first_page_url):
 
 def get_repos(session):
     for page in get_pages(session, f"https://api.github.com/orgs/{GITHUB_ORG}/repos"):
-        yield from page.json()
+        yield from page
 
 
 def get_repo_workflow_runs(repo_name, session):
     for page in get_pages(
         session, f"https://api.github.com/repos/{GITHUB_ORG}/{repo_name}/actions/runs"
     ):
-        yield from page.json()["workflow_runs"]
+        yield from page["workflow_runs"]
 
 
 def extract(session, output_dir, datetime_):
