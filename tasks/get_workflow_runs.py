@@ -1,6 +1,5 @@
 import collections
 import datetime
-import json
 import os
 import time
 
@@ -113,8 +112,7 @@ def load_latest_workflow_runs(repo_dir):
         if filepath.name in seen:
             continue
         seen.add(filepath.name)
-        with filepath.open() as f:
-            yield json.load(f)
+        yield io.read(filepath)
 
 
 def get_records(runs_dir):

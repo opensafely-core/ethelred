@@ -277,19 +277,16 @@ def test_main(tmpdir):
 
     get_workflow_runs.main(session, workflows_dir, now_function=mock_now)
 
-    with open(workflows_dir / "repos" / "20250101-000000Z" / "test_repo.json") as f:
-        repo_page = json.load(f)
-
-    with open(
-        workflows_dir / "runs" / "test_repo" / "20250101-000000Z" / "1.json"
-    ) as f:
-        run_file = json.load(f)
-
     with open(workflows_dir / "workflow_runs.csv") as f:
         csv_file = f.read()
 
-    assert repo_page == {"name": "test_repo"}
-    assert run_file == run
+    assert io.read(workflows_dir / "repos" / "20250101-000000Z" / "test_repo.json") == {
+        "name": "test_repo"
+    }
+    assert (
+        io.read(workflows_dir / "runs" / "test_repo" / "20250101-000000Z" / "1.json")
+        == run
+    )
     assert csv_file == (
         "id,repo,name,head_sha,status,conclusion,created_at,updated_at,run_started_at\n"
         "1,test_repo,My Workflow,12345678,pending,,2025-01-01T00:00:00Z,2025-01-01T00:00:00Z,2025-01-01T00:00:00Z\n"
