@@ -3,7 +3,7 @@ import json
 import pathlib
 import types
 
-from tasks import get_workflow_runs
+from tasks import get_workflow_runs, io
 
 
 class MockResponse:
@@ -142,12 +142,7 @@ def test_get_repo_workflow_runs():
     assert list(workflow_runs) == [{"id": 1}, {"id": 2}]
 
 
-def test_extract():
-    mock_file_system = {}
-
-    def mock_write(obj, f_path):
-        mock_file_system[str(f_path)] = obj
-
+def test_extract(tmpdir):
     repos_page_1 = MockResponse([{"name": "repo_1"}], next_url="repos?page=2")
     repos_page_2 = MockResponse([{"name": "repo_2"}])
     repo_1_runs_page = MockResponse(
@@ -160,16 +155,23 @@ def test_extract():
         f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_1/actions/runs": repo_1_runs_page,
         f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_2/actions/runs": repo_2_runs_page,
     }
-    output_dir = pathlib.Path("test_dir")
-    get_workflow_runs.extract(
-        session, output_dir, datetime.datetime(2025, 1, 1), mock_write
-    )
+    output_dir = pathlib.Path(tmpdir)
+    get_workflow_runs.extract(session, output_dir, datetime.datetime(2025, 1, 1))
 
-    assert mock_file_system == {
-        "test_dir/repos/20250101-000000Z/repo_1.json": '{"name": "repo_1"}',
-        "test_dir/repos/20250101-000000Z/repo_2.json": '{"name": "repo_2"}',
-        "test_dir/runs/repo_1/20250101-000000Z/1.json": '{"id": 1}',
-        "test_dir/runs/repo_1/20250101-000000Z/2.json": '{"id": 2}',
+    assert io.read(output_dir / "repos" / "20250101-000000Z" / "repo_1.json") == {
+        "name": "repo_1"
+    }
+    assert io.read(output_dir / "repos" / "20250101-000000Z" / "repo_2.json") == {
+        "name": "repo_2"
+    }
+    assert io.read(output_dir / "repos" / "20250101-000000Z" / "repo_2.json") == {
+        "name": "repo_2"
+    }
+    assert io.read(output_dir / "runs" / "repo_1" / "20250101-000000Z" / "1.json") == {
+        "id": 1
+    }
+    assert io.read(output_dir / "runs" / "repo_1" / "20250101-000000Z" / "2.json") == {
+        "id": 2
     }
 
 

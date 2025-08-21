@@ -88,18 +88,16 @@ def get_repo_workflow_runs(repo_name, session):
         yield from page.json()["workflow_runs"]
 
 
-def extract(session, output_dir, datetime_, write_function):
+def extract(session, output_dir, datetime_):
     timestamp = datetime_.strftime("%Y%m%d-%H%M%SZ")
     for repo in get_repos(session):
         repo_name = repo["name"]
-        write_function(
-            json.dumps(repo), output_dir / "repos" / timestamp / f"{repo_name}.json"
-        )
+        io.write(repo, output_dir / "repos" / timestamp / f"{repo_name}.json")
 
-        for run in get_repo_workflow_runs(repo_name, session):
-            write_function(
-                json.dumps(run),
-                output_dir / "runs" / repo_name / timestamp / f"{run['id']}.json",
+        runs = get_repo_workflow_runs(repo_name, session)
+        for run in runs:
+            io.write(
+                run, output_dir / "runs" / repo_name / timestamp / f"{run['id']}.json"
             )
 
 
@@ -140,7 +138,7 @@ def get_records(runs_dir):
 
 def main(session, workflows_dir, now_function=datetime.datetime.now):
     # Extract and write data to disk
-    extract(SessionWithRetry(session), workflows_dir, now_function(), io.write)
+    extract(SessionWithRetry(session), workflows_dir, now_function())
     # Get latest workflow runs from disk (may include past extractions)
     records = get_records(workflows_dir / "runs")
     # Load
