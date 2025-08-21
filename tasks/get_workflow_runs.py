@@ -58,7 +58,7 @@ def get_with_retry(
                 sleep_function(delay_seconds)
             else:
                 print(f"Maximum retries reached ({max_retries}).")
-                return response
+                raise
 
 
 def get_pages(session, first_page_url):

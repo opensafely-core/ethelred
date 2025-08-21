@@ -3,6 +3,8 @@ import json
 import pathlib
 import types
 
+import pytest
+
 from tasks import get_workflow_runs, io
 
 
@@ -58,10 +60,12 @@ def test_get_with_retry_when_fail(capsys):
         return
 
     session = {"invalid_url": MockErrorResponse("Network error")}
-    response = get_workflow_runs.get_with_retry(
-        session, "invalid_url", 3, 0.5, sleep_function=sleep
-    )
-    assert response.status_code == 400
+
+    with pytest.raises(Exception, match="Network error"):
+        get_workflow_runs.get_with_retry(
+            session, "invalid_url", 3, 0.5, sleep_function=sleep
+        )
+
     assert capsys.readouterr().out == (
         "Error fetching invalid_url: Network error\n"
         "Retrying in 0.5 seconds (retry attempt 1)...\n"
