@@ -34,40 +34,37 @@ class GitHubAPISession(requests.Session):
         self.params.update({"per_page": 100, "format": "json"})
 
 
-class SessionWithRetry:
-    def __init__(
-        self, session, max_retries=3, base_delay_seconds=0.5, sleep_function=time.sleep
-    ):
-        self.session = session
-        self.max_retries = max_retries
-        self.base_delay_seconds = base_delay_seconds
-        self.sleep = sleep_function
-
-    def get(self, url):
-        retry_count = 0
-        while True:
-            try:
-                response = self.session.get(url)
-                response.raise_for_status()
+def get_with_retry(
+    session,
+    url,
+    max_retries=3,
+    base_delay_seconds=0.5,
+    sleep_function=time.sleep,
+):
+    retry_count = 0
+    while True:
+        try:
+            response = session.get(url)
+            response.raise_for_status()
+            return response
+        except Exception as error:
+            print(f"Error fetching {url}: {error}")
+            if retry_count < max_retries:
+                delay_seconds = base_delay_seconds * (2**retry_count)
+                print(
+                    f"Retrying in {delay_seconds} seconds (retry attempt {retry_count + 1})..."
+                )
+                retry_count += 1
+                sleep_function(delay_seconds)
+            else:
+                print(f"Maximum retries reached ({max_retries}).")
                 return response
-            except Exception as error:
-                print(f"Error fetching {url}: {error}")
-                if retry_count < self.max_retries:
-                    delay_seconds = self.base_delay_seconds * (2**retry_count)
-                    print(
-                        f"Retrying in {delay_seconds} seconds (retry attempt {retry_count + 1})..."
-                    )
-                    retry_count += 1
-                    self.sleep(delay_seconds)
-                else:
-                    print(f"Maximum retries reached ({self.max_retries}).")
-                    return response
 
 
 def get_pages(session, first_page_url):
     url = first_page_url
     while True:
-        response = session.get(url)
+        response = get_with_retry(session, url)
         yield response.json()
         if next_link := response.links.get("next"):
             url = next_link["url"]
@@ -136,9 +133,7 @@ def get_records(runs_dir):
 
 def main(session, workflows_dir, now_function=datetime.datetime.now):
     # Extract and write data to disk
-    extract(
-        SessionWithRetry(session), workflows_dir, now_function(datetime.timezone.utc)
-    )
+    extract(session, workflows_dir, now_function(datetime.timezone.utc))
     # Get latest workflow runs from disk (may include past extractions)
     records = get_records(workflows_dir / "runs")
     # Load
