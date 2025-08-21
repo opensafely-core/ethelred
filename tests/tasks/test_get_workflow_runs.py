@@ -117,43 +117,19 @@ def test_get_pages():
     assert page_2 == ["page", "2", "data"]
 
 
-def test_get_repos():
-    page_1 = MockResponse([{"name": "repo_1"}], next_url="repos?page=2")
-    page_2 = MockResponse([{"name": "repo_2"}])
-    session = {
-        f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos": page_1,
-        "repos?page=2": page_2,
-    }
-    repos = get_workflow_runs.get_repos(session)
-
-    assert list(repos) == [{"name": "repo_1"}, {"name": "repo_2"}]
-
-
-def test_get_repo_workflow_runs():
-    page_1 = MockResponse(
-        {"total_count": 2, "workflow_runs": [{"id": 1}]}, next_url="page_2_url"
-    )
-    page_2 = MockResponse({"total_count": 2, "workflow_runs": [{"id": 2}]})
-    session = {
-        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_1/actions/runs": page_1,
-        "page_2_url": page_2,
-    }
-    workflow_runs = get_workflow_runs.get_repo_workflow_runs("repo_1", session)
-
-    assert list(workflow_runs) == [{"id": 1}, {"id": 2}]
-
-
 def test_extract(tmpdir):
     repos_page_1 = MockResponse([{"name": "repo_1"}], next_url="repos?page=2")
     repos_page_2 = MockResponse([{"name": "repo_2"}])
-    repo_1_runs_page = MockResponse(
-        {"total_count": 2, "workflow_runs": [{"id": 1}, {"id": 2}]}
+    repo_1_runs_page_1 = MockResponse(
+        {"total_count": 2, "workflow_runs": [{"id": 1}]}, next_url="runs?page=2"
     )
+    repo_1_runs_page_2 = MockResponse({"total_count": 2, "workflow_runs": [{"id": 2}]})
     repo_2_runs_page = MockResponse({"total_count": 0, "workflow_runs": []})
     session = {
         f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos": repos_page_1,
         "repos?page=2": repos_page_2,
-        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_1/actions/runs": repo_1_runs_page,
+        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_1/actions/runs": repo_1_runs_page_1,
+        "runs?page=2": repo_1_runs_page_2,
         f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_2/actions/runs": repo_2_runs_page,
     }
     output_dir = pathlib.Path(tmpdir)
