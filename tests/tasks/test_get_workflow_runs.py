@@ -158,19 +158,19 @@ def test_extract(tmpdir):
     output_dir = pathlib.Path(tmpdir)
     get_workflow_runs.extract(session, output_dir, datetime.datetime(2025, 1, 1))
 
-    assert io.read(output_dir / "repos" / "20250101-000000Z" / "repo_1.json") == {
+    assert io.read(output_dir / "repos" / "20250101-000000" / "repo_1.json") == {
         "name": "repo_1"
     }
-    assert io.read(output_dir / "repos" / "20250101-000000Z" / "repo_2.json") == {
+    assert io.read(output_dir / "repos" / "20250101-000000" / "repo_2.json") == {
         "name": "repo_2"
     }
-    assert io.read(output_dir / "repos" / "20250101-000000Z" / "repo_2.json") == {
+    assert io.read(output_dir / "repos" / "20250101-000000" / "repo_2.json") == {
         "name": "repo_2"
     }
-    assert io.read(output_dir / "runs" / "repo_1" / "20250101-000000Z" / "1.json") == {
+    assert io.read(output_dir / "runs" / "repo_1" / "20250101-000000" / "1.json") == {
         "id": 1
     }
-    assert io.read(output_dir / "runs" / "repo_1" / "20250101-000000Z" / "2.json") == {
+    assert io.read(output_dir / "runs" / "repo_1" / "20250101-000000" / "2.json") == {
         "id": 2
     }
 
@@ -187,9 +187,9 @@ def test_get_names_of_extracted_repos(tmpdir):
 
 def test_load_latest_workflow_runs(tmpdir):
     repo_dir = pathlib.Path(tmpdir) / "repo_1"
-    older_dir = repo_dir / "20250101-000000Z"
+    older_dir = repo_dir / "20250101-000000"
     older_dir.mkdir(parents=True)
-    newer_dir = repo_dir / "20250102-000000Z"
+    newer_dir = repo_dir / "20250102-000000"
     newer_dir.mkdir(parents=True)
 
     (older_dir / "1.json").write_text('{"id": 1,"status": "completed"}')
@@ -223,8 +223,8 @@ def test_get_records(tmpdir):
     }
     # Timestamp handling is tested elsewhere so only one timestamp per repo here
     runs_dir = pathlib.Path(tmpdir)
-    repo_1_dir = runs_dir / "repo_1" / "20250101-000000Z"
-    repo_2_dir = runs_dir / "repo_2" / "20250101-000000Z"
+    repo_1_dir = runs_dir / "repo_1" / "20250101-000000"
+    repo_2_dir = runs_dir / "repo_2" / "20250101-000000"
     repo_1_dir.mkdir(parents=True)
     repo_2_dir.mkdir(parents=True)
 
@@ -252,8 +252,8 @@ def test_main(tmpdir):
     # Run through pipeline for a single workflow run
     workflows_dir = pathlib.Path(tmpdir)
 
-    def mock_now():
-        return datetime.datetime(2025, 1, 1)
+    def mock_now(timezone):
+        return datetime.datetime(2025, 1, 1, tzinfo=timezone)
 
     run = {
         "id": 1,
@@ -280,11 +280,11 @@ def test_main(tmpdir):
     with open(workflows_dir / "workflow_runs.csv") as f:
         csv_file = f.read()
 
-    assert io.read(workflows_dir / "repos" / "20250101-000000Z" / "test_repo.json") == {
+    assert io.read(workflows_dir / "repos" / "20250101-000000" / "test_repo.json") == {
         "name": "test_repo"
     }
     assert (
-        io.read(workflows_dir / "runs" / "test_repo" / "20250101-000000Z" / "1.json")
+        io.read(workflows_dir / "runs" / "test_repo" / "20250101-000000" / "1.json")
         == run
     )
     assert csv_file == (
