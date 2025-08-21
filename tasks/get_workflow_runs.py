@@ -1,6 +1,5 @@
 import collections
 import datetime
-import itertools
 import json
 import os
 import time
@@ -12,7 +11,6 @@ from . import DATA_DIR, io
 
 GITHUB_ORG = "opensafely"
 
-File = collections.namedtuple("File", ["filepath", "text"])
 Record = collections.namedtuple(
     "Record",
     [
@@ -78,61 +76,40 @@ def get_pages(session, first_page_url):
             break
 
 
-def _extract_repo_names_from_pages(repos_pages):
-    decoded_pages = (page.json() for page in repos_pages)
-    return (repo["name"] for page in decoded_pages for repo in page)
-
-
-def get_repo_names(session):
-    url = f"https://api.github.com/orgs/{GITHUB_ORG}/repos"
-    pages_1, pages_2 = itertools.tee(get_pages(session, url))
-    return pages_1, _extract_repo_names_from_pages(pages_2)
-
-
-def _extract_workflow_runs_from_pages(workflow_runs_pages):
-    decoded_pages = (page.json() for page in workflow_runs_pages)
-    return (run for page in decoded_pages for run in page["workflow_runs"])
+def get_repos(session):
+    for page in get_pages(session, f"https://api.github.com/orgs/{GITHUB_ORG}/repos"):
+        yield from page.json()
 
 
 def get_repo_workflow_runs(repo_name, session):
-    url = f"https://api.github.com/repos/{GITHUB_ORG}/{repo_name}/actions/runs"
-    pages_1, pages_2 = itertools.tee(get_pages(session, url))
-    return pages_1, _extract_workflow_runs_from_pages(pages_2)
-
-
-def get_page_files(pages, output_dir):
-    for page_number, page in enumerate(pages, start=1):
-        yield File(output_dir / "pages" / f"{page_number}.json", page.text)
-
-
-def get_run_files(workflow_runs, output_dir):
-    for run in workflow_runs:
-        yield File(output_dir / "runs" / f"{run['id']}.json", json.dumps(run))
+    for page in get_pages(
+        session, f"https://api.github.com/repos/{GITHUB_ORG}/{repo_name}/actions/runs"
+    ):
+        yield from page.json()["workflow_runs"]
 
 
 def extract(session, output_dir, datetime_, write_function):
     timestamp = datetime_.strftime("%Y%m%d-%H%M%SZ")
-    repo_pages, repo_names = get_repo_names(session)
-    repo_files = get_page_files(repo_pages, output_dir / "repos" / timestamp)
+    for repo in get_repos(session):
+        repo_name = repo["name"]
+        write_function(
+            json.dumps(repo), output_dir / "repos" / timestamp / f"{repo_name}.json"
+        )
 
-    file_iterables = [repo_files]
-    for repo_name in repo_names:
-        run_pages, runs = get_repo_workflow_runs(repo_name, session)
-        page_files = get_page_files(run_pages, output_dir / repo_name / timestamp)
-        run_files = get_run_files(runs, output_dir / repo_name / timestamp)
-        file_iterables.extend([page_files, run_files])
-
-    for file in itertools.chain(*file_iterables):
-        write_function(file.text, file.filepath)
+        for run in get_repo_workflow_runs(repo_name, session):
+            write_function(
+                json.dumps(run),
+                output_dir / "runs" / repo_name / timestamp / f"{run['id']}.json",
+            )
 
 
-def get_names_of_extracted_repos(workflows_dir):
+def get_names_of_extracted_repos(runs_dir):
     # Being deterministic is more important than saving memory for a couple of strings
-    return sorted(repo.name for repo in workflows_dir.iterdir() if repo.is_dir())
+    return sorted(repo.name for repo in runs_dir.iterdir() if repo.is_dir())
 
 
 def load_latest_workflow_runs(repo_dir):
-    filepaths = sorted(repo_dir.glob("*/runs/*.json"), reverse=True)
+    filepaths = sorted(repo_dir.glob("*/*.json"), reverse=True)
     seen = set()
     for filepath in filepaths:
         if filepath.name in seen:
@@ -142,10 +119,10 @@ def load_latest_workflow_runs(repo_dir):
             yield json.load(f)
 
 
-def get_records(workflows_dir):
-    repos = get_names_of_extracted_repos(workflows_dir)
+def get_records(runs_dir):
+    repos = get_names_of_extracted_repos(runs_dir)
     workflow_runs = (
-        run for repo in repos for run in load_latest_workflow_runs(workflows_dir / repo)
+        run for repo in repos for run in load_latest_workflow_runs(runs_dir / repo)
     )
     for run in workflow_runs:
         yield Record(
@@ -165,7 +142,7 @@ def main(session, workflows_dir, now_function=datetime.datetime.now):
     # Extract and write data to disk
     extract(SessionWithRetry(session), workflows_dir, now_function(), io.write)
     # Get latest workflow runs from disk (may include past extractions)
-    records = get_records(workflows_dir)
+    records = get_records(workflows_dir / "runs")
     # Load
     io.write(records, workflows_dir / "workflow_runs.csv")
 
