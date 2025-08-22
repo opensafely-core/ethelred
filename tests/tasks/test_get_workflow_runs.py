@@ -74,7 +74,7 @@ def test_get_with_retry_when_fail_then_succeed(capsys):
 
 
 @responses.activate
-def test_get_pages(monkeypatch):
+def test_fetch_pages(monkeypatch):
     monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "test_token")
     match = [
         responses.matchers.header_matcher({"Authorization": "Bearer test_token"}),
@@ -94,7 +94,7 @@ def test_get_pages(monkeypatch):
         match=match,
     )
 
-    pages = get_workflow_runs.get_pages("https://test.url")
+    pages = get_workflow_runs.fetch_pages("https://test.url")
 
     assert isinstance(pages, types.GeneratorType)
     page_1, page_2 = list(pages)
@@ -104,7 +104,7 @@ def test_get_pages(monkeypatch):
 
 @responses.activate
 def test_extract(tmpdir, monkeypatch):
-    # Environment variable only needs to be available; correct usage tested in test_get_pages
+    # Environment variable only needs to be available; correct usage tested in test_fetch_pages
     monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "")
 
     responses.add(
@@ -230,7 +230,7 @@ def test_get_records(tmpdir):
 
 @responses.activate
 def test_main(tmpdir, monkeypatch):
-    # Environment variable only needs to be available; correct usage tested in test_get_pages
+    # Environment variable only needs to be available; correct usage tested in test_fetch_pages
     monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "")
 
     # Run through pipeline for a single workflow run
