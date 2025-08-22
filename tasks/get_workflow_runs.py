@@ -56,7 +56,7 @@ def get_with_retry(
                 raise
 
 
-def get_pages(first_page_url):
+def fetch_pages(first_page_url):
     url = first_page_url
     while True:
         response = get_with_retry(
@@ -71,13 +71,13 @@ def get_pages(first_page_url):
             break
 
 
-def get_repos(org):
-    for page in get_pages(f"https://api.github.com/orgs/{org}/repos"):
+def fetch_repos(org):
+    for page in fetch_pages(f"https://api.github.com/orgs/{org}/repos"):
         yield from page
 
 
-def get_repo_workflow_runs(org, repo_name):
-    for page in get_pages(
+def fetch_workflow_runs_for_repo(org, repo_name):
+    for page in fetch_pages(
         f"https://api.github.com/repos/{org}/{repo_name}/actions/runs"
     ):
         yield from page["workflow_runs"]
@@ -85,11 +85,11 @@ def get_repo_workflow_runs(org, repo_name):
 
 def extract(org, output_dir, datetime_):
     timestamp = datetime_.strftime("%Y%m%d-%H%M%S")
-    for repo in get_repos(org):
+    for repo in fetch_repos(org):
         repo_name = repo["name"]
         io.write(repo, output_dir / "repos" / timestamp / f"{repo_name}.json")
 
-        runs = get_repo_workflow_runs(org, repo_name)
+        runs = fetch_workflow_runs_for_repo(org, repo_name)
         for run in runs:
             io.write(
                 run, output_dir / "runs" / repo_name / timestamp / f"{run['id']}.json"
