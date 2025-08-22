@@ -155,35 +155,23 @@ def test_extract(tmpdir, monkeypatch):
     }
 
 
-def test_get_names_of_extracted_repos(tmpdir):
-    runs_dir = pathlib.Path(tmpdir)
-    (runs_dir / "repo_1").mkdir(parents=True)
-    (runs_dir / "repo_2").mkdir(parents=True)
+def test_filter_workflow_run_filepaths():
+    older_dir = pathlib.Path("repo_1") / "20250101-000000"
+    newer_dir = pathlib.Path("repo_1") / "20250102-000000"
 
-    extracted_repos = get_workflow_runs.get_names_of_extracted_repos(runs_dir)
+    filepaths = [
+        older_dir / "1.json",
+        older_dir / "2.json",
+        newer_dir / "2.json",
+        newer_dir / "3.json",
+    ]
 
-    assert extracted_repos == ["repo_1", "repo_2"]
+    filtered = get_workflow_runs.filter_workflow_run_filepaths(filepaths)
 
-
-def test_load_latest_workflow_runs(tmpdir):
-    repo_dir = pathlib.Path(tmpdir) / "repo_1"
-    older_dir = repo_dir / "20250101-000000"
-    older_dir.mkdir(parents=True)
-    newer_dir = repo_dir / "20250102-000000"
-    newer_dir.mkdir(parents=True)
-
-    (older_dir / "1.json").write_text('{"id": 1,"status": "completed"}')
-    (older_dir / "2.json").write_text('{"id": 2, "status": "running"}')
-    (newer_dir / "2.json").write_text('{"id": 2, "status": "completed"}')
-    (newer_dir / "3.json").write_text('{"id": 3, "status": "running"}')
-
-    runs = get_workflow_runs.load_latest_workflow_runs(repo_dir)
-
-    assert isinstance(runs, types.GeneratorType)
-    assert list(runs) == [
-        {"id": 3, "status": "running"},
-        {"id": 2, "status": "completed"},
-        {"id": 1, "status": "completed"},
+    assert list(filtered) == [
+        newer_dir / "3.json",
+        newer_dir / "2.json",
+        older_dir / "1.json",
     ]
 
 
