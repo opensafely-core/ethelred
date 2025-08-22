@@ -8,8 +8,6 @@ import requests
 from . import DATA_DIR, io
 
 
-GITHUB_ORG = "opensafely"
-
 Record = collections.namedtuple(
     "Record",
     [
@@ -73,25 +71,25 @@ def get_pages(first_page_url):
             break
 
 
-def get_repos():
-    for page in get_pages(f"https://api.github.com/orgs/{GITHUB_ORG}/repos"):
+def get_repos(org):
+    for page in get_pages(f"https://api.github.com/orgs/{org}/repos"):
         yield from page
 
 
-def get_repo_workflow_runs(repo_name):
+def get_repo_workflow_runs(org, repo_name):
     for page in get_pages(
-        f"https://api.github.com/repos/{GITHUB_ORG}/{repo_name}/actions/runs"
+        f"https://api.github.com/repos/{org}/{repo_name}/actions/runs"
     ):
         yield from page["workflow_runs"]
 
 
-def extract(output_dir, datetime_):
+def extract(org, output_dir, datetime_):
     timestamp = datetime_.strftime("%Y%m%d-%H%M%S")
-    for repo in get_repos():
+    for repo in get_repos(org):
         repo_name = repo["name"]
         io.write(repo, output_dir / "repos" / timestamp / f"{repo_name}.json")
 
-        runs = get_repo_workflow_runs(repo_name)
+        runs = get_repo_workflow_runs(org, repo_name)
         for run in runs:
             io.write(
                 run, output_dir / "runs" / repo_name / timestamp / f"{run['id']}.json"
@@ -132,9 +130,9 @@ def get_records(runs_dir):
         )
 
 
-def main(workflows_dir, now_function=datetime.datetime.now):
+def main(org, workflows_dir, now_function=datetime.datetime.now):
     # Extract and write data to disk
-    extract(workflows_dir, now_function(datetime.timezone.utc))
+    extract(org, workflows_dir, now_function(datetime.timezone.utc))
     # Get latest workflow runs from disk (may include past extractions)
     records = get_records(workflows_dir / "runs")
     # Load
@@ -142,4 +140,4 @@ def main(workflows_dir, now_function=datetime.datetime.now):
 
 
 if __name__ == "__main__":
-    main(DATA_DIR / "workflow_runs")
+    main("opensafely", DATA_DIR / "workflow_runs")
