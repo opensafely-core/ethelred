@@ -26,17 +26,14 @@ Record = collections.namedtuple(
 )
 
 
-class GitHubAPISession(requests.Session):
-    def __init__(self, token=None):
-        super().__init__()
-        token = os.environ["GITHUB_WORKFLOW_RUNS_TOKEN"]
-        self.headers.update({"Authorization": f"Bearer {token}"})
-        self.params.update({"per_page": 100, "format": "json"})
+def get_token():
+    return os.environ["GITHUB_WORKFLOW_RUNS_TOKEN"]
 
 
 def get_with_retry(
-    session,
     url,
+    headers=None,
+    params=None,
     max_retries=3,
     base_delay_seconds=0.5,
     sleep_function=time.sleep,
@@ -44,7 +41,7 @@ def get_with_retry(
     retry_count = 0
     while True:
         try:
-            response = session.get(url)
+            response = requests.get(url, headers=headers, params=params)
             response.raise_for_status()
             return response
         except Exception as error:
@@ -61,10 +58,14 @@ def get_with_retry(
                 raise
 
 
-def get_pages(session, first_page_url):
+def get_pages(first_page_url):
     url = first_page_url
     while True:
-        response = get_with_retry(session, url)
+        response = get_with_retry(
+            url,
+            headers={"Authorization": f"Bearer {get_token()}"},
+            params={"per_page": 100, "format": "json"},
+        )
         yield response.json()
         if next_link := response.links.get("next"):
             url = next_link["url"]
@@ -72,25 +73,25 @@ def get_pages(session, first_page_url):
             break
 
 
-def get_repos(session):
-    for page in get_pages(session, f"https://api.github.com/orgs/{GITHUB_ORG}/repos"):
+def get_repos():
+    for page in get_pages(f"https://api.github.com/orgs/{GITHUB_ORG}/repos"):
         yield from page
 
 
-def get_repo_workflow_runs(repo_name, session):
+def get_repo_workflow_runs(repo_name):
     for page in get_pages(
-        session, f"https://api.github.com/repos/{GITHUB_ORG}/{repo_name}/actions/runs"
+        f"https://api.github.com/repos/{GITHUB_ORG}/{repo_name}/actions/runs"
     ):
         yield from page["workflow_runs"]
 
 
-def extract(session, output_dir, datetime_):
+def extract(output_dir, datetime_):
     timestamp = datetime_.strftime("%Y%m%d-%H%M%S")
-    for repo in get_repos(session):
+    for repo in get_repos():
         repo_name = repo["name"]
         io.write(repo, output_dir / "repos" / timestamp / f"{repo_name}.json")
 
-        runs = get_repo_workflow_runs(repo_name, session)
+        runs = get_repo_workflow_runs(repo_name)
         for run in runs:
             io.write(
                 run, output_dir / "runs" / repo_name / timestamp / f"{run['id']}.json"
@@ -131,9 +132,9 @@ def get_records(runs_dir):
         )
 
 
-def main(session, workflows_dir, now_function=datetime.datetime.now):
+def main(workflows_dir, now_function=datetime.datetime.now):
     # Extract and write data to disk
-    extract(session, workflows_dir, now_function(datetime.timezone.utc))
+    extract(workflows_dir, now_function(datetime.timezone.utc))
     # Get latest workflow runs from disk (may include past extractions)
     records = get_records(workflows_dir / "runs")
     # Load
@@ -141,5 +142,4 @@ def main(session, workflows_dir, now_function=datetime.datetime.now):
 
 
 if __name__ == "__main__":
-    with GitHubAPISession() as session:
-        main(session, DATA_DIR / "workflow_runs")
+    main(DATA_DIR / "workflow_runs")

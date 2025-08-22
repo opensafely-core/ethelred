@@ -4,112 +4,97 @@ import pathlib
 import types
 
 import pytest
+import responses
+import responses.matchers
 
 from tasks import get_workflow_runs, io
 
 
-class MockResponse:
-    def __init__(self, json_data, next_url=None):
-        self.links = {"next": {"url": next_url}} if next_url else {}
-        self.json_data = json_data
-        self.status_code = 200
-
-    def json(self):
-        return self.json_data
-
-    def raise_for_status(self):
-        pass  # Response is valid
-
-
-class MockErrorResponse:
-    def __init__(self, error):
-        self.error = error
-        self.status_code = 400
-
-    def raise_for_status(self):
-        raise Exception(self.error)
-
-
-def test_github_api_session_init(monkeypatch):
-    monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "test_token")
-    session = get_workflow_runs.GitHubAPISession()
-
-    assert session.headers["Authorization"] == "Bearer test_token"
-    assert session.params == {"per_page": 100, "format": "json"}
-
-    session.close()
-
-
+@responses.activate
 def test_get_with_retry_when_successful(capsys):
     def sleep(seconds):  # pragma: no cover
         # Should not be called but if this test fails,
         # we still don't want time.sleep to be called
         return
 
-    session = {"test_url": MockResponse(["data_1", "data_2"])}
+    responses.add(responses.GET, "http://test.url", json=["data_1", "data_2"])
 
-    response = get_workflow_runs.get_with_retry(
-        session, "test_url", 3, 0.5, sleep_function=sleep
-    )
+    response = get_workflow_runs.get_with_retry("http://test.url", sleep_function=sleep)
     assert response.json() == ["data_1", "data_2"]
     assert capsys.readouterr().out == ""
 
 
+@responses.activate
 def test_get_with_retry_when_fail(capsys):
     def sleep(seconds):
         return
 
-    session = {"invalid_url": MockErrorResponse("Network error")}
+    responses.add(responses.GET, "http://invalid.url", status=400)
 
-    with pytest.raises(Exception, match="Network error"):
-        get_workflow_runs.get_with_retry(
-            session, "invalid_url", 3, 0.5, sleep_function=sleep
-        )
+    ERROR = "400 Client Error: Bad Request for url: http://invalid.url/"
+
+    with pytest.raises(Exception, match=ERROR):
+        get_workflow_runs.get_with_retry("http://invalid.url", sleep_function=sleep)
 
     assert capsys.readouterr().out == (
-        "Error fetching invalid_url: Network error\n"
+        f"Error fetching http://invalid.url: {ERROR}\n"
         "Retrying in 0.5 seconds (retry attempt 1)...\n"
-        "Error fetching invalid_url: Network error\n"
+        f"Error fetching http://invalid.url: {ERROR}\n"
         "Retrying in 1.0 seconds (retry attempt 2)...\n"
-        "Error fetching invalid_url: Network error\n"
+        f"Error fetching http://invalid.url: {ERROR}\n"
         "Retrying in 2.0 seconds (retry attempt 3)...\n"
-        "Error fetching invalid_url: Network error\n"
+        f"Error fetching http://invalid.url: {ERROR}\n"
         "Maximum retries reached (3).\n"
     )
 
 
+@responses.activate
 def test_get_with_retry_when_fail_then_succeed(capsys):
     def sleep(seconds):
         return
 
-    responses = {
-        "flaky_url": [MockErrorResponse("Temporary failure")] * 3
-        + [MockResponse(["data_1", "data_2"])]
-    }
+    responses.add(responses.GET, "http://flaky.url", status=500)
+    responses.add(responses.GET, "http://flaky.url", status=500)
+    responses.add(responses.GET, "http://flaky.url", status=500)
+    responses.add(responses.GET, "http://flaky.url", json=["data_1", "data_2"])
 
-    class MockSession:
-        def get(self, url):
-            return responses[url].pop(0)
-
-    session = MockSession()
     response = get_workflow_runs.get_with_retry(
-        session, "flaky_url", 3, 0.5, sleep_function=sleep
+        "http://flaky.url", sleep_function=sleep
     )
 
     assert response.json() == ["data_1", "data_2"]
     assert capsys.readouterr().out == (
-        "Error fetching flaky_url: Temporary failure\nRetrying in 0.5 seconds (retry attempt 1)...\n"
-        "Error fetching flaky_url: Temporary failure\nRetrying in 1.0 seconds (retry attempt 2)...\n"
-        "Error fetching flaky_url: Temporary failure\nRetrying in 2.0 seconds (retry attempt 3)...\n"
+        "Error fetching http://flaky.url: 500 Server Error: Internal Server Error for url: http://flaky.url/\n"
+        "Retrying in 0.5 seconds (retry attempt 1)...\n"
+        "Error fetching http://flaky.url: 500 Server Error: Internal Server Error for url: http://flaky.url/\n"
+        "Retrying in 1.0 seconds (retry attempt 2)...\n"
+        "Error fetching http://flaky.url: 500 Server Error: Internal Server Error for url: http://flaky.url/\n"
+        "Retrying in 2.0 seconds (retry attempt 3)...\n"
     )
 
 
-def test_get_pages():
-    session = {
-        "repos?page=1": MockResponse(["page", "1", "data"], next_url="repos?page=2"),
-        "repos?page=2": MockResponse(["page", "2", "data"]),
-    }
-    pages = get_workflow_runs.get_pages(session, "repos?page=1")
+@responses.activate
+def test_get_pages(monkeypatch):
+    monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "test_token")
+    match = [
+        responses.matchers.header_matcher({"Authorization": "Bearer test_token"}),
+        responses.matchers.query_param_matcher({"per_page": 100, "format": "json"}),
+    ]
+    responses.add(
+        responses.GET,
+        "https://test.url",
+        json=["page", "1", "data"],
+        match=match,
+        headers={"Link": '<https://nextpage.url>; rel="next"'},
+    )
+    responses.add(
+        responses.GET,
+        "https://nextpage.url",
+        json=["page", "2", "data"],
+        match=match,
+    )
+
+    pages = get_workflow_runs.get_pages("https://test.url")
 
     assert isinstance(pages, types.GeneratorType)
     page_1, page_2 = list(pages)
@@ -117,23 +102,41 @@ def test_get_pages():
     assert page_2 == ["page", "2", "data"]
 
 
-def test_extract(tmpdir):
-    repos_page_1 = MockResponse([{"name": "repo_1"}], next_url="repos?page=2")
-    repos_page_2 = MockResponse([{"name": "repo_2"}])
-    repo_1_runs_page_1 = MockResponse(
-        {"total_count": 2, "workflow_runs": [{"id": 1}]}, next_url="runs?page=2"
+@responses.activate
+def test_extract(tmpdir, monkeypatch):
+    # Environment variable only needs to be available; correct usage tested in test_get_pages
+    monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "")
+
+    responses.add(
+        responses.GET,
+        f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos",
+        json=[{"name": "repo_1"}],
+        headers={"Link": '<https://repos.page2>; rel="next"'},
     )
-    repo_1_runs_page_2 = MockResponse({"total_count": 2, "workflow_runs": [{"id": 2}]})
-    repo_2_runs_page = MockResponse({"total_count": 0, "workflow_runs": []})
-    session = {
-        f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos": repos_page_1,
-        "repos?page=2": repos_page_2,
-        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_1/actions/runs": repo_1_runs_page_1,
-        "runs?page=2": repo_1_runs_page_2,
-        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_2/actions/runs": repo_2_runs_page,
-    }
+    responses.add(
+        responses.GET,
+        "https://repos.page2",
+        json=[{"name": "repo_2"}],
+    )
+    responses.add(
+        responses.GET,
+        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_1/actions/runs",
+        json={"total_count": 2, "workflow_runs": [{"id": 1}]},
+        headers={"Link": '<https://repo_1/runs.page2>; rel="next"'},
+    )
+    responses.add(
+        responses.GET,
+        "https://repo_1/runs.page2",
+        json={"total_count": 2, "workflow_runs": [{"id": 2}]},
+    )
+    responses.add(
+        responses.GET,
+        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_2/actions/runs",
+        json={"total_count": 0, "workflow_runs": []},
+    )
+
     output_dir = pathlib.Path(tmpdir)
-    get_workflow_runs.extract(session, output_dir, datetime.datetime(2025, 1, 1))
+    get_workflow_runs.extract(output_dir, datetime.datetime(2025, 1, 1))
 
     assert io.read(output_dir / "repos" / "20250101-000000" / "repo_1.json") == {
         "name": "repo_1"
@@ -225,7 +228,11 @@ def test_get_records(tmpdir):
     assert record_3.repo == "repo_2"
 
 
-def test_main(tmpdir):
+@responses.activate
+def test_main(tmpdir, monkeypatch):
+    # Environment variable only needs to be available; correct usage tested in test_get_pages
+    monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "")
+
     # Run through pipeline for a single workflow run
     workflows_dir = pathlib.Path(tmpdir)
 
@@ -244,15 +251,18 @@ def test_main(tmpdir):
         "repository": {"name": "test_repo"},
     }
 
-    repos_page = MockResponse([{"name": "test_repo"}])
-    repo_1_runs_page = MockResponse({"total_count": 1, "workflow_runs": [run]})
+    responses.add(
+        responses.GET,
+        f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos",
+        json=[{"name": "test_repo"}],
+    )
+    responses.add(
+        responses.GET,
+        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/test_repo/actions/runs",
+        json={"total_count": 1, "workflow_runs": [run]},
+    )
 
-    session = {
-        f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos": repos_page,
-        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/test_repo/actions/runs": repo_1_runs_page,
-    }
-
-    get_workflow_runs.main(session, workflows_dir, now_function=mock_now)
+    get_workflow_runs.main(workflows_dir, now_function=mock_now)
 
     with open(workflows_dir / "workflow_runs.csv") as f:
         csv_file = f.read()
