@@ -96,27 +96,30 @@ def extract(org, output_dir, datetime_):
             )
 
 
-def get_names_of_extracted_repos(runs_dir):
-    # Being deterministic is more important than saving memory for a couple of strings
-    return sorted(repo.name for repo in runs_dir.iterdir() if repo.is_dir())
-
-
-def load_latest_workflow_runs(repo_dir):
-    filepaths = sorted(repo_dir.glob("*/*.json"), reverse=True)
+def filter_workflow_run_filepaths(filepaths):
+    """
+    Filters an iterable of filepaths to the latest retrieved file per workflow run.
+    """
+    filepaths = sorted(filepaths, reverse=True)
     seen = set()
     for filepath in filepaths:
         if filepath.name in seen:
             continue
         seen.add(filepath.name)
-        yield io.read(filepath)
+        yield filepath
 
 
 def get_records(runs_dir):
-    repos = get_names_of_extracted_repos(runs_dir)
-    workflow_runs = (
-        run for repo in repos for run in load_latest_workflow_runs(runs_dir / repo)
-    )
-    for run in workflow_runs:
+    repos = (repo.name for repo in runs_dir.iterdir() if repo.is_dir())
+    workflow_run_filepaths = [
+        filepath
+        for repo in repos
+        for filepath in filter_workflow_run_filepaths(
+            (runs_dir / repo).glob("*/*.json")
+        )
+    ]
+    for filepath in workflow_run_filepaths:
+        run = io.read(filepath)
         yield Record(
             id=run["id"],
             repo=run["repository"]["name"],
