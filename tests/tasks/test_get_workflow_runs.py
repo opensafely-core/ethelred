@@ -109,7 +109,7 @@ def test_extract(tmpdir, monkeypatch):
 
     responses.add(
         responses.GET,
-        f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos",
+        "https://api.github.com/orgs/test-org/repos",
         json=[{"name": "repo_1"}],
         headers={"Link": '<https://repos.page2>; rel="next"'},
     )
@@ -120,7 +120,7 @@ def test_extract(tmpdir, monkeypatch):
     )
     responses.add(
         responses.GET,
-        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_1/actions/runs",
+        "https://api.github.com/repos/test-org/repo_1/actions/runs",
         json={"total_count": 2, "workflow_runs": [{"id": 1}]},
         headers={"Link": '<https://repo_1/runs.page2>; rel="next"'},
     )
@@ -131,12 +131,12 @@ def test_extract(tmpdir, monkeypatch):
     )
     responses.add(
         responses.GET,
-        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/repo_2/actions/runs",
+        "https://api.github.com/repos/test-org/repo_2/actions/runs",
         json={"total_count": 0, "workflow_runs": []},
     )
 
     output_dir = pathlib.Path(tmpdir)
-    get_workflow_runs.extract(output_dir, datetime.datetime(2025, 1, 1))
+    get_workflow_runs.extract("test-org", output_dir, datetime.datetime(2025, 1, 1))
 
     assert io.read(output_dir / "repos" / "20250101-000000" / "repo_1.json") == {
         "name": "repo_1"
@@ -253,16 +253,16 @@ def test_main(tmpdir, monkeypatch):
 
     responses.add(
         responses.GET,
-        f"https://api.github.com/orgs/{get_workflow_runs.GITHUB_ORG}/repos",
+        "https://api.github.com/orgs/test-org/repos",
         json=[{"name": "test_repo"}],
     )
     responses.add(
         responses.GET,
-        f"https://api.github.com/repos/{get_workflow_runs.GITHUB_ORG}/test_repo/actions/runs",
+        "https://api.github.com/repos/test-org/test_repo/actions/runs",
         json={"total_count": 1, "workflow_runs": [run]},
     )
 
-    get_workflow_runs.main(workflows_dir, now_function=mock_now)
+    get_workflow_runs.main("test-org", workflows_dir, now_function=mock_now)
 
     with open(workflows_dir / "workflow_runs.csv") as f:
         csv_file = f.read()
