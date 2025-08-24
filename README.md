@@ -17,7 +17,7 @@ Ethelred needs a Job Server database.
 [Job Server's developer documentation][3] tells you how to get one.
 
 Ethelred needs a fine-grained [Personal Access Token][4] (PAT) with the "Actions (read-only)" permission.
-The PAT should be owned by the opensafely organisation.
+The PAT should access resources owned by the opensafely organisation.
 
 When you've got a Job Server database and a PAT,
 copy `dotenv` to `.env` and, if necessary, update `.env`.
