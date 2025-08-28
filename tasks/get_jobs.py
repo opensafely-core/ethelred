@@ -40,6 +40,10 @@ def extract(engine, metadata):
         yield from conn.execute(stmt)
 
 
+def filter_out_rows_with_empty_run_command(rows):
+    return (row for row in rows if row.run_command)
+
+
 def get_action(run_command):
     action, *_ = run_command.split()
     action_name, action_version = action.split(":")
@@ -100,10 +104,7 @@ def get_status_message_type(status_message):
 
 def get_records(rows):
     for row in rows:
-        if row.run_command:
-            action_name, _ = get_action(row.run_command)
-        else:
-            action_name = ""
+        action_name, _ = get_action(row.run_command)
         action_type = get_action_type(action_name)
         status_message_type = get_status_message_type(row.status_message)
         yield Record(
@@ -122,7 +123,8 @@ def main():  # pragma: no cover
     engine = utils.get_engine()
     metadata = utils.get_metadata(engine)
     rows = extract(engine, metadata)
-    records = get_records(rows)
+    filtered_rows = filter_out_rows_with_empty_run_command(rows)
+    records = get_records(filtered_rows)
     io.write(records, DATA_DIR / "jobs" / "jobs.csv")
 
 
