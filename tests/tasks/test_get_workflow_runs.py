@@ -28,6 +28,7 @@ def test_get_with_retry_when_fail(capsys):
         return
 
     responses.add(responses.GET, "http://invalid.url", status=400)
+
     ERROR = "400 Client Error: Bad Request for url: http://invalid.url/"
 
     with pytest.raises(Exception, match=ERROR):
@@ -157,8 +158,8 @@ def test_extract(tmpdir, monkeypatch):
         "https://api.github.com/repos/test-org/repo_2/actions/runs",
         json={"total_count": 0, "workflow_runs": []},
     )
-    output_dir = pathlib.Path(tmpdir)
 
+    output_dir = pathlib.Path(tmpdir)
     get_workflow_runs.extract("test-org", output_dir)
 
     assert io.read(output_dir / "repos" / "repo_1" / "20250101-000000.json") == {
@@ -221,8 +222,8 @@ def test_get_records(tmpdir):
     io.write(repo_2_run_3, runs_dir / "repo_2" / "3" / "20250101-000000.json")
 
     records = get_workflow_runs.get_records(runs_dir)
-
     record_1, record_2, record_3 = sorted(records, key=lambda r: r.id)
+
     assert isinstance(records, types.GeneratorType)
     assert record_1._fields == get_workflow_runs.Record._fields
     assert record_1.id == 1
@@ -237,8 +238,10 @@ def test_get_records(tmpdir):
 def test_main(tmpdir, monkeypatch):
     # Environment variable only needs to be available; correct usage tested in test_fetch_pages
     monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "")
+
     # Run through pipeline for a single workflow run
     workflows_dir = pathlib.Path(tmpdir)
+
     run = {
         "id": 1,
         "name": "My Workflow",
@@ -250,6 +253,7 @@ def test_main(tmpdir, monkeypatch):
         "run_started_at": "2025-01-03T00:00:00Z",
         "repository": {"name": "test_repo"},
     }
+
     responses.add(
         responses.GET,
         "https://api.github.com/orgs/test-org/repos",
@@ -262,6 +266,7 @@ def test_main(tmpdir, monkeypatch):
     )
 
     get_workflow_runs.main("test-org", workflows_dir)
+
     with open(workflows_dir / "workflow_runs.csv") as f:
         csv_file = f.read()
 
