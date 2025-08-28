@@ -3,10 +3,8 @@ import json
 import pickle
 
 
-def write(obj, f_path, overwrite_if_exists=True):
+def write(obj, f_path):
     f_path.parent.mkdir(parents=True, exist_ok=True)
-    if not overwrite_if_exists and f_path.exists():
-        return
     match f_path.suffix:
         case ".pickle":
             _write_pickle(obj, f_path)
