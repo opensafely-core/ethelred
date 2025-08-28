@@ -98,6 +98,7 @@ def extract(org, output_dir):
             / "repos"
             / repo_name
             / f"{parse_timestamp(repo['updated_at']).strftime('%Y%m%d-%H%M%S')}.json",
+            overwrite_if_exists=False,
         )
 
         runs = fetch_workflow_runs_for_repo(org, repo_name)
@@ -109,6 +110,7 @@ def extract(org, output_dir):
                 / repo_name
                 / str(run["id"])
                 / f"{parse_timestamp(run['updated_at']).strftime('%Y%m%d-%H%M%S')}.json",
+                overwrite_if_exists=False,
             )
 
 
