@@ -83,16 +83,32 @@ def fetch_workflow_runs_for_repo(org, repo_name):
         yield from page["workflow_runs"]
 
 
-def extract(org, output_dir, datetime_):
-    timestamp = datetime_.strftime("%Y%m%d-%H%M%S")
+def parse_timestamp(timestamp_isoformat):
+    return datetime.datetime.fromisoformat(timestamp_isoformat).astimezone(
+        datetime.timezone.utc
+    )
+
+
+def extract(org, output_dir):
     for repo in fetch_repos(org):
         repo_name = repo["name"]
-        io.write(repo, output_dir / "repos" / timestamp / f"{repo_name}.json")
+        io.write(
+            repo,
+            output_dir
+            / "repos"
+            / repo_name
+            / f"{parse_timestamp(repo['updated_at']).strftime('%Y%m%d-%H%M%S')}.json",
+        )
 
         runs = fetch_workflow_runs_for_repo(org, repo_name)
         for run in runs:
             io.write(
-                run, output_dir / "runs" / repo_name / timestamp / f"{run['id']}.json"
+                run,
+                output_dir
+                / "runs"
+                / repo_name
+                / str(run["id"])
+                / f"{parse_timestamp(run['updated_at']).strftime('%Y%m%d-%H%M%S')}.json",
             )
 
 
@@ -103,9 +119,10 @@ def filter_workflow_run_filepaths(filepaths):
     filepaths = sorted(filepaths, reverse=True)
     seen = set()
     for filepath in filepaths:
-        if filepath.name in seen:
+        *_, run_id, _ = filepath.parts
+        if run_id in seen:
             continue
-        seen.add(filepath.name)
+        seen.add(run_id)
         yield filepath
 
 
@@ -133,9 +150,9 @@ def get_records(runs_dir):
         )
 
 
-def main(org, workflows_dir, now_function=datetime.datetime.now):
+def main(org, workflows_dir):
     # Extract and write data to disk
-    extract(org, workflows_dir, now_function(datetime.timezone.utc))
+    extract(org, workflows_dir)
     # Get latest workflow runs from disk (may include past extractions)
     records = get_records(workflows_dir / "runs")
     # Load
