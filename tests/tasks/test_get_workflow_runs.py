@@ -144,9 +144,6 @@ def test_extract(tmpdir, monkeypatch):
     assert io.read(output_dir / "repos" / "20250101-000000" / "repo_2.json") == {
         "name": "repo_2"
     }
-    assert io.read(output_dir / "repos" / "20250101-000000" / "repo_2.json") == {
-        "name": "repo_2"
-    }
     assert io.read(output_dir / "runs" / "repo_1" / "20250101-000000" / "1.json") == {
         "id": 1
     }
