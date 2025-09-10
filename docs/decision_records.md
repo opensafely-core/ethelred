@@ -181,6 +181,24 @@ More specifically,
 we set `tool.ruff.src` in `pyproject.toml`
 and `PYTHONPATH` when invoking Coverage.py with `just test`.
 
+## 010: GitHub flow
+
+With [003](#003-continuous-integration), we adopted continuous integration (CI).
+
+Whilst we experienced several advantages of CI,
+we also experienced several disadvantages.
+Specifically, we felt there wasn't a suitable means of reviewing a set of changes,
+especially when pairing wasn't feasible.
+
+For this reason,
+we will adopt [GitHub flow][] *alongside* CI.
+A GitHub action will no longer automatically open a pull request (PR) for any commits pushed to a non-mainline branch.
+It will be possible, however, to merge a PR without approval.
+
+* If we want GitHub flow,
+  then we will open a PR, request a review, address review comments, and merge the PR.
+* If we want CI, then we will open and merge a PR quickly.
+
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
 [2]: https://refactoring.com/catalog/
 [3]: https://wesmckinney.com/blog/apache-arrow-pandas-internals/
@@ -192,6 +210,7 @@ and `PYTHONPATH` when invoking Coverage.py with `just test`.
 [Dagster]: https://dagster.io/
 [Data Transformations]: https://altair-viz.github.io/user_guide/transform/index.html
 [Fearless rebasing]: https://blog.gitbutler.com/fearless-rebasing/
+[GitHub Flow]: https://docs.github.com/en/get-started/using-github/github-flow
 [Group by: split-apply-combine]: https://pandas.pydata.org/pandas-docs/stable/user_guide/groupby.html
 [Pandas]: https://pandas.pydata.org/
 [Prefect]: https://www.prefect.io/
