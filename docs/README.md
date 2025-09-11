@@ -5,3 +5,4 @@ For the high-level, see the project [README](../README.md).
 For the low-level, see below.
 
 * [Decision Records](decision_records.md)
+* [Code Review Guidelines](code_review_guidelines.md)
