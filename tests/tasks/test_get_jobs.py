@@ -74,32 +74,6 @@ def test_extract(jobserver_engine, jobserver_metadata):
     assert row.status == "failed"  # lower case
 
 
-def test_filter_out_rows_with_empty_run_command():
-    rows = [
-        Row(
-            id=1,
-            job_request_id=2,
-            created_at=datetime.datetime(2025, 1, 1),
-            run_command="ehrql:v1 generate-dataset dataset_definition.py",
-            status="succeeded",
-            status_message="Completed successfully",
-        ),
-        Row(
-            id=2,
-            job_request_id=2,
-            created_at=datetime.datetime(2025, 1, 1),
-            run_command="",
-            status="succeeded",
-            status_message="All actions have already completed successfully",
-        ),
-    ]
-
-    filtered_rows = list(get_jobs.filter_out_rows_with_empty_run_command(rows))
-
-    assert len(filtered_rows) == 1
-    assert filtered_rows[0].id == 1
-
-
 def test_get_action():
     run_command = "ehrql:v1 generate-dataset analysis/dataset_definition.py"
     assert get_jobs.get_action(run_command) == ("ehrql", "v1")
@@ -129,6 +103,7 @@ def test_get_action():
         ("project-dag", "reusable"),
         ("safetab", "reusable"),
         ("my-reusable-action", "other"),  # the wildcard case
+        ("", "other"),  # the wildcard case, no status message
     ],
 )
 def test_get_action_type(action_name, action_type):
@@ -150,12 +125,18 @@ def test_get_status_message_type(status_message, status_message_type):
     assert get_jobs.get_status_message_type(status_message) == status_message_type
 
 
-def test_get_records():
+@pytest.mark.parametrize(
+    "run_command,action_name,action_type",
+    [
+        ("ehrql:v1 generate-dataset dataset_definition.py", "ehrql", "database"),
+    ],
+)
+def test_get_records(run_command, action_name, action_type):
     row = Row(
         id=1,
         job_request_id=2,
         created_at=datetime.datetime(2025, 1, 1),
-        run_command="ehrql:v1 generate-dataset dataset_definition.py",
+        run_command=run_command,
         status="succeeded",
         status_message="Completed successfully",
     )
@@ -166,7 +147,7 @@ def test_get_records():
     assert record.id == 1
     assert record.job_request_id == 2
     assert record.created_at == datetime.datetime(2025, 1, 1)
-    assert record.action_name == "ehrql"
-    assert record.action_type == "database"
+    assert record.action_name == action_name
+    assert record.action_type == action_type
     assert record.status == "succeeded"
     assert record.status_message_type == "other"
