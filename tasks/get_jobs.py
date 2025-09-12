@@ -40,10 +40,6 @@ def extract(engine, metadata):
         yield from conn.execute(stmt)
 
 
-def filter_out_rows_with_empty_run_command(rows):
-    return (row for row in rows if row.run_command)
-
-
 def get_action(run_command):
     action, *_ = run_command.split()
     action_name, action_version = action.split(":")
@@ -122,9 +118,8 @@ def main():  # pragma: no cover
     # This is hard to test without a Job Server DB, so we exclude it from coverage.
     engine = utils.get_engine()
     metadata = utils.get_metadata(engine)
-    rows = extract(engine, metadata)
-    filtered_rows = filter_out_rows_with_empty_run_command(rows)
-    records = get_records(filtered_rows)
+    rows = (row for row in extract(engine, metadata) if row.run_command)
+    records = get_records(rows)
     io.write(records, DATA_DIR / "jobs" / "jobs.csv")
 
 
