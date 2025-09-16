@@ -6,9 +6,9 @@ who was infamously not ready.
 
 This Ethelred is:
 
-* several tasks for extracting, transforming, and loading data.
+* several tasks for extracting, transforming, and loading data from multiple, heterogeneous sources.
   You will find them in `tasks`.
-* a [Streamlit][] app for representing data.
+* a [Streamlit][] app for representing that data to facilitate more effective decision-making.
   You will find it in `app`.
 
 ## Setup
