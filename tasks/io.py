@@ -1,9 +1,11 @@
 import csv
 import json
+import pathlib
 import pickle
 
 
 def write(obj, f_path):
+    f_path = pathlib.Path(f_path)
     f_path.parent.mkdir(parents=True, exist_ok=True)
     match f_path.suffix:
         case ".pickle":
@@ -36,6 +38,7 @@ def _write_json(obj, f_path):
 
 
 def read(f_path):
+    f_path = pathlib.Path(f_path)
     match f_path.suffix:
         case ".pickle":
             return _read_pickle(f_path)
