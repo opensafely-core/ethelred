@@ -11,7 +11,7 @@ The tasks application is not deployed.
 
 ## The Streamlit app
 
-The Streamlit app is deployed as a DigitalOcean App Platform app using a buildpack.
+The Streamlit app is deployed as a DigitalOcean App Platform app.
 
 ### The app spec
 
@@ -37,6 +37,9 @@ and the "[Reference for App Specification][]" page
 in the DigitalOcean docs.
 
 ### The buildpack
+
+For convenience,
+the App Platform app uses a buildpack, rather than a Dockerfile, to build an image.
 
 App Platform uses `requirements.txt` to determine that the Python buildpack is required.
 Because the information in this file is already stored elsewhere,
