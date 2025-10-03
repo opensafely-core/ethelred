@@ -19,6 +19,14 @@ The Continuous Deployment workflow (`.github/workflows/cd.yaml`) deploys the Str
 (a push event corresponds to a push, merge, or rebase).
 It does so only after all jobs in the Continuous Integration workflow (`.github/workflows/ci.yaml`) succeeded (or were skipped).
 
+The Continuous Deployment workflow requires a repository secret called `DIGITALOCEAN_DEPLOYMENT`.
+It should be set to a DigitalOcean personal access token with the actions:update scope.
+
+For more information about repository secrets,
+see the "[Using secrets in GitHub Actions][]" page in the GitHub docs.
+For more information about DigitalOcean personal access tokens,
+see the "[How to Create a Personal Access Token][]" page in the DigitalOcean docs.
+
 ### The app spec
 
 An *app spec* defines an App Platform app's configuration.
@@ -46,6 +54,8 @@ For more information about the Python buildpack,
 see the "[Python Buildpack on App Platform][]" page in the DigitalOcean docs.
 
 [1]: https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push
+[How to Create a Personal Access Token]: https://docs.digitalocean.com/reference/api/create-personal-access-token/
 [How to Update an App's Spec]: https://docs.digitalocean.com/products/app-platform/how-to/update-app-spec/
 [Python Buildpack on App Platform]: https://docs.digitalocean.com/products/app-platform/reference/buildpacks/python/
 [Reference for App Specification]: https://docs.digitalocean.com/products/app-platform/reference/app-spec/
+[Using secrets in GitHub Actions]: https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets
