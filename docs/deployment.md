@@ -13,6 +13,12 @@ The tasks application is not deployed.
 
 The Streamlit app is deployed as a DigitalOcean App Platform app.
 
+### The GitHub Actions workflows
+
+The Continuous Deployment workflow (`.github/workflows/cd.yaml`) deploys the Streamlit app on [a push event][1] to the mainline branch
+(a push event corresponds to a push, merge, or rebase).
+It does so only after all jobs in the Continuous Integration workflow (`.github/workflows/ci.yaml`) succeeded (or were skipped).
+
 ### The app spec
 
 An *app spec* defines an App Platform app's configuration.
@@ -39,6 +45,7 @@ it is a symlink.
 For more information about the Python buildpack,
 see the "[Python Buildpack on App Platform][]" page in the DigitalOcean docs.
 
+[1]: https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push
 [How to Update an App's Spec]: https://docs.digitalocean.com/products/app-platform/how-to/update-app-spec/
 [Python Buildpack on App Platform]: https://docs.digitalocean.com/products/app-platform/reference/buildpacks/python/
 [Reference for App Specification]: https://docs.digitalocean.com/products/app-platform/reference/app-spec/
