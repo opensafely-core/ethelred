@@ -11,6 +11,7 @@ services:
     environment_slug: python
     github:
       branch: main
+      # The Continuous Deployment GitHub Actions workflow handles deployment.
       deploy_on_push: false
       repo: opensafely-core/ethelred
     # run time
