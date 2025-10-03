@@ -80,3 +80,7 @@ fix *args=".": devenv
 check *args=".": devenv
     {{ RUFF }} format --check {{ args }}
     {{ RUFF }} check {{ args }}
+
+# Update the DigitalOcean App Platform app
+update-app:
+    doctl apps update 5807fff1-9df7-4db2-b514-e8b5870bb4ad --spec app_spec.yaml
