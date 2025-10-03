@@ -1,0 +1,35 @@
+# This is a DigitalOcean App Platform application specification, or app spec.
+# For more information about app specs, see:
+# https://docs.digitalocean.com/products/app-platform/how-to/update-app-spec/
+# https://docs.digitalocean.com/products/app-platform/reference/app-spec/
+name: ethelred
+region: lon1
+features:
+  - buildpack-stack=ubuntu-22
+services:
+  - name: streamlit
+    environment_slug: python
+    github:
+      branch: main
+      deploy_on_push: false
+      repo: opensafely-core/ethelred
+    # run time
+    run_command: streamlit run app/app.py
+    http_port: 8080
+    envs:
+      - key: STREAMLIT_SERVER_PORT
+        value: "8080"
+        scope: RUN_TIME
+        type: GENERAL
+    # build time
+    source_dir: /
+    # instance
+    instance_size_slug: basic-xxs
+    instance_count: 1
+ingress:
+  rules:
+    - component:
+        name: streamlit
+      match:
+        path:
+          prefix: /
