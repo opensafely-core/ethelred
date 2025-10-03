@@ -12,6 +12,9 @@ The tasks application is not deployed.
 ## The Streamlit app
 
 The Streamlit app is deployed as a DigitalOcean App Platform app using a buildpack.
+
+### The buildpack
+
 App Platform uses `requirements.txt` to determine that the Python buildpack is required.
 Because the information in this file is already stored elsewhere,
 it is a symlink.
