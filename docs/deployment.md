@@ -20,16 +20,7 @@ It's possible to create, update, and delete an app spec
 -- and hence an App Platform app --
 from the App Platform Control Panel.
 Such changes, however, are not committed to version control.
-Consequently, `app_spec.yaml` contains the canonical app spec for the App Platform app.
-
-Unfortunately, App Platform doesn't detect changes to `app_spec.yaml`.
-To apply the changes, first [install and configure `doctl`][1].
-The API token should have the app:update scope, as well as any required scopes.
-Then, run:
-
-```sh
-just update-app
-```
+Consequently, `.do/app.yaml` contains the canonical app spec for the App Platform app.
 
 For more information about app specs,
 see the "[How to Update an App's Spec][]" page
@@ -48,7 +39,6 @@ it is a symlink.
 For more information about the Python buildpack,
 see the "[Python Buildpack on App Platform][]" page in the DigitalOcean docs.
 
-[1]: https://docs.digitalocean.com/reference/doctl/how-to/install/
 [How to Update an App's Spec]: https://docs.digitalocean.com/products/app-platform/how-to/update-app-spec/
 [Python Buildpack on App Platform]: https://docs.digitalocean.com/products/app-platform/reference/buildpacks/python/
 [Reference for App Specification]: https://docs.digitalocean.com/products/app-platform/reference/app-spec/
