@@ -218,6 +218,14 @@ We had a positive experience of App Platform when we deployed OpenPrescribing Ho
 We considered using [Dokku][6],
 but have found Dokku hard to reason about.
 
+## 012: Use a buildpack rather than a Dockerfile
+
+With [011](#011-deploying-the-streamlit-app), we deployed the Streamlit app as an App Platform app.
+There are two mechanisms for building images for App Platform apps:
+either buildpacks or Dockerfiles.
+For convenience, we will use a buildpack.
+To make it easier to reason about the image, however, we will eventually use a Dockerfile.
+
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
 [2]: https://refactoring.com/catalog/
 [3]: https://wesmckinney.com/blog/apache-arrow-pandas-internals/
