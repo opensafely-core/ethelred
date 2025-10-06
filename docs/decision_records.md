@@ -226,6 +226,35 @@ either buildpacks or Dockerfiles.
 For convenience, we will use a buildpack.
 To make it easier to reason about the image, however, we will eventually use a Dockerfile.
 
+## 013: Adopt Ship / Show / Ask
+
+With [010](#010-github-flow),
+we adopted GitHub flow alongside continuous integration (CI).
+Having done so,
+we realised the branching strategy we were aiming for was already documented:
+it's called [Ship / Show / Ask][].
+
+* **Ship** corresponds to "push to mainline" CI
+  ([003](#003-continuous-integration) and [004](#004-treat-pull-requests-as-immutable)).
+* **Show** corresponds to GitHub flow with a post-merge review
+  ([010](#010-github-flow)).
+* **Ask** corresponds to GitHub flow with a pre-merge review
+  ([010](#010-github-flow)).
+
+We will adopt Ship / Show / Ask.
+Doing so necessitates the following changes:
+
+* To allow us to ship,
+  we will remove branch protection rules from the mainline branch.
+* To allow us to show,
+  we will allow PRs to be integrated into the mainline branch without approval.
+* To allow us to ask,
+  we will remove the GitHub action that automatically opens a pull request (PR) for any commits pushed to a non-mainline branch.
+
+It's important to emphasise that we will continue to maintain a [healthy mainline branch][1]
+by running checks on each push event
+(a push event corresponds to a push, merge, or rebase).
+
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
 [2]: https://refactoring.com/catalog/
 [3]: https://wesmckinney.com/blog/apache-arrow-pandas-internals/
@@ -244,4 +273,5 @@ To make it easier to reason about the image, however, we will eventually use a D
 [Pandas]: https://pandas.pydata.org/
 [Prefect]: https://www.prefect.io/
 [Reshaping and pivot tables]: https://pandas.pydata.org/pandas-docs/stable/user_guide/reshaping.html
+[Ship / Show / Ask]: https://martinfowler.com/articles/ship-show-ask.html
 [Working with fragments]: https://docs.streamlit.io/develop/concepts/architecture/fragments
