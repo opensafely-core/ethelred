@@ -211,12 +211,21 @@ For CI:
 * If the checks pass, approve and merge the PR.
 * If the checks fail, close the PR.
 
+## 011: Deploying the Streamlit app
+
+We will deploy the Streamlit app as a DigitalOcean [App Platform][] app.
+We had a positive experience of App Platform when we deployed OpenPrescribing Hospitals.
+We considered using [Dokku][6],
+but have found Dokku hard to reason about.
+
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
 [2]: https://refactoring.com/catalog/
 [3]: https://wesmckinney.com/blog/apache-arrow-pandas-internals/
 [4]: https://docs.python.org/3.12/reference/import.html
 [5]: https://docs.astral.sh/ruff/settings/#lint_isort_section-order
+[6]: https://bennett.wiki/tools-systems/dokku/
 [Apache Airflow]: https://airflow.apache.org/
+[App Platform]: https://docs.digitalocean.com/products/app-platform/
 [Architectural Decision Records]: https://adr.github.io/
 [Continuous Integration]: https://martinfowler.com/articles/continuousIntegration.html
 [Dagster]: https://dagster.io/
