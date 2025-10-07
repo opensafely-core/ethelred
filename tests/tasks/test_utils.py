@@ -1,15 +1,13 @@
 from tasks import io, utils
 
 
-def test_get_engine(monkeypatch):
-    monkeypatch.setenv("JOBSERVER_DATABASE_URL", "sqlite+pysqlite:///:memory:")
-    engine = utils.get_engine()
+def test_get_engine():
+    engine = utils.get_engine("sqlite+pysqlite:///:memory:")
     assert str(engine.url) == "sqlite+pysqlite:///:memory:"
 
 
-def test_get_metadata(monkeypatch):
-    monkeypatch.setenv("JOBSERVER_DATABASE_URL", "sqlite+pysqlite:///:memory:")
-    metadata = utils.get_metadata(utils.get_engine())
+def test_get_metadata():
+    metadata = utils.get_metadata(utils.get_engine("sqlite+pysqlite:///:memory:"))
     assert metadata.tables == {}
 
 

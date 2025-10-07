@@ -1,12 +1,10 @@
-import os
-
 import sqlalchemy
 
 from . import io
 
 
-def get_engine():
-    return sqlalchemy.create_engine(os.environ["JOBSERVER_DATABASE_URL"])
+def get_engine(database_url):
+    return sqlalchemy.create_engine(database_url)
 
 
 def get_metadata(engine):

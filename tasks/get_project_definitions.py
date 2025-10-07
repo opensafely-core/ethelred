@@ -1,4 +1,5 @@
 import collections
+import os
 
 import pipeline
 import sqlalchemy
@@ -43,7 +44,7 @@ def write_pickle(records, project_definitions_dir):
 
 def main():  # pragma: no cover
     # This is hard to test without a Job Server DB, so we exclude it from coverage.
-    engine = utils.get_engine()
+    engine = utils.get_engine(os.environ["JOBSERVER_DATABASE_URL"])
     metadata = utils.get_metadata(engine)
 
     rows = extract(engine, metadata)
