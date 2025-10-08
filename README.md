@@ -13,13 +13,13 @@ This Ethelred is:
 
 ## Setup
 
-Ethelred needs a Job Server database.
-[Job Server's developer documentation][3] tells you how to get one.
+Ethelred needs a Job Server PostgreSQL database and an OpenCodelists SQLite database.
+Refer to [Job Server's][3] and [OpenCodelists's][5] developer documentation for how to set these up.
 
 Ethelred needs a fine-grained [Personal Access Token][4] (PAT) with the "Actions (read-only)" permission.
 The PAT should access resources owned by the opensafely organisation.
 
-When you've got a Job Server database and a PAT,
+When you've got the databases and a PAT,
 copy `dotenv` to `.env` and, if necessary, update `.env`.
 
 Next, run the following commands:
@@ -31,6 +31,7 @@ python -m tasks.get_project_definitions
 python -m tasks.get_job_requests
 python -m tasks.get_jobs
 python -m tasks.get_workflow_runs
+python -m tasks.get_opencodelists_logins
 just run app/app.py
 ```
 
@@ -43,4 +44,5 @@ See the [README](docs/README.md) in the `docs` directory.
 [2]: https://en.wikipedia.org/wiki/%C3%86thelred_the_Unready
 [3]: https://github.com/opensafely-core/job-server/blob/main/DEVELOPERS.md
 [4]: https://github.com/settings/personal-access-tokens
+[5]: https://github.com/opensafely-core/opencodelists/blob/main/DEVELOPERS.md
 [Streamlit]: https://streamlit.io/
