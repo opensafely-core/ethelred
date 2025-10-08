@@ -1,3 +1,4 @@
+import enum
 import os
 
 import sqlalchemy
@@ -5,8 +6,16 @@ import sqlalchemy
 from . import io
 
 
-def get_engine():
-    return sqlalchemy.create_engine(os.environ["JOBSERVER_DATABASE_URL"])
+class Database(enum.StrEnum):
+    JOBSERVER = enum.auto()
+
+
+def get_engine(database):
+    match database:
+        case Database.JOBSERVER:
+            return sqlalchemy.create_engine(os.environ["JOBSERVER_DATABASE_URL"])
+        case _:
+            raise TypeError(f"Cannot get engine for unknown database: {database}")
 
 
 def get_metadata(engine):
