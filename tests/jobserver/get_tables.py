@@ -56,7 +56,7 @@ def get_table(table):
 
 
 def main():
-    engine = utils.get_engine()
+    engine = utils.get_engine(utils.Database.JOBSERVER)
     metadata = utils.get_metadata(engine)
     d_path = pathlib.Path(__file__).parent
     f_path = d_path / "tables.py"

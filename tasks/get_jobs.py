@@ -116,7 +116,7 @@ def get_records(rows):
 
 def main():  # pragma: no cover
     # This is hard to test without a Job Server DB, so we exclude it from coverage.
-    engine = utils.get_engine()
+    engine = utils.get_engine(utils.Database.JOBSERVER)
     metadata = utils.get_metadata(engine)
     rows = (row for row in extract(engine, metadata) if row.run_command)
     records = get_records(rows)
