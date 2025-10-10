@@ -3,7 +3,7 @@ import datetime
 
 import sqlalchemy
 
-from . import DATA_DIR, io, utils
+from .. import DATA_DIR, io, utils
 
 
 Record = collections.namedtuple(

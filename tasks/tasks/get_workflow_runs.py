@@ -5,7 +5,7 @@ import time
 
 import requests
 
-from . import DATA_DIR, io
+from .. import DATA_DIR, io
 
 
 Record = collections.namedtuple(

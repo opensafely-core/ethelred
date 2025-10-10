@@ -3,10 +3,21 @@ import datetime
 
 import sqlalchemy
 
-from tasks import get_project_definitions, io
+from tasks.tasks import get_job_requests
 
 
-Row = collections.namedtuple("Row", ["url", "sha", "project_definition"])
+Row = collections.namedtuple(
+    "Row",
+    [
+        "url",
+        "sha",
+        "created_at",
+        "num_jobs",
+        "username",
+        "num_failed_jobs",
+        "num_dependency_failed_jobs",
+    ],
+)
 
 
 def test_extract(jobserver_engine, jobserver_metadata):
@@ -35,13 +46,19 @@ def test_extract(jobserver_engine, jobserver_metadata):
         updated_by_id=a_foreign_key,
     )
 
+    user_table = jobserver_metadata.tables["jobserver_user"]
+    user_id = 1
+    insert_into_user_table = sqlalchemy.insert(user_table).values(
+        id=user_id, username="a_user", fullname="a user", roles=[]
+    )
+
     jobrequest_table = jobserver_metadata.tables["jobserver_jobrequest"]
     template_jobrequest = {
         "id": None,  # replace me
         "sha": None,  # replace me
         "created_at": None,  # replace me
         "backend_id": a_foreign_key,
-        "created_by_id": a_foreign_key,
+        "created_by_id": user_id,
         "workspace_id": workspace_id,
         "requested_actions": ["a1"],
         "project_definition": "actions: {a1: {}, a2: {}}",
@@ -63,45 +80,52 @@ def test_extract(jobserver_engine, jobserver_metadata):
         [jobrequest_1, jobrequest_2]
     )
 
+    job_table = jobserver_metadata.tables["jobserver_job"]
+    job_1 = {"id": 1, "job_request_id": 1, "run_command": "my-command:v1"}
+    job_2 = {"id": 2, "job_request_id": 2, "run_command": "my-command:v1"}
+    insert_into_job_table = sqlalchemy.insert(job_table).values([job_1, job_2])
+
     with jobserver_engine.connect() as conn:
         conn.execute(insert_into_repo_table)
         conn.execute(insert_into_workspace_table)
+        conn.execute(insert_into_user_table)
         conn.execute(insert_into_jobrequest_table)
+        conn.execute(insert_into_job_table)
         conn.commit()
 
     # act
-    rows = list(get_project_definitions.extract(jobserver_engine, jobserver_metadata))
+    rows = list(get_job_requests.extract(jobserver_engine, jobserver_metadata))
 
     # assert
     assert len(rows) == 1
     row = rows[0]
     assert row._fields == Row._fields
     assert row.sha == "2222222"
+    assert row.num_jobs == 1
+    assert row.num_failed_jobs == 0
+    assert row.num_dependency_failed_jobs == 0
 
 
-def test_get_record():
+def test_get_records():
     row = Row(
-        "https://github.com/opensafely/my-repo",
-        "0000000",
-        """
-        actions:
-            a1: {}
-            a2: {}
-        """,
+        url="https://github.com/opensafely/my-repo",
+        sha="0000000",
+        created_at=datetime.datetime(2025, 1, 1),
+        num_jobs=1,
+        username="my-username",
+        num_failed_jobs=0,
+        num_dependency_failed_jobs=0,
     )
-    record = get_project_definitions.get_record(row)
-    assert record.repo == "my-repo"
-    assert record.sha == "0000000"
-    assert record.project_definition == {"actions": {"a1": {}, "a2": {}}}
 
+    def load_project_definition(repo, sha):
+        return {"actions": {"a1": {}, "a2": {}}}
 
-def test_write_pickle(tmp_path):
-    record = get_project_definitions.Record(
-        "my-repo", "0000000", {"actions": {"a1": {}, "a2": {}}}
-    )
-    project_definitions_dir = tmp_path / "project_definitions"
+    records = list(get_job_requests.get_records([row], load_project_definition))
+    record = records[0]
 
-    get_project_definitions.write_pickle([record], project_definitions_dir)
-
-    project_definition = io.read(project_definitions_dir / "my-repo" / "0000000.pickle")
-    assert project_definition == {"actions": {"a1": {}, "a2": {}}}
+    assert record.created_at == datetime.datetime(2025, 1, 1)
+    assert record.num_actions == 2
+    assert record.num_jobs == 1
+    assert record.username == "my-username"
+    assert record.num_failed_jobs == 0
+    assert record.num_dependency_failed_jobs == 0

@@ -4,7 +4,7 @@ import datetime
 import pytest
 import sqlalchemy
 
-from tasks import get_jobs
+from tasks.tasks import get_jobs
 
 
 Row = collections.namedtuple(
