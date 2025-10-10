@@ -6,24 +6,13 @@ import sqlalchemy
 from .. import DATA_DIR, db, io, utils
 
 
-Record = collections.namedtuple(
-    "Record",
-    [
-        "login_at",
-        "user",
-    ],
-)
+Record = collections.namedtuple("Record", ["login_at", "user"])
 
 
 def extract(engine, metadata):  # pragma: no cover
     # This is hard to test without a OpenCodelists DB, so we exclude it from coverage.
     users = metadata.tables["opencodelists_user"]
-
-    stmt = sqlalchemy.select(
-        users.c.last_login,
-        users.c.email,
-    )
-
+    stmt = sqlalchemy.select(users.c.last_login, users.c.email)
     with engine.connect() as conn:
         yield from conn.execute(stmt)
 
