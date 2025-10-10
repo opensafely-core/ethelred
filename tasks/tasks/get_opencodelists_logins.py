@@ -32,7 +32,7 @@ def get_records(rows):
     for row in rows:
         yield Record(
             row.last_login.replace(tzinfo=datetime.timezone.utc),
-            utils.hash_email(row.email),
+            utils.sha256(row.email),
         )
 
 

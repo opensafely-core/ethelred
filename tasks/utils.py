@@ -11,5 +11,5 @@ def load_project_definition(project_definitions_dir, repo, sha):
     return io.read(project_definitions_dir / repo / f"{sha}.pickle")
 
 
-def hash_email(email):
-    return hashlib.sha256(email.encode("utf-8")).hexdigest()
+def sha256(text):
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
