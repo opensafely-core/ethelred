@@ -3,7 +3,7 @@ import datetime
 
 import sqlalchemy
 
-from .. import DATA_DIR, io, utils
+from .. import DATA_DIR, db, io, utils
 
 
 Record = collections.namedtuple(
@@ -38,8 +38,8 @@ def get_records(rows):
 
 def main():  # pragma: no cover
     # This is hard to test without a OpenCodelists DB, so we exclude it from coverage.
-    engine = utils.get_engine(utils.Database.OPENCODELISTS)
-    metadata = utils.get_metadata(engine)
+    engine = db.get_engine(db.Database.OPENCODELISTS)
+    metadata = db.get_metadata(engine)
     rows = extract(engine, metadata)
 
     records = get_records(rows)

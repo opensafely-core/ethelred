@@ -3,7 +3,7 @@ import enum
 
 import sqlalchemy
 
-from .. import DATA_DIR, INDEX_DATE, io, utils
+from .. import DATA_DIR, INDEX_DATE, db, io
 
 
 Record = collections.namedtuple(
@@ -116,8 +116,8 @@ def get_records(rows):
 
 def main():  # pragma: no cover
     # This is hard to test without a Job Server DB, so we exclude it from coverage.
-    engine = utils.get_engine(utils.Database.JOBSERVER)
-    metadata = utils.get_metadata(engine)
+    engine = db.get_engine(db.Database.JOBSERVER)
+    metadata = db.get_metadata(engine)
     rows = (row for row in extract(engine, metadata) if row.run_command)
     records = get_records(rows)
     io.write(records, DATA_DIR / "jobs" / "jobs.csv")
