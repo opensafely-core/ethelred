@@ -19,4 +19,4 @@ def test_get_records():
     assert record.login_at == datetime.datetime(
         2025, 1, 1, tzinfo=datetime.timezone.utc
     )
-    assert record.user == utils.sha256("user@example.com")
+    assert record.email_hash == utils.sha256("user@example.com")
