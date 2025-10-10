@@ -15,7 +15,6 @@ def test_get_records():
     )
     records = list(get_opencodelists_logins.get_records([row]))
     record = records[0]
-
     assert record.login_at == datetime.datetime(
         2025, 1, 1, tzinfo=datetime.timezone.utc
     )
