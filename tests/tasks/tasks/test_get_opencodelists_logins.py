@@ -1,7 +1,8 @@
 import collections
 import datetime
 
-from tasks import get_opencodelists_logins, utils
+from tasks import utils
+from tasks.tasks import get_opencodelists_logins
 
 
 Row = collections.namedtuple("Row", ["last_login", "email"])

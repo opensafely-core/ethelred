@@ -3,7 +3,7 @@ import collections
 import pipeline
 import sqlalchemy
 
-from . import DATA_DIR, INDEX_DATE, io, utils
+from .. import DATA_DIR, INDEX_DATE, io, utils
 
 
 Record = collections.namedtuple("Record", ["repo", "sha", "project_definition"])

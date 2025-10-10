@@ -7,7 +7,8 @@ import pytest
 import responses
 import responses.matchers
 
-from tasks import get_workflow_runs, io
+from tasks import io
+from tasks.tasks import get_workflow_runs
 
 
 @responses.activate
