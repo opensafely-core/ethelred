@@ -3,7 +3,7 @@ import functools
 
 import sqlalchemy
 
-from .. import DATA_DIR, INDEX_DATE, io, utils
+from .. import DATA_DIR, INDEX_DATE, db, io, utils
 
 
 Record = collections.namedtuple(
@@ -80,8 +80,8 @@ def get_records(rows, project_definition_loader):
 
 def main():  # pragma: no cover
     # This is hard to test without a Job Server DB, so we exclude it from coverage.
-    engine = utils.get_engine(utils.Database.JOBSERVER)
-    metadata = utils.get_metadata(engine)
+    engine = db.get_engine(db.Database.JOBSERVER)
+    metadata = db.get_metadata(engine)
     rows = extract(engine, metadata)
 
     project_definition_loader = functools.partial(
