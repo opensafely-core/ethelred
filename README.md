@@ -27,11 +27,11 @@ Next, run the following commands:
 ```sh
 just devenv
 source .venv/bin/activate
-python -m tasks.get_project_definitions
-python -m tasks.get_job_requests
-python -m tasks.get_jobs
-python -m tasks.get_workflow_runs
-python -m tasks.get_opencodelists_logins
+python -m tasks.tasks.get_project_definitions
+python -m tasks.tasks.get_job_requests
+python -m tasks.tasks.get_jobs
+python -m tasks.tasks.get_workflow_runs
+python -m tasks.tasks.get_opencodelists_logins
 just run app/app.py
 ```
 
