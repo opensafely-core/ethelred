@@ -11,6 +11,7 @@ exclude_also = [
     'if __name__ == "__main__":',
 ]
 omit = [
+    "tasks/__main__.py",
     "tests/jobserver/get_tables.py",
     "tests/jobserver/tables.py",
 ]
