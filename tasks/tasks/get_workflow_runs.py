@@ -133,7 +133,7 @@ def get_records(runs_dir):
         )
 
 
-def main(org, workflows_dir, now_function=datetime.datetime.now):
+def entrypoint(org, workflows_dir, now_function=datetime.datetime.now):
     # Extract and write data to disk
     extract(org, workflows_dir, now_function(datetime.timezone.utc))
     # Get latest workflow runs from disk (may include past extractions)
@@ -142,5 +142,9 @@ def main(org, workflows_dir, now_function=datetime.datetime.now):
     io.write(records, workflows_dir / "workflow_runs.csv")
 
 
+def main():  # pragma: no cover
+    entrypoint("opensafely", DATA_DIR / "workflow_runs")
+
+
 if __name__ == "__main__":
-    main("opensafely", DATA_DIR / "workflow_runs")
+    main()

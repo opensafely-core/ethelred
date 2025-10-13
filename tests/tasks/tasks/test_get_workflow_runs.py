@@ -215,7 +215,7 @@ def test_get_records(tmpdir):
 
 
 @responses.activate
-def test_main(tmpdir, monkeypatch):
+def test_entrypoint(tmpdir, monkeypatch):
     # Environment variable only needs to be available; correct usage tested in test_fetch_pages
     monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "")
 
@@ -248,7 +248,7 @@ def test_main(tmpdir, monkeypatch):
         json={"total_count": 1, "workflow_runs": [run]},
     )
 
-    get_workflow_runs.main("test-org", workflows_dir, now_function=mock_now)
+    get_workflow_runs.entrypoint("test-org", workflows_dir, now_function=mock_now)
 
     with open(workflows_dir / "workflow_runs.csv") as f:
         csv_file = f.read()
