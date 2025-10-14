@@ -1,52 +1,10 @@
 import abc
 import pathlib
 
-import pandas
 
-
-class AbstractRepository(abc.ABC):
-    @abc.abstractmethod
-    def get_date_earliest_job_request_created(self):
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def get_date_latest_job_request_created(self):
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def get_job_requests(self):
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def get_jobs(self):
-        raise NotImplementedError
+class AbstractRepository(abc.ABC): ...
 
 
 class Repository(AbstractRepository):
     def __init__(self, root_dir):
         root_dir = pathlib.Path(root_dir)
-        self.job_requests_csv = root_dir / "job_requests" / "job_requests.csv"
-        self.jobs_csv = root_dir / "jobs" / "jobs.csv"
-
-    @property
-    def _job_requests(self):
-        return pandas.read_csv(self.job_requests_csv, parse_dates=["created_at"])
-
-    def get_date_earliest_job_request_created(self):
-        return self._job_requests["created_at"].min().to_pydatetime().date()
-
-    def get_date_latest_job_request_created(self):
-        return self._job_requests["created_at"].max().to_pydatetime().date()
-
-    def get_job_requests(self, from_, to_):
-        assert from_ <= to_
-        # Indexing into a DatetimeIndex with a string when a datetime.date is available
-        # feels wrong, but the alternatives are cumbersome.
-        from_, to_ = [x.isoformat() for x in (from_, to_)]
-        by_created_at = self._job_requests.set_index(
-            "created_at", drop=False
-        ).sort_index()
-        return by_created_at.loc[from_:to_].reset_index(drop=True)
-
-    def get_jobs(self):
-        return pandas.read_csv(self.jobs_csv)
