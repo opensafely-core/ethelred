@@ -8,6 +8,7 @@ from tasks import db
     [
         (db.Database.JOBSERVER, "JOBSERVER_DATABASE_URL"),
         (db.Database.OPENCODELISTS, "OPENCODELISTS_DATABASE_URL"),
+        (db.Database.ETHELRED, "ETHELRED_DATABASE_URL"),
     ],
 )
 def test_get_engine(database, environment_variable, monkeypatch):
