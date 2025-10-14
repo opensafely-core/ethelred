@@ -17,6 +17,7 @@ Row = collections.namedtuple("Row", ["last_login", "email"])
             datetime.datetime(2025, 1, 1, tzinfo=None),
             datetime.datetime(2025, 1, 1, tzinfo=datetime.timezone.utc),
         ),
+        pytest.param(None, None, marks=pytest.mark.xfail(raises=AttributeError)),
     ],
 )
 def test_get_records(last_login, login_at):
