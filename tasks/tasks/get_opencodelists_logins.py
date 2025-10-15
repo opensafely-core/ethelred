@@ -29,7 +29,7 @@ def main():  # pragma: no cover
     # This is hard to test without a OpenCodelists DB, so we exclude it from coverage.
     engine = db.get_engine(db.Database.OPENCODELISTS)
     metadata = db.get_metadata(engine)
-    rows = extract(engine, metadata)
+    rows = (row for row in extract(engine, metadata) if row.last_login is not None)
 
     records = get_records(rows)
 
