@@ -19,11 +19,10 @@ def extract(engine, metadata):  # pragma: no cover
 
 def get_records(rows):
     for row in rows:
-        if row.last_login is None:
-            last_login = row.last_login
-        else:
-            last_login = row.last_login.replace(tzinfo=datetime.timezone.utc)
-        yield Record(last_login, utils.sha256(row.email))
+        yield Record(
+            row.last_login.replace(tzinfo=datetime.timezone.utc),
+            utils.sha256(row.email),
+        )
 
 
 def main():  # pragma: no cover
