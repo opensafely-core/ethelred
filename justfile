@@ -1,6 +1,7 @@
-PYTHON := "python3.12"
+PYTHON_VERSION := "python3.12"
 VENV_DIR := ".venv"
 BIN_DIR := VENV_DIR / "bin"
+PYTHON := BIN_DIR / "python"
 PIP := BIN_DIR / "python -m pip"
 PIP_COMPILE := BIN_DIR / "pip-compile"
 RUFF := BIN_DIR / "ruff"
@@ -16,7 +17,7 @@ clean:
 
 # Create a virtual environment
 venv:
-    test -d {{ VENV_DIR }} || {{ PYTHON }} -m venv {{ VENV_DIR }} && {{ PIP }} install --upgrade pip
+    test -d {{ VENV_DIR }} || {{ PYTHON_VERSION }} -m venv {{ VENV_DIR }} && {{ PIP }} install --upgrade pip
     test -e {{ PIP_COMPILE }} || {{ PIP }} install pip-tools
 
 _compile src dst *args: venv
@@ -65,6 +66,12 @@ devenv: requirements-dev prodenv (_install 'dev') && install-pre-commit
 # Run a streamlit app
 run *args: prodenv
     {{ STREAMLIT }} run {{ args }}
+
+tasks-list: prodenv
+    {{ PYTHON }} -m tasks list
+
+tasks-run task: prodenv
+    {{ PYTHON }} -m tasks run {{ task }}
 
 # Run tests
 test *args: devenv
