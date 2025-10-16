@@ -909,9 +909,9 @@ sqlalchemy==2.0.41 \
     --hash=sha256:edba70118c4be3c2b1f90754d308d0b79c6fe2c0fdc52d8ddf603916f83f4db9 \
     --hash=sha256:ff8e80c4c4932c10493ff97028decfdb622de69cae87e0f127a7ebe32b4069c6
     # via -r requirements.prod.in
-streamlit==1.46.0 \
-    --hash=sha256:0b2734b48f11f1e5c8046011b6b1a2274982dc657eef2ade8db70f0e1dc53dda \
-    --hash=sha256:f8624acabafcf18611a0fac2635cf181a7ba922b45bd131ae15fc8f80e1a5482
+streamlit==1.50.0 \
+    --hash=sha256:87221d568aac585274a05ef18a378b03df332b93e08103fffcf3cd84d852af46 \
+    --hash=sha256:9403b8f94c0a89f80cf679c2fcc803d9a6951e0fba542e7611995de3f67b4bb3
     # via -r requirements.prod.in
 tenacity==9.1.2 \
     --hash=sha256:1169d376c297e7de388d18b4481760d478b0e99a777cad3a9c86e556f4b697cb \
@@ -982,9 +982,7 @@ watchdog==6.0.0 \
     --hash=sha256:e6f0e77c9417e7cd62af82529b10563db3423625c5fce018430b249bf977f9e8 \
     --hash=sha256:e7631a77ffb1f7d2eefa4445ebbee491c720a5661ddf6df3498ebecae5ed375c \
     --hash=sha256:ef810fbf7b781a5a593894e4f439773830bdecb885e6880d957d5b9382a960d2
-    # via
-    #   -r requirements.prod.in
-    #   streamlit
+    # via -r requirements.prod.in
 
 # The following packages are considered to be unsafe in a requirements file:
 setuptools==80.9.0 \
