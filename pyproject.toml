@@ -25,6 +25,7 @@ filterwarnings = [
     # control Streamlit, so we ignore the deprecation warning.
     "ignore::altair.utils.deprecation.AltairDeprecationWarning:streamlit.elements.vega_charts",
 ]
+pythonpath = "app"
 
 [tool.ruff]
 src = [".", "app"]

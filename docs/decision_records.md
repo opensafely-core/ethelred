@@ -178,8 +178,7 @@ Not using the standard import system means we need to add some configuration to 
 * and most importantly, nobody is confused.
 
 More specifically,
-we set `tool.ruff.src` in `pyproject.toml`
-and `PYTHONPATH` when invoking Coverage.py with `just test`.
+we set `tool.ruff.src` and `tool.pytest.ini_options.pythonpath` in `pyproject.toml`.
 
 ## 010: GitHub flow
 

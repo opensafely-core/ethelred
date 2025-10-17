@@ -68,7 +68,7 @@ run *args: prodenv
 
 # Run tests
 test *args: devenv
-    PYTHONPATH={{ justfile_directory() }}/app {{ BIN_DIR }}/coverage run --source {{ justfile_directory() }} --module pytest {{ args }}
+    {{ BIN_DIR }}/coverage run --source {{ justfile_directory() }} --module pytest {{ args }}
     {{ BIN_DIR }}/coverage report || {{ BIN_DIR }}/coverage html
 
 # Fix code
