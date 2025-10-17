@@ -20,9 +20,8 @@ Next, run the following commands:
 ```sh
 just devenv
 source .venv/bin/activate
-source .env
-python -m tasks list # lists all tasks
-python -m tasks run <task> # runs individual tasks
+just tasks-list # lists all tasks
+just tasks-run <task> # runs individual tasks
 just run app/app.py
 ```
 
