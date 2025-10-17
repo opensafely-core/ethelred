@@ -3,7 +3,7 @@ import os
 import repositories
 
 
-def main(repository):  # pragma: no cover
+def _main(repository):  # pragma: no cover
     # This is tested by tests.app.test_app.test_app, but coverage doesn't seem to
     # realise.
     import altair
@@ -37,6 +37,7 @@ def main(repository):  # pragma: no cover
             to_ = initial_to
 
     streamlit.title("Ethelred")
+    streamlit.button("Log out", on_click=streamlit.logout)
 
     streamlit.header("OpenCodelists")
 
@@ -61,6 +62,22 @@ def main(repository):  # pragma: no cover
 
 
 if __name__ == "__main__":
-    database_url = os.environ.get("ETHELRED_DATABASE_URL")
-    repository = repositories.Repository(database_url)
-    main(repository)
+    import streamlit
+
+    streamlit._secrets_singleton._secrets = {
+        "auth": {
+            "redirect_uri": os.environ["AUTH_REDIRECT_URI"],
+            "cookie_secret": os.environ["AUTH_COOKIE_SECRET"],
+            "client_id": os.environ["AUTH_CLIENT_ID"],
+            "client_secret": os.environ["AUTH_CLIENT_SECRET"],
+            "server_metadata_url": os.environ["AUTH_SERVER_METADATA_URL"],
+        }
+    }
+
+    # user.is_logged_in is accessible only after loading secrets
+    if streamlit.user.is_logged_in:
+        database_url = os.environ.get("ETHELRED_DATABASE_URL")
+        repository = repositories.Repository(database_url)
+        _main(repository)
+    else:
+        streamlit.login()
