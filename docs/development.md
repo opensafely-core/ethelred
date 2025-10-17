@@ -2,13 +2,17 @@
 
 ## Setup
 
-Ethelred needs a Job Server PostgreSQL database and an OpenCodelists SQLite database.
-Refer to [Job Server's][3] and [OpenCodelists's][5] developer documentation for how to set these up.
+Different tasks have different data dependencies.
+These are:
 
-Ethelred needs a fine-grained [Personal Access Token][4] (PAT) with the "Actions (read-only)" permission.
-The PAT should access resources owned by the opensafely organisation.
+* a Job Server PostgreSQL database.
+  Refer to [Job Server's][3] developer documentation for setup instructions.
+* an OpenCodelists SQLite database.
+  Refer to [OpenCodelists's][5] developer documentation for setup instructions.
+* a fine-grained [Personal Access Token][4] (PAT) with the "Actions (read-only)" permission.
+  The PAT should access resources owned by the opensafely organisation.
 
-When you've got the databases and a PAT,
+When you've got the data dependencies you need,
 copy `dotenv` to `.env` and, if necessary, update `.env`.
 
 Next, run the following commands:
