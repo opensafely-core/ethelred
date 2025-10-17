@@ -71,6 +71,9 @@ tasks-list: prodenv
     {{ PYTHON }} -m tasks list
 
 tasks-run task: prodenv
+    #!/usr/bin/env bash
+    set -ea
+    . .env
     {{ PYTHON }} -m tasks run {{ task }}
 
 # Run tests
