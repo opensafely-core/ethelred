@@ -20,7 +20,7 @@ def extract(engine, metadata):  # pragma: no cover
 def get_records(rows):
     for row in rows:
         yield Record(
-            row.last_login.replace(tzinfo=datetime.timezone.utc),
+            row.last_login.replace(microsecond=0, tzinfo=datetime.timezone.utc),
             utils.sha256(row.email),
         )
 
