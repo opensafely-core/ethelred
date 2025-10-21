@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: digitalocean/app_action/deploy@v2
+      - uses: digitalocean/app_action/deploy@f4c57e650e1dec6665ad5d3af739b67b9d31aab1
         with:
           token: ${{ secrets.DIGITALOCEAN_DEPLOYMENT }}
           print_build_logs: true
