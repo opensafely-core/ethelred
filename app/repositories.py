@@ -31,10 +31,10 @@ class Repository(AbstractRepository):
         return val
 
     def get_earliest_login_date(self):
-        return self._call(self.opencodelists_logins_uri, "min", "login_at")
+        return self._call(self.opencodelists_logins_uri, "min", "login_at").date()
 
     def get_latest_login_date(self):
-        return self._call(self.opencodelists_logins_uri, "max", "login_at")
+        return self._call(self.opencodelists_logins_uri, "max", "login_at").date()
 
     def get_logins_per_day(self, from_, to_):
         assert from_ <= to_
