@@ -3,7 +3,7 @@ import datetime
 
 import sqlalchemy
 
-from .. import db, tables, utils
+from .. import DATA_DIR, db, io, utils
 
 
 Record = collections.namedtuple("Record", ["login_at", "email_hash"])
@@ -33,11 +33,7 @@ def main():  # pragma: no cover
 
     records = get_records(rows)
 
-    db.write_records(
-        records,
-        db.get_engine(db.Database.ETHELRED),
-        tables.opencodelists_logins,
-    )
+    io.write(records, DATA_DIR / "opencodelists_logins" / "opencodelists_logins.csv")
 
 
 if __name__ == "__main__":
