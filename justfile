@@ -44,6 +44,13 @@ upgrade env package="": venv
     fi
     FORCE=true {{ just_executable() }} requirements-{{ env }} $opts
 
+# This is the default input command to update-dependencies action
+# https://github.com/bennettoxford/update-dependencies-action
+# Upgrade all dev and prod dependencies.
+update-dependencies:
+    just upgrade prod
+    just upgrade dev
+
 _install env:
     #!/usr/bin/env bash
     set -euxo pipefail
