@@ -25,7 +25,7 @@ Record = collections.namedtuple(
 
 
 def get_token():
-    return os.environ["GITHUB_WORKFLOW_RUNS_TOKEN"]
+    return os.environ["GITHUB_TOKEN"]
 
 
 def get_with_retry(

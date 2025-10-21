@@ -76,7 +76,7 @@ def test_get_with_retry_when_fail_then_succeed(capsys):
 
 @responses.activate
 def test_fetch_pages(monkeypatch):
-    monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "test_token")
+    monkeypatch.setenv("GITHUB_TOKEN", "test_token")
     match = [
         responses.matchers.header_matcher({"Authorization": "Bearer test_token"}),
         responses.matchers.query_param_matcher({"per_page": 100, "format": "json"}),
@@ -106,7 +106,7 @@ def test_fetch_pages(monkeypatch):
 @responses.activate
 def test_extract(tmpdir, monkeypatch):
     # Environment variable only needs to be available; correct usage tested in test_fetch_pages
-    monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "")
+    monkeypatch.setenv("GITHUB_TOKEN", "")
 
     responses.add(
         responses.GET,
@@ -217,7 +217,7 @@ def test_get_records(tmpdir):
 @responses.activate
 def test_entrypoint(tmpdir, monkeypatch):
     # Environment variable only needs to be available; correct usage tested in test_fetch_pages
-    monkeypatch.setenv("GITHUB_WORKFLOW_RUNS_TOKEN", "")
+    monkeypatch.setenv("GITHUB_TOKEN", "")
 
     # Run through pipeline for a single workflow run
     workflows_dir = pathlib.Path(tmpdir)
