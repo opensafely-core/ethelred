@@ -1,3 +1,4 @@
+import functools
 import os
 
 import repositories
@@ -61,7 +62,12 @@ def _main(repository):  # pragma: no cover
     streamlit.write(layer_chart)
 
 
-if __name__ == "__main__":
+# Probably should be a @require_login decorator?
+def main(func):  # pragma: no cover
+    # This is tested by tests.app.test_app.test_app, but coverage doesn't seem to
+    # realise.
+    import os
+
     import streamlit
 
     streamlit._secrets_singleton._secrets = {
@@ -73,11 +79,15 @@ if __name__ == "__main__":
             "server_metadata_url": os.environ["AUTH_SERVER_METADATA_URL"],
         }
     }
-
     # user.is_logged_in is accessible only after loading secrets
     if streamlit.user.is_logged_in:
-        database_url = os.environ.get("ETHELRED_DATABASE_URL")
-        repository = repositories.Repository(database_url)
-        _main(repository)
+        func()
     else:
-        streamlit.login()
+        streamlit.title("Please log in")
+        streamlit.button("Log in with Google", on_click=streamlit.login)
+
+
+if __name__ == "__main__":
+    database_url = os.environ.get("ETHELRED_DATABASE_URL")
+
+    main(functools.partial(_main, repositories.Repository(database_url)))
