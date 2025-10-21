@@ -1,11 +1,7 @@
 import collections
 import datetime
-import os
-import time
 
-import requests
-
-from .. import DATA_DIR, io
+from .. import DATA_DIR, github, io
 
 
 Record = collections.namedtuple(
@@ -24,73 +20,13 @@ Record = collections.namedtuple(
 )
 
 
-def get_token():
-    return os.environ["GITHUB_TOKEN"]
-
-
-def get_with_retry(
-    url,
-    headers=None,
-    params=None,
-    max_retries=3,
-    base_delay_seconds=0.5,
-    sleep_function=time.sleep,
-):
-    retry_count = 0
-    while True:
-        try:
-            response = requests.get(url, headers=headers, params=params)
-            response.raise_for_status()
-            return response
-        except Exception as error:
-            print(f"Error fetching {url}: {error}")
-            if retry_count < max_retries:
-                delay_seconds = base_delay_seconds * (2**retry_count)
-                print(
-                    f"Retrying in {delay_seconds} seconds (retry attempt {retry_count + 1})..."
-                )
-                retry_count += 1
-                sleep_function(delay_seconds)
-            else:
-                print(f"Maximum retries reached ({max_retries}).")
-                raise
-
-
-def fetch_pages(first_page_url):
-    url = first_page_url
-    while True:
-        response = get_with_retry(
-            url,
-            headers={"Authorization": f"Bearer {get_token()}"},
-            params={"per_page": 100, "format": "json"},
-        )
-        yield response.json()
-        if next_link := response.links.get("next"):
-            url = next_link["url"]
-        else:
-            break
-
-
-def fetch_repos(org):
-    for page in fetch_pages(f"https://api.github.com/orgs/{org}/repos"):
-        yield from page
-
-
-def fetch_workflow_runs_for_repo(org, repo_name):
-    for page in fetch_pages(
-        f"https://api.github.com/repos/{org}/{repo_name}/actions/runs"
-    ):
-        yield from page["workflow_runs"]
-
-
 def extract(org, output_dir, datetime_):
     timestamp = datetime_.strftime("%Y%m%d-%H%M%S")
-    for repo in fetch_repos(org):
+    for repo in github.fetch_repos(org):
         repo_name = repo["name"]
         io.write(repo, output_dir / "repos" / timestamp / f"{repo_name}.json")
 
-        runs = fetch_workflow_runs_for_repo(org, repo_name)
-        for run in runs:
+        for run in github.fetch_workflow_runs(org, repo_name):
             io.write(
                 run, output_dir / "runs" / repo_name / timestamp / f"{run['id']}.json"
             )
