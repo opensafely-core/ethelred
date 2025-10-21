@@ -1,5 +1,4 @@
 import collections
-import datetime
 
 import sqlalchemy
 
@@ -19,10 +18,7 @@ def extract(engine, metadata):  # pragma: no cover
 
 def get_records(rows):
     for row in rows:
-        yield Record(
-            row.last_login.replace(microsecond=0, tzinfo=datetime.timezone.utc),
-            utils.sha256(row.email),
-        )
+        yield Record(row.last_login.replace(microsecond=0), utils.sha256(row.email))
 
 
 def main():  # pragma: no cover
