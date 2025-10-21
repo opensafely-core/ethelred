@@ -69,10 +69,8 @@ def test_get_with_retry_when_fail_then_succeed(capsys):
 
 
 @responses.activate
-def test_fetch_with_top_level_results(monkeypatch):
-    monkeypatch.setenv("GITHUB_TOKEN", "test_token")
+def test_fetch_with_top_level_results(stub_token):
     match = [
-        responses.matchers.header_matcher({"Authorization": "Bearer test_token"}),
         responses.matchers.query_param_matcher({"per_page": "100", "format": "json"}),
     ]
     responses.add(
@@ -89,28 +87,42 @@ def test_fetch_with_top_level_results(monkeypatch):
         match=match,
     )
 
-    records = github.fetch("https://test.url")
+    records = github.fetch("an-org", "https://test.url")
 
     assert isinstance(records, types.GeneratorType)
     assert list(records) == [{"id": 1}, {"id": 2}]
 
 
 @responses.activate
-def test_fetch_with_nested_results(monkeypatch):
-    monkeypatch.setenv("GITHUB_TOKEN", "test_token")
+def test_fetch_with_nested_results(stub_token):
     responses.add(
         responses.GET,
         "https://test.url",
         json={"results": [{"id": 1}]},
     )
 
-    records = github.fetch("https://test.url", results_key="results")
+    records = github.fetch("an-org", "https://test.url", results_key="results")
     assert list(records) == [{"id": 1}]
 
 
 @responses.activate
-def test_fetch_repos(monkeypatch):
-    monkeypatch.setenv("GITHUB_TOKEN", "test_token")
+def test_fetch_uses_the_correct_token(monkeypatch):
+    monkeypatch.setenv("GITHUB_EBMDATALAB_TOKEN", "test_token")
+    responses.add(
+        responses.GET,
+        "https://test.url",
+        json=[],
+        match=[
+            responses.matchers.header_matcher({"Authorization": "Bearer test_token"})
+        ],
+    )
+
+    records = github.fetch("ebmdatalab", "https://test.url")
+    assert list(records) == []
+
+
+@responses.activate
+def test_fetch_repos(stub_token):
     responses.add(
         responses.GET,
         "https://api.github.com/orgs/test-org/repos?per_page=100&format=json",
@@ -122,8 +134,7 @@ def test_fetch_repos(monkeypatch):
 
 
 @responses.activate
-def test_fetch_workflow_runs(monkeypatch):
-    monkeypatch.setenv("GITHUB_TOKEN", "test_token")
+def test_fetch_workflow_runs(stub_token):
     responses.add(
         responses.GET,
         "https://api.github.com/repos/test-org/test-repo/actions/runs?per_page=100&format=json",
@@ -131,4 +142,16 @@ def test_fetch_workflow_runs(monkeypatch):
     )
 
     repos = github.fetch_workflow_runs("test-org", "test-repo")
+    assert list(repos) == [{"id": 1}]
+
+
+@responses.activate
+def test_fetch_prs(stub_token):
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/test-org/test-repo/pulls?state=all&per_page=100&format=json",
+        json=[{"id": 1}],
+    )
+
+    repos = github.fetch_prs("test-org", "test-repo")
     assert list(repos) == [{"id": 1}]

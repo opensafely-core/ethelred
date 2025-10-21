@@ -1,6 +1,8 @@
 import pytest
 import sqlalchemy
 
+from tasks import github
+
 from .jobserver import tables
 
 
@@ -24,3 +26,8 @@ def jobserver_metadata(jobserver_engine):
     tables.metadata.create_all(bind=jobserver_engine)
     yield tables.metadata
     tables.metadata.drop_all(bind=jobserver_engine)
+
+
+@pytest.fixture
+def stub_token(monkeypatch):
+    monkeypatch.setattr(github, "get_token", lambda _: "a-token")

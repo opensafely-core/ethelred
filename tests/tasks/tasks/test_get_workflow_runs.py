@@ -10,10 +10,7 @@ from tasks.tasks import get_workflow_runs
 
 
 @responses.activate
-def test_extract(tmpdir, monkeypatch):
-    # Environment variable only needs to be available; correct usage tested in test_fetch_pages
-    monkeypatch.setenv("GITHUB_TOKEN", "")
-
+def test_extract(tmpdir, stub_token):
     responses.add(
         responses.GET,
         "https://api.github.com/orgs/test-org/repos",
@@ -121,10 +118,7 @@ def test_get_records(tmpdir):
 
 
 @responses.activate
-def test_entrypoint(tmpdir, monkeypatch):
-    # Environment variable only needs to be available; correct usage tested in test_fetch_pages
-    monkeypatch.setenv("GITHUB_TOKEN", "")
-
+def test_entrypoint(tmpdir, stub_token):
     # Run through pipeline for a single workflow run
     workflows_dir = pathlib.Path(tmpdir)
 

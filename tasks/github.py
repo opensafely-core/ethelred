@@ -4,8 +4,14 @@ import time
 import requests
 
 
-def get_token():
-    return os.environ["GITHUB_TOKEN"]
+def get_token(org):
+    env_vars = {
+        "ebmdatalab": "GITHUB_EBMDATALAB_TOKEN",
+        "bennettoxford": "GITHUB_BENNETTOXFORD_TOKEN",
+        "opensafely-core": "GITHUB_OPENSAFELY_CORE_TOKEN",
+        "opensafely": "GITHUB_OPENSAFELY_TOKEN",
+    }
+    return os.environ[env_vars[org]]
 
 
 def get_with_retry(
@@ -36,12 +42,12 @@ def get_with_retry(
                 raise
 
 
-def fetch(first_page_url, *, results_key=None):
+def fetch(org, first_page_url, *, results_key=None):
     url = first_page_url
     while True:
         response = get_with_retry(
             url,
-            headers={"Authorization": f"Bearer {get_token()}"},
+            headers={"Authorization": f"Bearer {get_token(org)}"},
             params={"per_page": 100, "format": "json"},
         )
         page = response.json()
@@ -54,11 +60,18 @@ def fetch(first_page_url, *, results_key=None):
 
 
 def fetch_repos(org):
-    yield from fetch(f"https://api.github.com/orgs/{org}/repos")
+    yield from fetch(org, f"https://api.github.com/orgs/{org}/repos")
 
 
 def fetch_workflow_runs(org, repo_name):
     yield from fetch(
+        org,
         f"https://api.github.com/repos/{org}/{repo_name}/actions/runs",
         results_key="workflow_runs",
+    )
+
+
+def fetch_prs(org, repo_name):
+    yield from fetch(
+        org, f"https://api.github.com/repos/{org}/{repo_name}/pulls?state=all"
     )

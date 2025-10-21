@@ -9,8 +9,14 @@ These are:
   Refer to [Job Server's][3] developer documentation for setup instructions.
 * an OpenCodelists SQLite database.
   Refer to [OpenCodelists's][5] developer documentation for setup instructions.
-* a fine-grained [Personal Access Token][4] (PAT) with the "Actions (read-only)" permission.
-  The PAT should access resources owned by the opensafely organisation.
+* a series of GitHub fine-grained [Personal Access Tokens][4] (PATs):
+  * opensafely organisation: "Actions (read-only)" and "Pull Requests (read-only)" permissions,
+  * opensafely-core organisation: "Pull Requests (read-only)" permission,
+  * ebmdatalab organisation: "Pull Requests (read-only)" permission,
+  * bennettoxford organisation: "Pull Requests (read-only)" permission.
+
+(Note that the opensafely-core, ebmdatalab and bennettoxford PATs are only needed for running the `get_prs` task
+and can be left empty if you aren't going to run it.)
 
 When you've got the data dependencies you need,
 copy `dotenv` to `.env` and, if necessary, update `.env`.
