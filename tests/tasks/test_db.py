@@ -1,7 +1,4 @@
-import collections
-
 import pytest
-import sqlalchemy
 
 from tasks import db
 
@@ -29,37 +26,3 @@ def test_get_metadata(monkeypatch):
     monkeypatch.setenv("JOBSERVER_DATABASE_URL", "sqlite+pysqlite:///:memory:")
     metadata = db.get_metadata(db.get_engine(db.Database.JOBSERVER))
     assert metadata.tables == {}
-
-
-def test_write_records():
-    engine = sqlalchemy.create_engine("sqlite+pysqlite:///:memory:")
-    table = sqlalchemy.Table(
-        "test", sqlalchemy.MetaData(), sqlalchemy.Column("col_1", sqlalchemy.String)
-    )
-    Record = collections.namedtuple("Record", ["col_1"])
-
-    db.write_records([Record("value_1"), Record("value_2")], engine, table)
-
-    with engine.connect() as conn:
-        rows = list(conn.execute(sqlalchemy.select(table)))
-    assert len(rows) == 2
-    assert rows[0]._fields == Record._fields
-    assert rows[0].col_1 == "value_1"
-
-
-def test_write_records_overwrites_existing_table():
-    engine = sqlalchemy.create_engine("sqlite+pysqlite:///:memory:")
-    table = sqlalchemy.Table(
-        "test", sqlalchemy.MetaData(), sqlalchemy.Column("col_1", sqlalchemy.String)
-    )
-    Record = collections.namedtuple("Record", ["col_1"])
-    table.create(engine)
-    with engine.begin() as conn:
-        conn.execute(sqlalchemy.insert(table), {"col_1": "old_value"})
-
-    db.write_records([Record("new_value")], engine, table)
-
-    with engine.connect() as conn:
-        rows = list(conn.execute(sqlalchemy.select(table)))
-    assert len(rows) == 1
-    assert rows[0].col_1 == "new_value"

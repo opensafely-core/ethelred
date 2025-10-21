@@ -26,10 +26,3 @@ def get_metadata(engine):
     metadata = sqlalchemy.MetaData()
     metadata.reflect(bind=engine)
     return metadata
-
-
-def write_records(records, engine, table):
-    table.drop(engine, checkfirst=True)  # Overwrite table if it exists
-    table.create(engine)
-    with engine.begin() as conn:
-        conn.execute(sqlalchemy.insert(table), [record._asdict() for record in records])
