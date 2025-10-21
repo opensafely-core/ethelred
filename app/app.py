@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 import repositories
 
@@ -61,6 +62,8 @@ def main(repository):  # pragma: no cover
 
 
 if __name__ == "__main__":
-    database_url = os.environ.get("ETHELRED_DATABASE_URL")
-    repository = repositories.Repository(database_url)
+    root_uri = os.environ.get(
+        "REPOSITORY_ROOT_URI", pathlib.Path("data").resolve().as_uri()
+    )
+    repository = repositories.Repository(root_uri)
     main(repository)

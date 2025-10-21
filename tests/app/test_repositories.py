@@ -1,7 +1,6 @@
 import datetime
 
 import pytest
-import sqlalchemy
 
 from app import repositories
 
@@ -15,24 +14,16 @@ def test_abstract_repository():
 
 @pytest.fixture
 def repository(tmp_path):
-    database_url = f"sqlite+pysqlite:///{tmp_path}/db.sqlite3"
-    engine = sqlalchemy.create_engine(database_url)
-    metadata = sqlalchemy.MetaData()
-    logins_table = sqlalchemy.Table(
-        "opencodelists_logins",
-        metadata,
-        sqlalchemy.Column("login_at", sqlalchemy.DateTime, primary_key=True),
-        sqlalchemy.Column("email_hash", sqlalchemy.String(64), primary_key=True),
+    logins_path = tmp_path / "opencodelists_logins" / "opencodelists_logins.csv"
+    logins_path.parent.mkdir()
+    logins_path.write_text(
+        (
+            "login_at,email_hash\n"
+            + "2025-01-01 00:00:00,1111111\n"
+            + "2025-01-03 00:00:00,3333333\n"
+        )
     )
-    metadata.create_all(engine)
-    with engine.connect() as conn:
-        logins = [
-            {"login_at": datetime.datetime(2025, 1, 1), "email_hash": 1111111},
-            {"login_at": datetime.datetime(2025, 1, 3), "email_hash": 3333333},
-        ]
-        conn.execute(sqlalchemy.insert(logins_table), logins)
-        conn.commit()
-    return repositories.Repository(database_url)
+    return repositories.Repository(tmp_path.as_uri())
 
 
 def test_get_earliest_login_date(repository):
