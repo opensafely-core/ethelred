@@ -20,7 +20,7 @@ class AbstractRepository(abc.ABC):
 
 class Repository(AbstractRepository):
     def __init__(self, root_uri):
-        self.opencodelists_logins_uri = root_uri + "/opencodelists/login_events.csv"
+        self.login_events_uri = root_uri + "/opencodelists/login_events.csv"
 
     def _call(self, uri, func, col):
         with duckdb.connect() as conn:
@@ -29,10 +29,10 @@ class Repository(AbstractRepository):
         return val
 
     def get_earliest_login_date(self):
-        return self._call(self.opencodelists_logins_uri, "min", "login_at").date()
+        return self._call(self.login_events_uri, "min", "login_at").date()
 
     def get_latest_login_date(self):
-        return self._call(self.opencodelists_logins_uri, "max", "login_at").date()
+        return self._call(self.login_events_uri, "max", "login_at").date()
 
     def get_logins_per_day(self, from_, to_):
         assert from_ <= to_
@@ -52,7 +52,7 @@ class Repository(AbstractRepository):
                 ORDER BY login_on
                 """,
                 params={
-                    "uri": self.opencodelists_logins_uri,
+                    "uri": self.login_events_uri,
                     "from": from_,
                     "to": to_,
                 },
