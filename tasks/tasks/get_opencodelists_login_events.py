@@ -29,7 +29,7 @@ def main():  # pragma: no cover
 
     records = get_records(rows)
 
-    io.write(records, DATA_DIR / "opencodelists_logins" / "opencodelists_logins.csv")
+    io.write(records, DATA_DIR / "opencodelists" / "login_events.csv")
 
 
 if __name__ == "__main__":

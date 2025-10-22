@@ -20,9 +20,7 @@ class AbstractRepository(abc.ABC):
 
 class Repository(AbstractRepository):
     def __init__(self, root_uri):
-        self.opencodelists_logins_uri = (
-            root_uri + "/opencodelists_logins/opencodelists_logins.csv"
-        )
+        self.opencodelists_logins_uri = root_uri + "/opencodelists/login_events.csv"
 
     def _call(self, uri, func, col):
         with duckdb.connect() as conn:
