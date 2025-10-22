@@ -26,8 +26,8 @@ def repository(tmp_path):
     return repositories.Repository(tmp_path.as_uri())
 
 
-def test_get_earliest_login_date(repository):
-    assert repository.get_earliest_login_date() == datetime.date(2025, 1, 1)
+def test_get_earliest_login_event_date(repository):
+    assert repository.get_earliest_login_event_date() == datetime.date(2025, 1, 1)
 
 
 def test_get_latest_login_date(repository):

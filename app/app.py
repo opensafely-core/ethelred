@@ -11,7 +11,7 @@ def main(repository):  # pragma: no cover
     import streamlit
 
     with streamlit.sidebar:
-        earliest_login_date = repository.get_earliest_login_date()
+        earliest_login_date = repository.get_earliest_login_event_date()
         latest_login_date = repository.get_latest_login_date()
 
         initial_from = latest_login_date.replace(month=1, day=1)

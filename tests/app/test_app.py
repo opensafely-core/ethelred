@@ -7,7 +7,7 @@ from app import app, repositories
 
 
 class FakeRepository(repositories.AbstractRepository):
-    def get_earliest_login_date(self):
+    def get_earliest_login_event_date(self):
         return datetime.date(2025, 1, 1)
 
     def get_latest_login_date(self):

@@ -6,7 +6,7 @@ import pandas
 
 class AbstractRepository(abc.ABC):
     @abc.abstractmethod
-    def get_earliest_login_date(self):
+    def get_earliest_login_event_date(self):
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -28,7 +28,7 @@ class Repository(AbstractRepository):
             val, *_ = getattr(rel, func)(col).fetchone()
         return val
 
-    def get_earliest_login_date(self):
+    def get_earliest_login_event_date(self):
         return self._call(self.login_events_uri, "min", "login_at").date()
 
     def get_latest_login_date(self):
