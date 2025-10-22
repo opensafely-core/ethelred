@@ -14,7 +14,7 @@ def test_abstract_repository():
 
 @pytest.fixture
 def repository(tmp_path):
-    logins_path = tmp_path / "opencodelists_logins" / "opencodelists_logins.csv"
+    logins_path = tmp_path / "opencodelists" / "login_events.csv"
     logins_path.parent.mkdir()
     logins_path.write_text(
         (
