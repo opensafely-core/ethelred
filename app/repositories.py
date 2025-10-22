@@ -14,7 +14,7 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_logins_per_day(self, from_, to_):
+    def get_login_events_per_day(self, from_, to_):
         raise NotImplementedError
 
 
@@ -34,7 +34,7 @@ class Repository(AbstractRepository):
     def get_latest_login_event_date(self):
         return self._call(self.login_events_uri, "max", "login_at").date()
 
-    def get_logins_per_day(self, from_, to_):
+    def get_login_events_per_day(self, from_, to_):
         assert from_ <= to_
         with duckdb.connect() as conn:
             logins_per_day_relation = conn.sql(

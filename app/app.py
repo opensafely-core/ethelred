@@ -46,7 +46,7 @@ def main(repository):  # pragma: no cover
         + "compared to the 28 day rolling mean in red"
     )
 
-    base_chart = altair.Chart(repository.get_logins_per_day(from_, to_))
+    base_chart = altair.Chart(repository.get_login_events_per_day(from_, to_))
     count_chart = base_chart.mark_line().encode(x="date", y="count")
     rolling_mean_chart = (
         base_chart.mark_line(color="red")

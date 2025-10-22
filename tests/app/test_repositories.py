@@ -37,8 +37,8 @@ def test_get_latest_login_event_date(repository):
 @pytest.mark.filterwarnings(
     "ignore:The behavior of DatetimeProperties.to_pydatetime is deprecated:FutureWarning"
 )
-def test_get_logins_per_day(repository):
-    logins_per_day = repository.get_logins_per_day(
+def test_get_login_events_per_day(repository):
+    logins_per_day = repository.get_login_events_per_day(
         datetime.date(2025, 1, 1), datetime.date(2025, 1, 3)
     )
     assert list(logins_per_day["date"].dt.to_pydatetime()) == [

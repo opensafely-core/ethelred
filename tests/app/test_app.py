@@ -13,7 +13,7 @@ class FakeRepository(repositories.AbstractRepository):
     def get_latest_login_event_date(self):
         return datetime.date(2025, 1, 1)
 
-    def get_logins_per_day(self, from_, to_):
+    def get_login_events_per_day(self, from_, to_):
         return pandas.DataFrame({"date": [datetime.date(2025, 1, 1)], "count": [1]})
 
 
