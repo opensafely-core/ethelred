@@ -10,7 +10,7 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_latest_login_date(self):
+    def get_latest_login_event_date(self):
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -31,7 +31,7 @@ class Repository(AbstractRepository):
     def get_earliest_login_event_date(self):
         return self._call(self.login_events_uri, "min", "login_at").date()
 
-    def get_latest_login_date(self):
+    def get_latest_login_event_date(self):
         return self._call(self.login_events_uri, "max", "login_at").date()
 
     def get_logins_per_day(self, from_, to_):
