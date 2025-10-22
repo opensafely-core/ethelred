@@ -30,8 +30,8 @@ def test_get_earliest_login_event_date(repository):
     assert repository.get_earliest_login_event_date() == datetime.date(2025, 1, 1)
 
 
-def test_get_latest_login_date(repository):
-    assert repository.get_latest_login_date() == datetime.date(2025, 1, 3)
+def test_get_latest_login_event_date(repository):
+    assert repository.get_latest_login_event_date() == datetime.date(2025, 1, 3)
 
 
 @pytest.mark.filterwarnings(
