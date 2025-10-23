@@ -12,23 +12,23 @@ def main(repository):  # pragma: no cover
 
     with streamlit.sidebar:
         earliest_event_date = repository.get_earliest_login_event_date()
-        latest_login_date = repository.get_latest_login_event_date()
+        latest_event_date = repository.get_latest_login_event_date()
 
-        initial_from = latest_login_date.replace(month=1, day=1)
+        initial_from = latest_event_date.replace(month=1, day=1)
         from_ = streamlit.date_input(
             "From",
             value=initial_from,
             min_value=earliest_event_date,
-            max_value=latest_login_date,
+            max_value=latest_event_date,
             help="The earliest date to include",
         )
 
-        initial_to = latest_login_date
+        initial_to = latest_event_date
         to_ = streamlit.date_input(
             "To",
             value=initial_to,
             min_value=earliest_event_date,
-            max_value=latest_login_date,
+            max_value=latest_event_date,
             help="The latest date to include",
         )
 
