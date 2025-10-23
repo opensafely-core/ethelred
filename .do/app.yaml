@@ -6,6 +6,11 @@ name: ethelred
 region: lon1
 features:
   - buildpack-stack=ubuntu-22
+envs:
+  - key: REPOSITORY_ROOT_URI
+    value: ${REPOSITORY_ROOT_URI}
+    scope: RUN_TIME
+    type: SECRET
 services:
   - name: streamlit
     environment_slug: python
