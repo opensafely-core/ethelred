@@ -8,7 +8,7 @@ features:
   - buildpack-stack=ubuntu-22
 envs:
   - key: REPOSITORY_ROOT_URI
-    value: ${{ secrets.REPOSITORY_ROOT_URI }}
+    value: ${REPOSITORY_ROOT_URI}
     scope: RUN_TIME
     type: SECRET
 services:
