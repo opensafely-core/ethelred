@@ -42,7 +42,7 @@ def main(repository):  # pragma: no cover
     streamlit.header("OpenCodelists")
 
     streamlit.markdown(
-        f"Number of logins per day from {from_:%Y/%m/%d} to {to_:%Y/%m/%d} in blue, "
+        f"Number of login events per day from {from_:%Y/%m/%d} to {to_:%Y/%m/%d} in blue, "
         + "compared to the 28 day rolling mean in red"
     )
 
