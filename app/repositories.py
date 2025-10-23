@@ -57,8 +57,8 @@ class Repository(AbstractRepository):
                     "to": to_,
                 },
             )
-            logins_per_day = rel.to_df()
+            events_per_day = rel.to_df()
 
-        # interpolate counts of zero for days without logins
+        # interpolate counts of zero for days without events
         idx = pandas.date_range(from_, to_, freq="D", normalize=True, name="date")
-        return logins_per_day.set_index("date").reindex(idx).fillna(0).reset_index()
+        return events_per_day.set_index("date").reindex(idx).fillna(0).reset_index()
