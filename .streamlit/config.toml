@@ -1,0 +1,5 @@
+[server]
+# Enable the script health check endpoint (/_stcore/script-health-check) for use
+# See https://github.com/streamlit/streamlit/blob/1.50.0/lib/streamlit/config.py#L805-L818
+# and https://github.com/streamlit/streamlit/blob/1.50.0/lib/streamlit/web/server/server.py#L144-L146
+scriptHealthCheckEnabled = true
