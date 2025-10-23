@@ -30,6 +30,9 @@ services:
         value: "8080"
         scope: RUN_TIME
         type: GENERAL
+    health_check:
+      # See https://github.com/streamlit/streamlit/blob/1.50.0/lib/streamlit/web/server/server.py#L144-L146
+      http_path: /_stcore/script-health-check
     # build time
     source_dir: /
     # instance
