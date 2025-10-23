@@ -10,7 +10,7 @@ envs:
   - key: REPOSITORY_ROOT_URI
     value: ${REPOSITORY_ROOT_URI}
     scope: RUN_TIME
-    type: SECRET
+    type: GENERAL
 services:
   - name: streamlit
     environment_slug: python
