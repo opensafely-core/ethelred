@@ -37,7 +37,7 @@ class Repository(AbstractRepository):
     def get_login_events_per_day(self, from_, to_):
         assert from_ <= to_
         with duckdb.connect() as conn:
-            logins_per_day_relation = conn.sql(
+            rel = conn.sql(
                 """
                 SELECT
                     login_on AS date,
@@ -57,7 +57,7 @@ class Repository(AbstractRepository):
                     "to": to_,
                 },
             )
-            logins_per_day = logins_per_day_relation.to_df()
+            logins_per_day = rel.to_df()
 
         # interpolate counts of zero for days without logins
         idx = pandas.date_range(from_, to_, freq="D", normalize=True, name="date")
