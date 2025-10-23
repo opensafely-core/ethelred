@@ -14,9 +14,9 @@ def test_abstract_repository():
 
 @pytest.fixture
 def repository(tmp_path):
-    logins_path = tmp_path / "opencodelists" / "login_events.csv"
-    logins_path.parent.mkdir()
-    logins_path.write_text(
+    login_events_csv = tmp_path / "opencodelists" / "login_events.csv"
+    login_events_csv.parent.mkdir()
+    login_events_csv.write_text(
         (
             "login_at,email_hash\n"
             + "2025-01-01 00:00:00,1111111\n"
