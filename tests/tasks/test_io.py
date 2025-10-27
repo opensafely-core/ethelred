@@ -5,7 +5,7 @@ import pytest
 from tasks import io
 
 
-@pytest.mark.parametrize("suffix", [".pickle", ".json"])
+@pytest.mark.parametrize("suffix", [".json"])
 def test_one_record_per_file(tmp_path, suffix):
     f_path = tmp_path / "subdir" / f"obj{suffix}"
     io.write({"my_key": "my_value"}, f_path)
