@@ -13,7 +13,7 @@ def test_write_csv(tmp_path):
 
 
 def test_write_unsupported_file_type(tmp_path):
-    f_path = tmp_path / "subdir" / "obj.txt"
+    f_path = tmp_path / "subdir" / "obj.json"
     with pytest.raises(ValueError):
         io.write({"my_key": "my_value"}, f_path)
     assert f_path.parent.exists()  # This is undesirable
