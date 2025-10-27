@@ -17,5 +17,12 @@ def test_get_engine_with_unknown_database():
 
 def test_get_metadata():
     engine = sqlalchemy.create_engine("sqlite+pysqlite:///:memory:")
+    with engine.connect() as conn:
+        sqlalchemy.Table(
+            "my_table",
+            sqlalchemy.MetaData(),
+            sqlalchemy.Column("my_column", sqlalchemy.String),
+        ).create(conn)
+
     metadata = db.get_metadata(engine)
-    assert metadata.tables == {}
+    assert "my_table" in metadata.tables
