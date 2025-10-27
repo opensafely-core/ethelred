@@ -4,6 +4,8 @@
 # https://docs.digitalocean.com/products/app-platform/reference/app-spec/
 name: ethelred
 region: lon1
+alerts:
+- rule: DEPLOYMENT_FAILED
 features:
   - buildpack-stack=ubuntu-22
 envs:
