@@ -16,7 +16,7 @@ clean:
 
 # Create a virtual environment
 venv:
-    test -d {{ VENV_DIR }} || {{ PYTHON }} -m venv {{ VENV_DIR }} && {{ PIP }} install --upgrade pip
+    test -d {{ VENV_DIR }} || {{ PYTHON }} -m venv {{ VENV_DIR }} && {{ PIP }} install --upgrade pip==25.2
     test -e {{ PIP_COMPILE }} || {{ PIP }} install pip-tools
 
 _compile src dst *args: venv
