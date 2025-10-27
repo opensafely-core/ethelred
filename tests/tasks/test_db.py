@@ -1,4 +1,5 @@
 import pytest
+import sqlalchemy
 
 from tasks import db
 
@@ -14,7 +15,7 @@ def test_get_engine_with_unknown_database():
         db.get_engine("foo")
 
 
-def test_get_metadata(monkeypatch):
-    monkeypatch.setenv("OPENCODELISTS_DATABASE_URL", "sqlite+pysqlite:///:memory:")
-    metadata = db.get_metadata(db.get_engine(db.Database.OPENCODELISTS))
+def test_get_metadata():
+    engine = sqlalchemy.create_engine("sqlite+pysqlite:///:memory:")
+    metadata = db.get_metadata(engine)
     assert metadata.tables == {}
