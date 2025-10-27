@@ -13,7 +13,7 @@ def get_engine(database):
         case Database.OPENCODELISTS:
             return sqlalchemy.create_engine(os.environ["OPENCODELISTS_DATABASE_URL"])
         case _:
-            raise TypeError(f"Cannot get engine for unknown database: {database}")
+            raise TypeError(f"Cannot get engine for database `{database}`")
 
 
 def get_metadata(engine):

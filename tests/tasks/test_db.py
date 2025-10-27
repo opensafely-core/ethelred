@@ -10,7 +10,7 @@ def test_get_engine(monkeypatch):
 
 
 def test_get_engine_with_unknown_database():
-    with pytest.raises(TypeError, match="Cannot get engine for unknown database: foo"):
+    with pytest.raises(TypeError, match="Cannot get engine for database `foo`"):
         db.get_engine("foo")
 
 
