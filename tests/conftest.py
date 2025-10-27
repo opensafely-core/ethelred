@@ -4,13 +4,13 @@ import sqlalchemy
 from .jobserver import tables
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session")  # pragma: no cover
 def jobserver_engine():
     return sqlalchemy.create_engine("postgresql://user:pass@localhost:3979/jobserver")
 
 
 @pytest.fixture
-def jobserver_metadata(jobserver_engine):
+def jobserver_metadata(jobserver_engine):  # pragma: no cover
     def return_false(*args, **kwargs):
         return False
 
