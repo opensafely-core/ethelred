@@ -5,14 +5,11 @@ import sqlalchemy
 
 
 class Database(enum.StrEnum):
-    JOBSERVER = enum.auto()
     OPENCODELISTS = enum.auto()
 
 
 def get_engine(database):
     match database:
-        case Database.JOBSERVER:
-            return sqlalchemy.create_engine(os.environ["JOBSERVER_DATABASE_URL"])
         case Database.OPENCODELISTS:
             return sqlalchemy.create_engine(os.environ["OPENCODELISTS_DATABASE_URL"])
         case _:

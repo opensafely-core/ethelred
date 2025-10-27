@@ -5,8 +5,6 @@
 Different tasks have different data dependencies.
 These are:
 
-* a Job Server PostgreSQL database.
-  Refer to [Job Server's][3] developer documentation for setup instructions.
 * an OpenCodelists SQLite database.
   Refer to [OpenCodelists's][5] developer documentation for setup instructions.
 * a fine-grained [Personal Access Token][4] (PAT) with the "Actions (read-only)" permission.
@@ -26,6 +24,5 @@ python -m tasks run <task> # runs individual tasks
 just run app/app.py
 ```
 
-[3]: https://github.com/opensafely-core/job-server/blob/main/DEVELOPERS.md
 [4]: https://github.com/settings/personal-access-tokens
 [5]: https://github.com/opensafely-core/opencodelists/blob/main/DEVELOPERS.md

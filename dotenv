@@ -1,3 +1,2 @@
 GITHUB_WORKFLOW_RUNS_TOKEN=
-JOBSERVER_DATABASE_URL=postgresql://user:pass@localhost:6543/jobserver
 OPENCODELISTS_DATABASE_URL=sqlite:///data/opencodelists/db.sqlite3
