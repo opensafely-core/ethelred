@@ -16,7 +16,7 @@ def get_engine(database):
             raise TypeError(f"Cannot get engine for database `{database}`")
 
 
-def get_metadata(engine):
+def reflect_metadata(engine):
     metadata = sqlalchemy.MetaData()
     metadata.reflect(bind=engine)
     return metadata
