@@ -5,7 +5,7 @@ import pytest
 from tasks import io
 
 
-def test_many_records_per_file(tmp_path):
+def test_write_csv(tmp_path):
     Record = collections.namedtuple("Record", ["name"])
     f_path = tmp_path / "subdir" / "records.csv"
     io.write([Record("name_a"), Record("name_b")], f_path)
