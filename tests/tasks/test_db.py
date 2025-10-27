@@ -9,7 +9,7 @@ def test_get_engine(monkeypatch):
     assert str(engine.url) == "sqlite+pysqlite:///:memory:"
 
 
-def test_get_engine_when_unknown_database():
+def test_get_engine_with_unknown_database():
     with pytest.raises(TypeError, match="Cannot get engine for unknown database: foo"):
         db.get_engine("foo")
 
