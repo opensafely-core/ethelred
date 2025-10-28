@@ -11,6 +11,9 @@ envs:
     value: ${REPOSITORY_ROOT_URI}
     scope: RUN_TIME
     type: GENERAL
+domains:
+  - domain: ethelred.opensafely.org
+    type: PRIMARY
 services:
   - name: streamlit
     environment_slug: python
