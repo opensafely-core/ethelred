@@ -1,4 +1,4 @@
-name: Update python dependencies
+name: Update Python dependencies
 
 on:
   workflow_dispatch:
@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+
       - uses: "opensafely-core/setup-action@v1"
         with:
           python-version: "3.12"
@@ -29,12 +30,12 @@ jobs:
           pr_title: "Update Python dependencies"
           commit_message: "Update Python dependencies"
 
-      - name: Notify slack of PR
+      - name: Notify Slack of PR
         if: ${{ steps.update.outputs.pull-request-operation != 'none' }}
-        uses: slackapi/slack-github-action@b0fa283ad8fea605de13dc3f449259339835fc52 # v2.1.0
+        uses: slackapi/slack-github-action@b0fa283ad8fea605de13dc3f449259339835fc52
         with:
           method: chat.postMessage
           token: ${{ secrets.BENNETTBOT_SLACK_BOT_TOKEN }}
           payload: |
             channel: "C09JXFFBUCA"
-            text: "Update dependencies\n${{ steps.update.outputs.pull-request-url }}"
+            text: "Update Python dependencies\n${{ steps.update.outputs.pull-request-url }}"
