@@ -56,7 +56,9 @@ _install env:
     set -euxo pipefail
 
     test requirements.{{ env }}.txt -nt {{ VENV_DIR }}/.{{ env }} || exit 0
-    {{ PIP }} install -r requirements.{{ env }}.txt
+    # We pass --no-deps to avoid using setuptools' deprecated interfaces.
+    # https://pip.pypa.io/en/stable/topics/secure-installs/#do-not-use-setuptools-directly
+    {{ PIP }} install --no-deps -r requirements.{{ env }}.txt
     touch {{ VENV_DIR }}/.{{ env }}
 
 # Install pre-commit hook
