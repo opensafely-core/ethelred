@@ -35,6 +35,7 @@ services:
     health_check:
       # See https://github.com/streamlit/streamlit/blob/1.50.0/lib/streamlit/web/server/server.py#L144-L146
       http_path: /_stcore/script-health-check
+      timeout_seconds: 10
     # build time
     source_dir: /
     # instance
