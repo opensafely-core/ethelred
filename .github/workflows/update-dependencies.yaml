@@ -3,38 +3,38 @@ name: Update python dependencies
 on:
   workflow_dispatch:
   schedule:
-    - cron:  "0 11 * * TUE"
+    - cron: "0 11 * * TUE"
 
 jobs:
   update-dependencies:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
-    - uses: "opensafely-core/setup-action@v1"
-      with:
-        python-version: "3.12"
-        install-just: true
+      - uses: actions/checkout@v5
+      - uses: "opensafely-core/setup-action@v1"
+        with:
+          python-version: "3.12"
+          install-just: true
 
-    - uses: actions/create-github-app-token@v2
-      id: generate-token
-      with:
-        app-id: 1031449  # opensafely-core Create PR app
-        private-key: ${{ secrets.CREATE_PR_APP_PRIVATE_KEY }}
+      - uses: actions/create-github-app-token@v2
+        id: generate-token
+        with:
+          app-id: 1031449 # opensafely-core Create PR app
+          private-key: ${{ secrets.CREATE_PR_APP_PRIVATE_KEY }}
 
-    - uses: bennettoxford/update-dependencies-action@v1
-      id: update
-      with:
-        token: ${{ steps.generate-token.outputs.token }}
-        automerge: false
-        pr_title: "Update Python dependencies"
-        commit_message: "Update Python dependencies"
+      - uses: bennettoxford/update-dependencies-action@v1
+        id: update
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          automerge: false
+          pr_title: "Update Python dependencies"
+          commit_message: "Update Python dependencies"
 
-    - name: Notify slack of PR
-      if: ${{ steps.update.outputs.pull-request-operation != 'none' }}
-      uses: slackapi/slack-github-action@b0fa283ad8fea605de13dc3f449259339835fc52  # v2.1.0
-      with:
-        method: chat.postMessage
-        token: ${{ secrets.BENNETTBOT_SLACK_BOT_TOKEN }}
-        payload: |
-          channel: "C09JXFFBUCA"
-          text: "Update dependencies\n${{ steps.update.outputs.pull-request-url }}"
+      - name: Notify slack of PR
+        if: ${{ steps.update.outputs.pull-request-operation != 'none' }}
+        uses: slackapi/slack-github-action@b0fa283ad8fea605de13dc3f449259339835fc52 # v2.1.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.BENNETTBOT_SLACK_BOT_TOKEN }}
+          payload: |
+            channel: "C09JXFFBUCA"
+            text: "Update dependencies\n${{ steps.update.outputs.pull-request-url }}"

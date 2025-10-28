@@ -46,6 +46,7 @@ upgrade env package="": venv
 
 # This is the default input command to update-dependencies action
 # https://github.com/bennettoxford/update-dependencies-action
+
 # Upgrade all dev and prod dependencies.
 update-dependencies:
     just upgrade prod
