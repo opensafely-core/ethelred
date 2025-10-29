@@ -17,6 +17,10 @@ class AbstractRepository(abc.ABC):
     def get_login_events_per_day(self, from_, to_):
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def get_codelist_create_events_per_day(self, from_, to_):
+        raise NotImplementedError
+
 
 class Repository(AbstractRepository):
     def __init__(self, root_uri):
