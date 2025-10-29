@@ -21,6 +21,9 @@ class AbstractRepository(abc.ABC):
 class Repository(AbstractRepository):
     def __init__(self, root_uri):
         self.login_events_uri = root_uri + "/opencodelists/login_events.csv"
+        self.codelist_create_events_uri = (
+            root_uri + "/opencodelists/codelist_create_events.csv"
+        )
 
     def _call(self, uri, func, col):
         with duckdb.connect() as conn:
@@ -53,6 +56,35 @@ class Repository(AbstractRepository):
                 """,
                 params={
                     "uri": self.login_events_uri,
+                    "from": from_,
+                    "to": to_,
+                },
+            )
+            events_per_day = rel.to_df()
+
+        # interpolate counts of zero for days without events
+        idx = pandas.date_range(from_, to_, freq="D", normalize=True, name="date")
+        return events_per_day.set_index("date").reindex(idx).fillna(0).reset_index()
+
+    def get_codelist_create_events_per_day(self, from_, to_):
+        assert from_ <= to_
+        with duckdb.connect() as conn:
+            rel = conn.sql(
+                """
+                    SELECT
+                        created_on AS date,
+                        COUNT(*) AS count
+                    FROM (
+                        SELECT
+                            CAST(created_at AS DATE) AS created_on
+                        FROM read_csv($uri)
+                        WHERE created_at >= $from AND created_at <= $to
+                    )
+                    GROUP BY created_on
+                    ORDER BY created_on
+                    """,
+                params={
+                    "uri": self.codelist_create_events_uri,
                     "from": from_,
                     "to": to_,
                 },
