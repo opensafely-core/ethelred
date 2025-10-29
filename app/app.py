@@ -63,6 +63,15 @@ def main(repository):  # pragma: no cover
 
     streamlit.write(timeseries(repository.get_login_events_per_day(from_, to_)))
 
+    streamlit.markdown(
+        f"Number of codelist create events per day from {from_:%Y/%m/%d} to {to_:%Y/%m/%d} in blue, "
+        + "compared to the 28 day rolling mean in red"
+    )
+
+    streamlit.write(
+        timeseries(repository.get_codelist_create_events_per_day(from_, to_))
+    )
+
 
 if __name__ == "__main__":
     root_uri = os.environ.get(
