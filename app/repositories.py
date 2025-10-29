@@ -2,6 +2,7 @@ import abc
 
 import duckdb
 import pandas
+from duckdb import sqltypes
 
 
 class AbstractRepository(abc.ABC):
@@ -73,26 +74,20 @@ class Repository(AbstractRepository):
     def get_codelist_create_events_per_day(self, from_, to_):
         assert from_ <= to_
         with duckdb.connect() as conn:
-            rel = conn.sql(
-                """
-                    SELECT
-                        created_on AS date,
-                        COUNT(*) AS count
-                    FROM (
-                        SELECT
-                            CAST(created_at AS DATE) AS created_on
-                        FROM read_csv($uri)
-                        WHERE created_at >= $from AND created_at <= $to
-                    )
-                    GROUP BY created_on
-                    ORDER BY created_on
-                    """,
-                params={
-                    "uri": self.codelist_create_events_uri,
-                    "from": from_,
-                    "to": to_,
-                },
+            rel = conn.read_csv(self.codelist_create_events_uri)
+            created_at = duckdb.ColumnExpression("created_at")
+            rel = rel.filter(created_at >= from_)
+            rel = rel.filter(created_at <= to_)
+            rel = rel.select(created_at.cast(sqltypes.DATE).alias("created_on"))
+            rel = rel.order("created_on")
+            rel = rel.aggregate(
+                [
+                    duckdb.ColumnExpression("created_on").alias("date"),
+                    duckdb.FunctionExpression("count").alias("count"),
+                ],
+                "created_on",
             )
+
             events_per_day = rel.to_df()
 
         # interpolate counts of zero for days without events
