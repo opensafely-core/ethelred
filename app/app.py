@@ -46,19 +46,22 @@ def main(repository):  # pragma: no cover
         + "compared to the 28 day rolling mean in red"
     )
 
-    base_chart = altair.Chart(repository.get_login_events_per_day(from_, to_))
-    count_chart = base_chart.mark_line().encode(x="date", y="count")
-    rolling_mean_chart = (
-        base_chart.mark_line(color="red")
-        .transform_window(rolling_mean="mean(count)", frame=[-27, 0])
-        .encode(x="date", y="rolling_mean:Q")
-    )
-    layer_chart = (
-        (count_chart + rolling_mean_chart)
-        .configure_axis(title=None)
-        .configure_line(interpolate="monotone")
-    )
-    streamlit.write(layer_chart)
+    def timeseries(events_per_day):
+        base_chart = altair.Chart(events_per_day)
+        count_chart = base_chart.mark_line().encode(x="date", y="count")
+        rolling_mean_chart = (
+            base_chart.mark_line(color="red")
+            .transform_window(rolling_mean="mean(count)", frame=[-27, 0])
+            .encode(x="date", y="rolling_mean:Q")
+        )
+        layer_chart = (
+            (count_chart + rolling_mean_chart)
+            .configure_axis(title=None)
+            .configure_line(interpolate="monotone")
+        )
+        return layer_chart
+
+    streamlit.write(timeseries(repository.get_login_events_per_day(from_, to_)))
 
 
 if __name__ == "__main__":
