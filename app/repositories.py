@@ -43,33 +43,7 @@ class Repository(AbstractRepository):
         return self._call(self.login_events_uri, "max", "login_at").date()
 
     def get_login_events_per_day(self, from_, to_):
-        assert from_ <= to_
-        with duckdb.connect() as conn:
-            rel = conn.sql(
-                """
-                SELECT
-                    login_on AS date,
-                    COUNT(*) AS count
-                FROM (
-                    SELECT
-                        CAST(login_at AS DATE) AS login_on
-                    FROM read_csv($uri)
-                    WHERE login_at >= $from AND login_at <= $to
-                )
-                GROUP BY login_on
-                ORDER BY login_on
-                """,
-                params={
-                    "uri": self.login_events_uri,
-                    "from": from_,
-                    "to": to_,
-                },
-            )
-            events_per_day = rel.to_df()
-
-        # interpolate counts of zero for days without events
-        idx = pandas.date_range(from_, to_, freq="D", normalize=True, name="date")
-        return events_per_day.set_index("date").reindex(idx).fillna(0).reset_index()
+        return self._get_events_per_day(self.login_events_uri, "login_at", from_, to_)
 
     def get_codelist_create_events_per_day(self, from_, to_):
         return self._get_events_per_day(
