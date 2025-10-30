@@ -83,14 +83,14 @@ class Repository(AbstractRepository):
             event_at = duckdb.ColumnExpression(col)
             rel = rel.filter(event_at >= from_)
             rel = rel.filter(event_at <= to_)
-            rel = rel.select(event_at.cast(sqltypes.DATE).alias("created_on"))
-            rel = rel.order("created_on")
+            rel = rel.select(event_at.cast(sqltypes.DATE).alias("event_on"))
+            rel = rel.order("event_on")
             rel = rel.aggregate(
                 [
-                    duckdb.ColumnExpression("created_on").alias("date"),
+                    duckdb.ColumnExpression("event_on").alias("date"),
                     duckdb.FunctionExpression("count").alias("count"),
                 ],
-                "created_on",
+                "event_on",
             )
 
             events_per_day = rel.to_df()
