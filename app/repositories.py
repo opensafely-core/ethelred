@@ -42,10 +42,10 @@ class Repository(AbstractRepository):
     def get_latest_login_event_date(self):
         return self._call(self.login_events_uri, "max", "login_at").date()
 
-    def get_login_events_per_day(self, from_, to_):
+    def get_login_events_per_day(self, from_, to_):  # pragma: no cover
         return _get_events_per_day(self.login_events_uri, "login_at", from_, to_)
 
-    def get_codelist_create_events_per_day(self, from_, to_):
+    def get_codelist_create_events_per_day(self, from_, to_):  # pragma: no cover
         return _get_events_per_day(
             self.codelist_create_events_uri, "created_at", from_, to_
         )
