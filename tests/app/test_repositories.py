@@ -67,3 +67,21 @@ def test_get_codelist_create_events_per_day(repository):
         datetime.datetime(2025, 1, 3),
     ]
     assert list(events_per_day["count"]) == [1, 0, 1]
+
+
+@pytest.mark.filterwarnings(
+    "ignore:The behavior of DatetimeProperties.to_pydatetime is deprecated:FutureWarning"
+)
+def test_get_events_per_day(repository):
+    events_per_day = repositories._get_events_per_day(
+        repository.login_events_uri,
+        "login_at",
+        datetime.date(2025, 1, 1),
+        datetime.date(2025, 1, 3),
+    )
+    assert list(events_per_day["date"].dt.to_pydatetime()) == [
+        datetime.datetime(2025, 1, 1),
+        datetime.datetime(2025, 1, 2),  # not in fixture data
+        datetime.datetime(2025, 1, 3),
+    ]
+    assert list(events_per_day["count"]) == [1, 0, 1]
