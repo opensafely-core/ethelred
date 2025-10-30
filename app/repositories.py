@@ -72,12 +72,12 @@ class Repository(AbstractRepository):
         return events_per_day.set_index("date").reindex(idx).fillna(0).reset_index()
 
     def get_codelist_create_events_per_day(self, from_, to_):
-        return self._get_events_per_day(from_, to_)
+        return self._get_events_per_day(self.codelist_create_events_uri, from_, to_)
 
-    def _get_events_per_day(self, from_, to_):
+    def _get_events_per_day(self, uri, from_, to_):
         assert from_ <= to_
         with duckdb.connect() as conn:
-            rel = conn.read_csv(self.codelist_create_events_uri)
+            rel = conn.read_csv(uri)
             created_at = duckdb.ColumnExpression("created_at")
             rel = rel.filter(created_at >= from_)
             rel = rel.filter(created_at <= to_)
