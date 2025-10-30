@@ -42,10 +42,12 @@ def test_get_latest_login_event_date(repository):
 @pytest.mark.filterwarnings(
     "ignore:The behavior of DatetimeProperties.to_pydatetime is deprecated:FutureWarning"
 )
-def test_get_events_per_day(repository):
+def test_get_events_per_day(tmp_path):
+    events_csv = tmp_path / "events.csv"
+    events_csv.write_text("event_at\n2025-01-01 00:00:00\n2025-01-03 00:00:00")
     events_per_day = repositories._get_events_per_day(
-        repository.login_events_uri,
-        "login_at",
+        events_csv.as_uri(),
+        "event_at",
         datetime.date(2025, 1, 1),
         datetime.date(2025, 1, 3),
     )
