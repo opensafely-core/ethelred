@@ -3,10 +3,10 @@ import datetime
 import pandas
 from streamlit.testing.v1 import AppTest
 
-from app import app, repositories
+from app import app
 
 
-class FakeRepository(repositories.AbstractRepository):
+class FakeRepository:
     def get_earliest_login_event_date(self):
         return datetime.date(2025, 1, 1)
 

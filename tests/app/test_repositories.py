@@ -5,13 +5,6 @@ import pytest
 from app import repositories
 
 
-def test_abstract_repository():
-    class FakeRepository(repositories.AbstractRepository): ...
-
-    with pytest.raises(TypeError):
-        FakeRepository()
-
-
 @pytest.fixture
 def repository(tmp_path):
     path = tmp_path / "opencodelists"

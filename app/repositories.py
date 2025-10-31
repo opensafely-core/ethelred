@@ -1,29 +1,9 @@
-import abc
-
 import duckdb
 import pandas
 from duckdb import sqltypes
 
 
-class AbstractRepository(abc.ABC):
-    @abc.abstractmethod
-    def get_earliest_login_event_date(self):
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def get_latest_login_event_date(self):
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def get_login_events_per_day(self, from_, to_):
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def get_codelist_create_events_per_day(self, from_, to_):
-        raise NotImplementedError
-
-
-class Repository(AbstractRepository):
+class Repository:
     def __init__(self, root_uri):
         self.login_events_uri = root_uri + "/opencodelists/login_events.csv"
         self.codelist_create_events_uri = (
