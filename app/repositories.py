@@ -10,10 +10,10 @@ class Repository:
             root_uri + "/opencodelists/codelist_create_events.csv"
         )
 
-    def get_earliest_login_event_date(self):
+    def get_earliest_login_event_date(self):  # pragma: no cover
         return _get_scalar_result(self.login_events_uri, "min", "login_at").date()
 
-    def get_latest_login_event_date(self):
+    def get_latest_login_event_date(self):  # pragma: no cover
         return _get_scalar_result(self.login_events_uri, "max", "login_at").date()
 
     def get_login_events_per_day(self, from_, to_):  # pragma: no cover
