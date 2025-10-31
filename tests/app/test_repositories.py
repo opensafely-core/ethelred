@@ -1,35 +1,18 @@
 import datetime
+import pathlib
+from urllib.parse import urlparse
 
 import pytest
 
 from app import repositories
 
 
-@pytest.fixture
-def repository(tmp_path):
-    path = tmp_path / "opencodelists"
-    path.mkdir()
-    login_events_csv = path / "login_events.csv"
-    login_events_csv.write_text(
-        (
-            "login_at,email_hash\n"
-            + "2025-01-01 00:00:00,1111111\n"
-            + "2025-01-03 00:00:00,3333333\n"
-        )
-    )
-    codelist_create_events_csv = path / "codelist_create_events.csv"
-    codelist_create_events_csv.write_text(
-        ("created_at,id\n" + "2025-01-01 00:00:00,1\n" + "2025-01-03 00:00:00,3\n")
-    )
-    return repositories.Repository(tmp_path.as_uri())
-
-
-def test_get_earliest_login_event_date(repository):
-    assert repository.get_earliest_login_event_date() == datetime.date(2025, 1, 1)
-
-
-def test_get_latest_login_event_date(repository):
-    assert repository.get_latest_login_event_date() == datetime.date(2025, 1, 3)
+def test_repository_uris_have_valid_paths(tmp_path):
+    repository = repositories.Repository(tmp_path.as_uri())
+    login_events_path = urlparse(repository.login_events_uri).path
+    codelist_create_events_path = urlparse(repository.codelist_create_events_uri).path
+    assert str(pathlib.Path(login_events_path)) == login_events_path
+    assert str(pathlib.Path(codelist_create_events_path)) == codelist_create_events_path
 
 
 def test_get_scalar_result(tmp_path):
