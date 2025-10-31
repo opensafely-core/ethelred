@@ -32,6 +32,13 @@ def test_get_latest_login_event_date(repository):
     assert repository.get_latest_login_event_date() == datetime.date(2025, 1, 3)
 
 
+def test_get_scalar_result(tmp_path):
+    my_csv = tmp_path / "my.csv"
+    my_csv.write_text("val\n2\n3\n1")
+    scalar_result = repositories._get_scalar_result(my_csv.as_uri(), "max", "val")
+    assert scalar_result == 3
+
+
 @pytest.mark.filterwarnings(
     "ignore:The behavior of DatetimeProperties.to_pydatetime is deprecated:FutureWarning"
 )
