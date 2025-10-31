@@ -10,17 +10,11 @@ class Repository:
             root_uri + "/opencodelists/codelist_create_events.csv"
         )
 
-    def _call(self, uri, func, col):
-        with duckdb.connect() as conn:
-            rel = conn.read_csv(uri)
-            val, *_ = getattr(rel, func)(col).fetchone()
-        return val
-
     def get_earliest_login_event_date(self):
-        return self._call(self.login_events_uri, "min", "login_at").date()
+        return _call(self.login_events_uri, "min", "login_at").date()
 
     def get_latest_login_event_date(self):
-        return self._call(self.login_events_uri, "max", "login_at").date()
+        return _call(self.login_events_uri, "max", "login_at").date()
 
     def get_login_events_per_day(self, from_, to_):  # pragma: no cover
         return _get_events_per_day(self.login_events_uri, "login_at", from_, to_)
@@ -29,6 +23,13 @@ class Repository:
         return _get_events_per_day(
             self.codelist_create_events_uri, "created_at", from_, to_
         )
+
+
+def _call(uri, func, col):
+    with duckdb.connect() as conn:
+        rel = conn.read_csv(uri)
+        val, *_ = getattr(rel, func)(col).fetchone()
+    return val
 
 
 def _get_events_per_day(uri, col, from_, to_):
