@@ -11,10 +11,10 @@ class Repository:
         )
 
     def get_earliest_login_event_date(self):
-        return _call(self.login_events_uri, "min", "login_at").date()
+        return _get_scalar_result(self.login_events_uri, "min", "login_at").date()
 
     def get_latest_login_event_date(self):
-        return _call(self.login_events_uri, "max", "login_at").date()
+        return _get_scalar_result(self.login_events_uri, "max", "login_at").date()
 
     def get_login_events_per_day(self, from_, to_):  # pragma: no cover
         return _get_events_per_day(self.login_events_uri, "login_at", from_, to_)
@@ -25,7 +25,7 @@ class Repository:
         )
 
 
-def _call(uri, func, col):
+def _get_scalar_result(uri, func, col):
     with duckdb.connect() as conn:
         rel = conn.read_csv(uri)
         val, *_ = getattr(rel, func)(col).fetchone()
