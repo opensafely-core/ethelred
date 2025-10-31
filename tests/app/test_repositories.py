@@ -9,10 +9,9 @@ from app import repositories
 
 def test_repository_uris_have_valid_paths(tmp_path):
     repository = repositories.Repository(tmp_path.as_uri())
-    login_events_path = urlparse(repository.login_events_uri).path
-    codelist_create_events_path = urlparse(repository.codelist_create_events_uri).path
-    assert str(pathlib.Path(login_events_path)) == login_events_path
-    assert str(pathlib.Path(codelist_create_events_path)) == codelist_create_events_path
+    for uri in repository.uris.values():
+        path = urlparse(uri).path
+        assert str(pathlib.Path(path)) == path
 
 
 def test_get_scalar_result(tmp_path):
