@@ -24,7 +24,6 @@ def test_repository_get_num_logged_in_users(tmp_path):
         + "2025-01-03 23:59:59,2222222\n"  # right boundary, should be counted
         + "2025-01-04 00:00:00,3333333\n"  # outside boundary, shouldn't be counted
     )
-
     repository = repositories.Repository(tmp_path.as_uri())
     from_ = datetime.date(2025, 1, 1)
     to_ = datetime.date(2025, 1, 3)
