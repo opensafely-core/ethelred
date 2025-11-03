@@ -20,6 +20,16 @@ class Repository:
     def get_login_events_per_day(self, from_, to_):  # pragma: no cover
         return _get_events_per_day(self.uris["login_events"], "login_at", from_, to_)
 
+    def get_num_logged_in_users(self, from_, to_):
+        with duckdb.connect() as conn:
+            rel = conn.read_csv(self.uris["login_events"])
+            login_at = duckdb.ColumnExpression("login_at")
+            rel = rel.filter(login_at >= from_)
+            rel = rel.filter(login_at <= to_)
+            rel = rel.select("email_hash").distinct().count("email_hash")
+            val, *_ = rel.fetchone()
+        return val
+
     def get_codelist_create_events_per_day(self, from_, to_):  # pragma: no cover
         return _get_events_per_day(
             self.uris["codelist_create_events"], "created_at", from_, to_
