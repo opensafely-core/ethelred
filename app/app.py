@@ -41,13 +41,16 @@ def main(repository):  # pragma: no cover
 
     streamlit.header("OpenCodelists")
 
-    streamlit.metric(
-        "Number of logged in users",
-        "{:,}".format(repository.get_num_logged_in_users(from_, to_)),
-        border=True,
-        help="The number of logged in users "
-        + f"from {from_:%Y/%m/%d} to {to_:%Y/%m/%d}",
-    )
+    column, *_ = streamlit.columns(1)
+
+    with column:
+        streamlit.metric(
+            "Number of logged in users",
+            "{:,}".format(repository.get_num_logged_in_users(from_, to_)),
+            border=True,
+            help="The number of logged in users "
+            + f"from {from_:%Y/%m/%d} to {to_:%Y/%m/%d}",
+        )
 
     streamlit.markdown(
         f"Number of login events per day from {from_:%Y/%m/%d} to {to_:%Y/%m/%d} in blue, "
