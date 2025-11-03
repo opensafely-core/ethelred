@@ -35,6 +35,17 @@ class Repository:
             self.uris["codelist_create_events"], "created_at", from_, to_
         )
 
+    def get_num_codelists_created(self, from_, to_):
+        with duckdb.connect() as conn:
+            rel = conn.read_csv(self.uris["codelist_create_events"])
+            created_at = duckdb.ColumnExpression("created_at")
+            created_on = created_at.cast(sqltypes.DATE).alias("created_on")
+            rel = rel.filter(created_on >= from_)
+            rel = rel.filter(created_on <= to_)
+            rel = rel.count("id")
+            val, *_ = rel.fetchone()
+        return val
+
 
 def _get_scalar_result(uri, func, col):
     with duckdb.connect() as conn:
