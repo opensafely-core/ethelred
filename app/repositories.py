@@ -24,8 +24,9 @@ class Repository:
         with duckdb.connect() as conn:
             rel = conn.read_csv(self.uris["login_events"])
             login_at = duckdb.ColumnExpression("login_at")
-            rel = rel.filter(login_at >= from_)
-            rel = rel.filter(login_at <= to_)
+            login_on = login_at.cast(sqltypes.DATE).alias("login_on")
+            rel = rel.filter(login_on >= from_)
+            rel = rel.filter(login_on <= to_)
             rel = rel.select("email_hash").distinct().count("email_hash")
             val, *_ = rel.fetchone()
         return val

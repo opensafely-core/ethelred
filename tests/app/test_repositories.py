@@ -21,7 +21,7 @@ def test_repository_get_num_logged_in_users(tmp_path):
         "login_at,email_hash\n"
         + "2025-01-01 00:00:00,1111111\n"  # left boundary, should be counted
         + "2025-01-02 00:00:00,1111111\n"  # logged in twice, shouldn't be counted
-        + "2025-01-03 00:00:00,2222222\n"  # right boundary, should be counted
+        + "2025-01-03 23:59:59,2222222\n"  # right boundary, should be counted
         + "2025-01-04 00:00:00,3333333\n"  # outside boundary, shouldn't be counted
     )
 
