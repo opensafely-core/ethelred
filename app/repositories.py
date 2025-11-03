@@ -20,7 +20,7 @@ class Repository:
     def get_login_events_per_day(self, from_, to_):  # pragma: no cover
         return _get_events_per_day(self.uris["login_events"], "login_at", from_, to_)
 
-    def get_num_logged_in_users(self, from_, to_):
+    def get_num_users_logged_in(self, from_, to_):
         with duckdb.connect() as conn:
             rel = conn.read_csv(self.uris["login_events"])
             login_at = duckdb.ColumnExpression("login_at")

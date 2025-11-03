@@ -45,10 +45,10 @@ def main(repository):  # pragma: no cover
 
     with lhs_column:
         streamlit.metric(
-            "Number of logged in users",
-            "{:,}".format(repository.get_num_logged_in_users(from_, to_)),
+            "Number of users logged in",
+            "{:,}".format(repository.get_num_users_logged_in(from_, to_)),
             border=True,
-            help="The number of logged in users "
+            help="The number of users logged in "
             + f"from {from_:%Y/%m/%d} to {to_:%Y/%m/%d}",
         )
 
