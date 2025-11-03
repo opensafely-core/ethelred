@@ -14,6 +14,23 @@ def test_repository_uris_have_valid_paths(tmp_path):
         assert str(pathlib.Path(path)) == path
 
 
+def test_repository_get_num_logged_in_users(tmp_path):
+    login_events_csv = tmp_path / "opencodelists" / "login_events.csv"
+    login_events_csv.parent.mkdir()
+    login_events_csv.write_text(
+        "login_at,email_hash\n"
+        + "2025-01-01 00:00:00,1111111\n"  # left boundary, should be counted
+        + "2025-01-02 00:00:00,1111111\n"  # logged in twice, shouldn't be counted
+        + "2025-01-03 00:00:00,2222222\n"  # right boundary, should be counted
+        + "2025-01-04 00:00:00,3333333\n"  # outside boundary, shouldn't be counted
+    )
+
+    repository = repositories.Repository(tmp_path.as_uri())
+    from_ = datetime.date(2025, 1, 1)
+    to_ = datetime.date(2025, 1, 3)
+    assert repository.get_num_logged_in_users(from_, to_) == 2
+
+
 def test_get_scalar_result(tmp_path):
     my_csv = tmp_path / "my.csv"
     my_csv.write_text("val\n2\n3\n1")
