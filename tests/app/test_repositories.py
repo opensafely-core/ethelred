@@ -31,6 +31,21 @@ def test_repository_get_num_logged_in_users(tmp_path):
     assert repository.get_num_logged_in_users(from_, to_) == 2
 
 
+def test_repository_get_num_codelists_created(tmp_path):
+    events_csv = tmp_path / "opencodelists" / "codelist_create_events.csv"
+    events_csv.parent.mkdir()
+    events_csv.write_text(
+        "created_at,id\n"
+        + "2025-01-01 00:00:00,1\n"  # left boundary, should be counted
+        + "2025-01-03 23:59:59,2\n"  # right boundary, should be counted
+        + "2025-01-04 00:00:00,3\n"  # outside boundary, shouldn't be counted
+    )
+    repository = repositories.Repository(tmp_path.as_uri())
+    from_ = datetime.date(2025, 1, 1)
+    to_ = datetime.date(2025, 1, 3)
+    assert repository.get_num_codelists_created(from_, to_) == 2
+
+
 def test_get_scalar_result(tmp_path):
     my_csv = tmp_path / "my.csv"
     my_csv.write_text("val\n2\n3\n1")
