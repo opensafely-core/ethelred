@@ -182,7 +182,7 @@ we set `tool.ruff.src` and `tool.pytest.ini_options.pythonpath` in `pyproject.to
 
 ## 010: GitHub flow
 
-With [003](#003-continuous-integration) and [004](#004-treat-pull-requests-as-immutable),
+With [DR003](#003-continuous-integration) and [DR004](#004-treat-pull-requests-as-immutable),
 we adopted continuous integration (CI).
 Whilst we experienced several advantages of CI,
 we also experienced several disadvantages.
@@ -219,7 +219,7 @@ but have found Dokku hard to reason about.
 
 ## 012: Use a buildpack rather than a Dockerfile
 
-With [011](#011-deploying-the-streamlit-app), we deployed the Streamlit app as an App Platform app.
+With [DR011](#011-deploying-the-streamlit-app), we deployed the Streamlit app as an App Platform app.
 There are two mechanisms for building images for App Platform apps:
 either buildpacks or Dockerfiles.
 For convenience, we will use a buildpack.
@@ -227,18 +227,18 @@ To make it easier to reason about the image, however, we will eventually use a D
 
 ## 013: Adopt Ship / Show / Ask
 
-With [010](#010-github-flow),
+With [DR010](#010-github-flow),
 we adopted GitHub flow alongside continuous integration (CI).
 Having done so,
 we realised the branching strategy we were aiming for was already documented:
 it's called [Ship / Show / Ask][].
 
 * **Ship** corresponds to "push to mainline" CI
-  ([003](#003-continuous-integration) and [004](#004-treat-pull-requests-as-immutable)).
+  ([DR003](#003-continuous-integration) and [DR004](#004-treat-pull-requests-as-immutable)).
 * **Show** corresponds to GitHub flow with a post-merge review
-  ([010](#010-github-flow)).
+  ([DR010](#010-github-flow)).
 * **Ask** corresponds to GitHub flow with a pre-merge review
-  ([010](#010-github-flow)).
+  ([DR010](#010-github-flow)).
 
 We will adopt Ship / Show / Ask.
 Doing so necessitates the following changes:
