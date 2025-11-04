@@ -60,9 +60,10 @@ def _get_events_per_day(uri, col, from_, to_):
     with duckdb.connect() as conn:
         rel = conn.read_csv(uri)
         event_at = duckdb.ColumnExpression(col)
-        rel = rel.filter(event_at >= from_)
-        rel = rel.filter(event_at <= to_)
-        rel = rel.select(event_at.cast(sqltypes.DATE).alias("event_on"))
+        event_on = event_at.cast(sqltypes.DATE).alias("event_on")
+        rel = rel.filter(event_on >= from_)
+        rel = rel.filter(event_on <= to_)
+        rel = rel.select(event_on)
         rel = rel.order("event_on")
         rel = rel.aggregate(
             [
