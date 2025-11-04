@@ -61,6 +61,7 @@ def test_get_events_per_day(tmp_path):
         "event_at\n"
         + "2025-01-01 00:00:00\n"  # left boundary, should be counted
         + "2025-01-03 00:00:00\n"  # right boundary, should be counted
+        + "2025-01-04 00:00:00\n"  # outside boundary, shouldn't be counted
     )
     events_per_day = repositories._get_events_per_day(
         events_csv.as_uri(),
