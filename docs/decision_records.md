@@ -254,6 +254,41 @@ It's important to emphasise that we will continue to maintain a [healthy mainlin
 by running checks on each push event
 (a push event corresponds to a push, merge, or rebase).
 
+## 014: Persistent storage and DuckDB
+
+With [DR008](#008-use-csv-files-as-the-interface),
+we used CSV files as the interface between the two applications that comprise Ethelred;
+the tasks and the Streamlit app.
+With [DR011](#011-deploying-the-streamlit-app),
+we deployed the Streamlit app as an App Platform app.
+How should we make the CSV files available to the Streamlit app?
+
+An App Platform app's local filesystem is ephemeral;
+it doesn't survive redeployment
+and redeployment is common (see "[Deployment](deployment.md)").
+Clearly, we require persistent storage.
+
+We considered three approaches to persistent storage:
+
+* [Volumes Block Storage][],
+  but App Platform doesn't support Volumes Block Storage.
+* a PostgreSQL database,
+  but doing so would require us to revisit [DR008](#008-use-csv-files-as-the-interface).
+  It would also require us to rework the tasks and the Streamlit app.
+* [Spaces Object Storage][].
+  We thought we might have to copy data
+  from object storage
+  to the Streamlit app's local filesystem
+  after each redeployment.
+  However, [DuckDB][] can connect to object storage and can read CSV files.
+
+There are several reasons why DuckDB might be suited to Ethelred.
+However, its ability to connect to object storage and to read CSV files
+is why we will make the CSV files available to the Streamlit app using object storage and DuckDB.
+
+For more information about App Platform and storage,
+see the "[How to Store Data in App Platform][]" page in the DigitalOcean docs.
+
 [1]: https://martinfowler.com/articles/branching-patterns.html#healthy-branch
 [2]: https://refactoring.com/catalog/
 [3]: https://wesmckinney.com/blog/apache-arrow-pandas-internals/
@@ -266,11 +301,15 @@ by running checks on each push event
 [Continuous Integration]: https://martinfowler.com/articles/continuousIntegration.html
 [Dagster]: https://dagster.io/
 [Data Transformations]: https://altair-viz.github.io/user_guide/transform/index.html
+[DuckDB]: https://duckdb.org/
 [Fearless rebasing]: https://blog.gitbutler.com/fearless-rebasing/
 [GitHub Flow]: https://docs.github.com/en/get-started/using-github/github-flow
 [Group by: split-apply-combine]: https://pandas.pydata.org/pandas-docs/stable/user_guide/groupby.html
+[How to Store Data in App Platform]: https://docs.digitalocean.com/products/app-platform/how-to/store-data/
 [Pandas]: https://pandas.pydata.org/
 [Prefect]: https://www.prefect.io/
 [Reshaping and pivot tables]: https://pandas.pydata.org/pandas-docs/stable/user_guide/reshaping.html
 [Ship / Show / Ask]: https://martinfowler.com/articles/ship-show-ask.html
+[Spaces Object Storage]: https://docs.digitalocean.com/products/spaces/
+[Volumes Block Storage]: https://docs.digitalocean.com/products/volumes/
 [Working with fragments]: https://docs.streamlit.io/develop/concepts/architecture/fragments
