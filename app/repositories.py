@@ -21,6 +21,7 @@ class Repository:
         return _get_events_per_day(self.uris["login_events"], "login_at", from_, to_)
 
     def get_num_users_logged_in(self, from_, to_):
+        assert from_ <= to_
         with duckdb.connect() as conn:
             rel = conn.read_csv(self.uris["login_events"])
             login_at = duckdb.ColumnExpression("login_at")
@@ -37,6 +38,7 @@ class Repository:
         )
 
     def get_num_codelists_created(self, from_, to_):
+        assert from_ <= to_
         with duckdb.connect() as conn:
             rel = conn.read_csv(self.uris["codelist_create_events"])
             created_at = duckdb.ColumnExpression("created_at")
