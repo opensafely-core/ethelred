@@ -83,6 +83,20 @@ def main(repository):  # pragma: no cover
 
     streamlit.write(timeseries(repository.get_login_events_per_day(from_, to_)))
 
+    with streamlit.expander("About login events"):
+        streamlit.markdown(
+            f"""
+            Currently, each of the
+            {repository.get_num_users_logged_in(from_, to_):,}
+            users is associated with a single login event:
+            the latest (most recent) login event,
+            at the time the data were extracted on {to_:%Y/%m/%d}.
+            For a given user, the time of the latest login event will change
+            from one extract to another,
+            if they login after the first extract and before the second extract.
+            """
+        )
+
     streamlit.markdown(
         f"Number of codelist create events per day from {from_:%Y/%m/%d} to {to_:%Y/%m/%d} in blue, "
         + "compared to the 28 day rolling mean in red"
