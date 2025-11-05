@@ -20,6 +20,48 @@ class Repository:
     def get_login_events_per_day(self, from_, to_):  # pragma: no cover
         return _get_events_per_day(self.uris["login_events"], "login_at", from_, to_)
 
+    def get_num_users_logged_in_per_day(self, from_, to_):
+        assert from_ <= to_
+        with duckdb.connect() as conn:
+            rel = conn.read_csv(self.uris["login_events"])
+            rel = rel.select(
+                "email_hash, login_at, login_at + INTERVAL 14 DAYS AS logout_at"
+            )
+            rel = rel.select(
+                "email_hash, CAST(login_at AS DATE) AS login_on, CAST(logout_at AS DATE) AS logout_on"
+            )
+            rel = rel.select(
+                "email_hash, generate_series(login_on, logout_on, INTERVAL 1 DAY) AS login_on"
+            )
+            rel = rel.select("email_hash, unnest(login_on) AS login_on")
+            rel = rel.filter(duckdb.ColumnExpression("login_on") >= from_)
+            rel = rel.filter(duckdb.ColumnExpression("login_on") <= to_)
+            rel = rel.distinct()
+            rel = rel.aggregate(
+                [
+                    duckdb.ColumnExpression("login_on").alias("date"),
+                    duckdb.FunctionExpression("count").alias("count"),
+                ],
+                "login_on",
+            )
+
+            num_users_logged_in_per_day = rel.to_df()
+
+        # interpolate counts of zero for days without logged in users
+        idx = pandas.date_range(
+            num_users_logged_in_per_day["date"].min(),
+            num_users_logged_in_per_day["date"].max(),
+            freq="D",
+            normalize=True,
+            name="date",
+        )
+        return (
+            num_users_logged_in_per_day.set_index("date")
+            .reindex(idx)
+            .fillna(0)
+            .reset_index()
+        )
+
     def get_num_users_logged_in(self, from_, to_):
         assert from_ <= to_
         with duckdb.connect() as conn:

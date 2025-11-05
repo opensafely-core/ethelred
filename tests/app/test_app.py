@@ -16,6 +16,9 @@ class FakeRepository:
     def get_login_events_per_day(self, from_, to_):
         return pandas.DataFrame({"date": [datetime.date(2025, 1, 1)], "count": [1]})
 
+    def get_num_users_logged_in_per_day(self, from_, to_):
+        return pandas.DataFrame({"date": [datetime.date(2025, 1, 1)], "count": [1]})
+
     def get_num_users_logged_in(self, from_, to_):
         return 1_000
 

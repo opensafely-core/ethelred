@@ -98,6 +98,13 @@ def main(repository):  # pragma: no cover
         )
 
     streamlit.markdown(
+        f"Number of users logged in per day from {from_:%Y/%m/%d} to {to_:%Y/%m/%d} in blue, "
+        + "compared to the 28 day rolling mean in red"
+    )
+
+    streamlit.write(timeseries(repository.get_num_users_logged_in_per_day(from_, to_)))
+
+    streamlit.markdown(
         f"Number of codelist create events per day from {from_:%Y/%m/%d} to {to_:%Y/%m/%d} in blue, "
         + "compared to the 28 day rolling mean in red"
     )
