@@ -1,3 +1,5 @@
+set dotenv-load := true
+
 PYTHON := "python3.12"
 VENV_DIR := ".venv"
 BIN_DIR := VENV_DIR / "bin"
