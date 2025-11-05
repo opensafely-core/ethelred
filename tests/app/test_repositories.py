@@ -2,6 +2,7 @@ import datetime
 import pathlib
 from urllib.parse import urlparse
 
+import pandas
 import pytest
 
 from app import repositories
@@ -12,6 +13,33 @@ def test_repository_uris_have_valid_paths(tmp_path):
     for uri in repository.uris.values():
         path = urlparse(uri).path
         assert str(pathlib.Path(path)) == path
+
+
+def test_get_num_users_logged_in_per_day(tmp_path):
+    login_events_csv = tmp_path / "opencodelists" / "login_events.csv"
+    login_events_csv.parent.mkdir()
+    login_events_csv.write_text(
+        "login_at,email_hash\n"
+        + "2025-01-01 00:00:00,1111111\n"  # left boundary, should be counted
+        + "2025-01-02 00:00:00,1111111\n"  # logged in twice, should be counted once
+        + "2025-01-03 23:59:59,2222222\n"  # right boundary, should be counted
+        + "2025-01-04 00:00:00,3333333\n"  # outside boundary, shouldn't be counted
+    )
+    repository = repositories.Repository(tmp_path.as_uri())
+    from_ = datetime.date(2025, 1, 1)
+    to_ = datetime.date(2025, 1, 3)
+    obs = repository.get_num_users_logged_in_per_day(from_, to_)
+    exp = pandas.DataFrame(
+        {
+            "date": [
+                datetime.datetime(2025, 1, 1),
+                datetime.datetime(2025, 1, 2),
+                datetime.datetime(2025, 1, 3),
+            ],
+            "count": [1, 1, 2],
+        }
+    )
+    pandas.testing.assert_frame_equal(obs, exp)
 
 
 def test_repository_get_num_users_logged_in(tmp_path):
