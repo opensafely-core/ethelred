@@ -1,11 +1,6 @@
 set dotenv-load := true
 
-PYTHON := "python3.12"
 VENV_DIR := ".venv"
-BIN_DIR := VENV_DIR / "bin"
-PIP := BIN_DIR / "python -m pip"
-PIP_COMPILE := BIN_DIR / "pip-compile"
-RUFF := BIN_DIR / "ruff"
 
 # List available recipes and their arguments
 default:
@@ -25,76 +20,89 @@ _checkenv:
 clean:
     rm -rf {{ VENV_DIR }}
 
-# Create a virtual environment
-venv:
-    test -d {{ VENV_DIR }} || {{ PYTHON }} -m venv {{ VENV_DIR }} && {{ PIP }} install --upgrade pip==25.2
-    test -e {{ PIP_COMPILE }} || {{ PIP }} install pip-tools
+# Upgrade a single package to the latest version as of the cutoff in pyproject.toml
+upgrade-package package: && devenv
+    uv lock --upgrade-package {{ package }}
 
-_compile src dst *args: venv
-    #!/usr/bin/env bash
-    set -euxo pipefail
+# Upgrade all packages to the latest versions as of the cutoff in pyproject.toml
+upgrade-all: && devenv
+    uv lock --upgrade
 
-    test "${FORCE:-}" = "true" -o {{ src }} -nt {{ dst }} || exit 0
-    {{ PIP_COMPILE }} --quiet --generate-hashes --resolver=backtracking --strip-extras --allow-unsafe --output-file={{ dst }} {{ src }} {{ args }}
+# Move the cutoff date in pyproject.toml to N days ago (default: 7) at midnight UTC
+bump-uv-cutoff days="7":
+    #!/usr/bin/env -S uvx --with tomlkit python3.13
 
-# Compile prod requirements
-requirements-prod *args: (_compile 'requirements.prod.in' 'requirements.prod.txt' args)
+    import datetime
+    import tomlkit
 
-# Compile dev requirements
-requirements-dev *args: requirements-prod (_compile 'requirements.dev.in' 'requirements.dev.txt' args)
+    with open("pyproject.toml", "rb") as f:
+        content = tomlkit.load(f)
 
-# Upgrade the given dev or prod dependency, or all dependencies if no dependency is given
-upgrade env package="": venv
-    #!/usr/bin/env bash
-    set -euxo pipefail
+    new_datetime = (
+        datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=int("{{ days }}"))
+    ).replace(hour=0, minute=0, second=0, microsecond=0)
+    new_timestamp = new_datetime.strftime("%Y-%m-%dT%H:%M:%SZ")
+    if existing_timestamp := content["tool"]["uv"].get("exclude-newer"):
+        if new_datetime < datetime.datetime.fromisoformat(existing_timestamp):
+            print(
+                f"Existing cutoff {existing_timestamp} is more recent than {new_timestamp}, not updating."
+            )
+            exit(0)
+    content["tool"]["uv"]["exclude-newer"] = new_timestamp
 
-    if test -z "{{ package }}"; then
-        opts='--upgrade';
-    else
-        opts="--upgrade-package {{ package }}";
-    fi
-    FORCE=true {{ just_executable() }} requirements-{{ env }} $opts
+    with open("pyproject.toml", "w") as f:
+        tomlkit.dump(content, f)
 
 # Upgrade all dependencies (used by the update-dependencies GitHub Actions workflow)
-update-dependencies:
-    just upgrade prod
-    just upgrade dev
-
-_install env:
-    #!/usr/bin/env bash
-    set -euxo pipefail
-
-    test requirements.{{ env }}.txt -nt {{ VENV_DIR }}/.{{ env }} || exit 0
-    # We pass --no-deps to avoid using setuptools' deprecated interfaces.
-    # https://pip.pypa.io/en/stable/topics/secure-installs/#do-not-use-setuptools-directly
-    {{ PIP }} install --no-deps -r requirements.{{ env }}.txt
-    touch {{ VENV_DIR }}/.{{ env }}
+update-dependencies: bump-uv-cutoff upgrade-all
 
 # Install pre-commit hook
 install-pre-commit:
-    test -f .git/hooks/pre-commit || {{ BIN_DIR }}/pre-commit install
+    test -f .git/hooks/pre-commit || uv run pre-commit install
 
-# Install prod requirements into the virtual environment
-prodenv: requirements-prod (_install 'prod')
+# Install prod requirements into the virtual environment and remove all other packages
+prodenv:
+    uv sync --no-dev
 
 # Install dev requirements into the virtual environment
-devenv: requirements-dev prodenv (_install 'dev') && install-pre-commit
+devenv: && install-pre-commit
+    uv sync --inexact
 
 # Run a command
-run *args: _checkenv prodenv
-    {{ BIN_DIR }}/{{ args }}
+run *args: _checkenv
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # The --no-dev flag just means that `uv` won't install dev dependencies
+    # prior to running the command if they aren't already present
+    # `uv` won't remove existing dev dependencies from the venv before running the command
+    # To run with solely prod dependencies, run `just prodenv` beforehand
+    uv run --no-dev {{ args }}
 
 # Run tests
-test *args: devenv
-    {{ BIN_DIR }}/coverage run --source {{ justfile_directory() }} --module pytest {{ args }}
-    {{ BIN_DIR }}/coverage report || {{ BIN_DIR }}/coverage html
+test *args:
+    uv run coverage run --source {{ justfile_directory() }} --module pytest {{ args }}
+    uv run coverage report || uv run coverage html
 
 # Fix code
-fix *args=".": devenv
-    {{ RUFF }} format {{ args }}
-    {{ RUFF }} check --fix {{ args }}
+fix *args=".":
+    uv run ruff format {{ args }}
+    uv run ruff check --fix {{ args }}
 
-# Check code
-check *args=".": devenv
-    {{ RUFF }} format --check {{ args }}
-    {{ RUFF }} check {{ args }}
+# Check code and lockfile
+check *args=".":
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # The lockfile should be checked before `uv run` is used
+    # Make sure dates in pyproject.toml and uv.lock are in sync
+    unset UV_EXCLUDE_NEWER
+    rc=0
+    uv lock --check || rc=$?
+    if test "$rc" != "0" ; then
+        echo "Timestamp cutoffs in uv.lock must match those in pyproject.toml. See DEVELOPERS.md for details and hints." >&2
+        exit $rc
+    fi
+
+    uv run ruff format --check {{ args }}
+    uv run ruff check {{ args }}
