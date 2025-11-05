@@ -15,11 +15,10 @@ Next, run the following commands:
 
 ```sh
 just devenv
-source .venv/bin/activate
 source .env
-python -m tasks list # lists all tasks
-python -m tasks run <task> # runs individual tasks
-just run app/app.py
+just run python -m tasks list # lists all tasks
+just run python -m tasks run <task> # runs individual tasks
+just run streamlit run app/app.py
 ```
 
 [5]: https://github.com/opensafely-core/opencodelists/blob/main/DEVELOPERS.md
