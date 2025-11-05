@@ -100,9 +100,9 @@ Let's not!
 For convenience,
 the App Platform app uses a buildpack, rather than a Dockerfile, to build an image.
 
-App Platform uses `requirements.txt` to determine that the Python buildpack is required.
-Because the information in this file is already stored elsewhere,
-it is a symlink.
+App Platform's Python buildpack supports `uv`, our package manager.
+Other package manager files (such as `requirements.txt`) must not be present in the
+repo for the buildpack to use `uv`.
 
 For more information about the Python buildpack,
 see the "[Python Buildpack on App Platform][]" page in the DigitalOcean docs.

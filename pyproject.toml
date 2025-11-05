@@ -1,3 +1,19 @@
+[project]
+  name = "ethelred"
+  version = "0.1.0"
+  description = "ethelred.opensafely.org"
+  readme = "README.md"
+  requires-python = ">=3.12"
+
+dependencies = [
+    "altair",
+    "duckdb",
+    "pandas",
+    "sqlalchemy",
+    "streamlit",
+    "watchdog",
+]
+
 [tool.coverage.run]
 branch = true
 dynamic_context = "test_function"
@@ -45,3 +61,17 @@ lines-after-imports = 2
 "altair" = ["alt"]
 "pandas" = ["pd"]
 "streamlit" = ["st"]
+
+# Note: any `exclude-newer-package` timestamps should be removed if > 7 days old
+# See https://github.com/opensafely-core/repo-template/blob/main/DEVELOPERS.md for details
+[tool.uv]
+exclude-newer = "2025-11-04T00:00:00Z"
+exclude-newer-package = {}
+
+[dependency-groups]
+dev = [
+    "coverage",
+    "pre-commit",
+    "pytest",
+    "ruff",
+]
