@@ -9,6 +9,19 @@ RUFF := BIN_DIR / "ruff"
 default:
     @{{ just_executable() }} --list
 
+# Check if a .env exists
+_checkenv:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if [[ ! -f .env ]]; then
+    # just will not pick up environment variables from a .env that it's just created,
+    # and there isn't an easy way to load those into the environment, so we just
+    # prompt the user to create a .env.
+        echo "No '.env' file found; please create one from dotenv"
+        exit 1
+    fi
+
 # Remove the virtual environment
 clean:
     rm -rf {{ VENV_DIR }}
@@ -69,7 +82,7 @@ prodenv: requirements-prod (_install 'prod')
 devenv: requirements-dev prodenv (_install 'dev') && install-pre-commit
 
 # Run a command
-run *args: prodenv
+run *args: _checkenv prodenv
     {{ BIN_DIR }}/{{ args }}
 
 # Run tests
