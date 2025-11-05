@@ -13,8 +13,9 @@ jobs:
 
       - uses: "opensafely-core/setup-action@v1"
         with:
-          python-version: "3.12"
           install-just: true
+          install-uv: true
+          cache: uv
 
       - uses: actions/create-github-app-token@v2
         id: generate-token
