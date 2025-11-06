@@ -1,7 +1,5 @@
 set dotenv-load := true
 
-VENV_DIR := ".venv"
-
 # List available recipes and their arguments
 default:
     @{{ just_executable() }} --list
@@ -21,7 +19,7 @@ _checkenv:
 
 # Remove the virtual environment
 clean:
-    rm -rf {{ VENV_DIR }}
+    rm -rf .venv
 
 # Upgrade a single package to the latest version as of the cutoff in pyproject.toml
 upgrade-package package: && devenv
