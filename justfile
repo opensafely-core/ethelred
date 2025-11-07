@@ -17,9 +17,6 @@ _checkenv:
     set -euo pipefail
 
     if [[ ! -f .env ]]; then
-    # just will not pick up environment variables from a .env that it's just created,
-    # and there isn't an easy way to load those into the environment, so we just
-    # prompt the user to create a .env.
         echo "No '.env' file found; please create one from dotenv"
         exit 1
     fi
