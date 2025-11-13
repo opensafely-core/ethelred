@@ -62,8 +62,6 @@ lines-after-imports = 2
 "pandas" = ["pd"]
 "streamlit" = ["st"]
 
-# Note: any `exclude-newer-package` timestamps should be removed if > 7 days old
-# See https://github.com/opensafely-core/repo-template/blob/main/DEVELOPERS.md for details
 [tool.uv]
 exclude-newer = "2025-11-04T00:00:00Z"
 

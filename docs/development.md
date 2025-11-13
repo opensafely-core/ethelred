@@ -54,8 +54,8 @@ If `just check` errors saying that the timestamps must match, you might have mod
 The timestamp cutoff should usually be set to midnight UTC of a past date.
 In general, the date is expected to be between 7 and 14 days ago as a result of automated weekly dependency updates.
 
-If you require a package version that is newer than the cutoff allows, you can either manually bump the global cutoff
-date or add a package-specific timestamp cutoff. Both options are described below.
+If you require a package version that is newer than the cutoff allows, you can manually bump the global cutoff
+date as described below.
 
 ### Manually bumping the cutoff date
 The cutoff timestamp can be modified to a more recent date either manually in the `pyproject.toml`
@@ -65,18 +65,5 @@ For example, to set the cutoff to today's date and upgrade all dependencies, run
 just bump-uv-cutoff 0
 just upgrade-all
 ```
-
-### Adding a package-specific timestamp cutoff
-It is possible to specify a package-specific timestamp cutoff in addition to the global cutoff.
-This should be done in the `pyproject.toml` to ensure reproducible installs;
-see the [uv documentation](https://docs.astral.sh/uv/reference/settings/#exclude-newer-package) for details.
-If set, the package-specific cutoff will take precedence over the global cutoff regardless of which one is more recent.
-
-You should not set a package-specific cutoff that is older than the global cutoff - use a version
-constraint instead.
-If there is good reason to set a package-specific cutoff that is more recent than the global cutoff,
-**care should be taken to ensure that the package-specific cutoff is manually removed once it is over 7 days old**,
-as otherwise future automated updates of that package will be indefinitely blocked.
-Currently no automated tooling is in place to enforce removal of stale package-specific cutoffs.
 
 [5]: https://github.com/opensafely-core/opencodelists/blob/main/DEVELOPERS.md
