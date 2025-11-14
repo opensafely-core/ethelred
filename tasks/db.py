@@ -11,7 +11,9 @@ class Database(enum.StrEnum):
 def get_engine(database):
     match database:
         case Database.OPENCODELISTS:
-            return sqlalchemy.create_engine(os.environ["OPENCODELISTS_DATABASE_URL"])
+            return sqlalchemy.create_engine(
+                "sqlite+pysqlite:///" + os.environ["OPENCODELISTS_DATABASE_PATH"]
+            )
         case _:
             raise TypeError(f"Cannot get engine for database `{database}`")
 

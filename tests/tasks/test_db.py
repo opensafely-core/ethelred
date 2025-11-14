@@ -5,7 +5,7 @@ from tasks import db
 
 
 def test_get_engine(monkeypatch):
-    monkeypatch.setenv("OPENCODELISTS_DATABASE_URL", "sqlite+pysqlite:///:memory:")
+    monkeypatch.setenv("OPENCODELISTS_DATABASE_PATH", ":memory:")
     engine = db.get_engine(db.Database.OPENCODELISTS)
     assert str(engine.url) == "sqlite+pysqlite:///:memory:"
 
