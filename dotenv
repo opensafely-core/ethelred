@@ -1,1 +1,1 @@
-OPENCODELISTS_DATABASE_URL=sqlite:///data/opencodelists/db.sqlite3
+OPENCODELISTS_DATABASE_URL=sqlite+pysqlite:///data/opencodelists/db.sqlite3
