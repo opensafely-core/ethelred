@@ -104,3 +104,20 @@ check *args=".":
 
     uv run ruff format --check {{ args }}
     uv run ruff check {{ args }}
+
+fetch-codelists-db:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    tmpdir="$(mktemp --directory)"
+    cleanup() { rm --recursive --force "$tmpdir"; }
+    trap cleanup EXIT
+
+    remote_path=/var/lib/dokku/data/storage/opencodelists/backup/db/sanitised-latest-db.sqlite3.zst
+    compressed_path="$tmpdir/sanitised-latest-db.sqlite3.zst"
+    decompressed_path="$tmpdir/sanitised-latest-db.sqlite3"
+
+    scp -q "$DOKKU_USERNAME@dokku3.ebmdatalab.net:$remote_path" "$compressed_path"
+    zstd --decompress --quiet "$compressed_path" -o "$decompressed_path"
+    mkdir --parents $(dirname $OPENCODELISTS_DATABASE_PATH)
+    sqlite3 $OPENCODELISTS_DATABASE_PATH ".restore $decompressed_path"
