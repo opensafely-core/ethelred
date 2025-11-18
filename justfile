@@ -106,6 +106,7 @@ check *args=".":
     uv run ruff check {{ args }}
 
 tasks-list: (run "python -m tasks list")
+
 tasks-run task: (run "python -m tasks run" task)
 
 streamlit: (run "streamlit run app/app.py")
