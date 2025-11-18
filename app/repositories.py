@@ -31,10 +31,10 @@ class Repository:
         with duckdb.connect() as conn:
             rel = conn.read_csv(self.uris["login_events"])
             rel = rel.select(
-                "email_hash, logged_in_at, logged_in_at + INTERVAL 14 DAYS AS logout_at"
+                "email_hash, logged_in_at, logged_in_at + INTERVAL 14 DAYS AS logged_out_at"
             )
             rel = rel.select(
-                "email_hash, CAST(logged_in_at AS DATE) AS login_on, CAST(logout_at AS DATE) AS logout_on"
+                "email_hash, CAST(logged_in_at AS DATE) AS login_on, CAST(logged_out_at AS DATE) AS logout_on"
             )
             rel = rel.select(
                 "email_hash, generate_series(login_on, logout_on, INTERVAL 1 DAY) AS login_on"
