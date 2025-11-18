@@ -34,21 +34,21 @@ class Repository:
                 "email_hash, logged_in_at, logged_in_at + INTERVAL 14 DAYS AS logged_out_at"
             )
             rel = rel.select(
-                "email_hash, CAST(logged_in_at AS DATE) AS login_on, CAST(logged_out_at AS DATE) AS logout_on"
+                "email_hash, CAST(logged_in_at AS DATE) AS logged_in_on, CAST(logged_out_at AS DATE) AS logout_on"
             )
             rel = rel.select(
-                "email_hash, generate_series(login_on, logout_on, INTERVAL 1 DAY) AS login_on"
+                "email_hash, generate_series(logged_in_on, logout_on, INTERVAL 1 DAY) AS logged_in_on"
             )
-            rel = rel.select("email_hash, unnest(login_on) AS login_on")
-            rel = rel.filter(duckdb.ColumnExpression("login_on") >= from_)
-            rel = rel.filter(duckdb.ColumnExpression("login_on") <= to_)
+            rel = rel.select("email_hash, unnest(logged_in_on) AS logged_in_on")
+            rel = rel.filter(duckdb.ColumnExpression("logged_in_on") >= from_)
+            rel = rel.filter(duckdb.ColumnExpression("logged_in_on") <= to_)
             rel = rel.distinct()
             rel = rel.aggregate(
                 [
-                    duckdb.ColumnExpression("login_on").alias("date"),
+                    duckdb.ColumnExpression("logged_in_on").alias("date"),
                     duckdb.FunctionExpression("count").alias("count"),
                 ],
-                "login_on",
+                "logged_in_on",
             )
 
             num_users_logged_in_per_day = rel.to_df()
