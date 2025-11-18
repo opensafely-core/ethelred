@@ -51,7 +51,7 @@ bump-uv-cutoff days="7":
     with open("pyproject.toml", "w") as f:
         tomlkit.dump(content, f)
 
-# Upgrade all dependencies (used by the update-dependencies GitHub Actions workflow)
+# Upgrade all packages to the latest versions (used by the update-dependencies GitHub Actions workflow)
 update-dependencies: bump-uv-cutoff upgrade-all
 
 # Install pre-commit hook
