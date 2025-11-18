@@ -34,10 +34,10 @@ class Repository:
                 "email_hash, logged_in_at, logged_in_at + INTERVAL 14 DAYS AS logged_out_at"
             )
             rel = rel.select(
-                "email_hash, CAST(logged_in_at AS DATE) AS logged_in_on, CAST(logged_out_at AS DATE) AS logout_on"
+                "email_hash, CAST(logged_in_at AS DATE) AS logged_in_on, CAST(logged_out_at AS DATE) AS logged_out_on"
             )
             rel = rel.select(
-                "email_hash, generate_series(logged_in_on, logout_on, INTERVAL 1 DAY) AS logged_in_on"
+                "email_hash, generate_series(logged_in_on, logged_out_on, INTERVAL 1 DAY) AS logged_in_on"
             )
             rel = rel.select("email_hash, unnest(logged_in_on) AS logged_in_on")
             rel = rel.filter(duckdb.ColumnExpression("logged_in_on") >= from_)
