@@ -71,10 +71,10 @@ run *args: _checkenv
     #!/usr/bin/env bash
     set -euo pipefail
 
-    # The --no-dev flag just means that `uv` won't install dev dependencies
-    # prior to running the command if they aren't already present
-    # `uv` won't remove existing dev dependencies from the venv before running the command
-    # To run with solely prod dependencies, run `just prodenv` beforehand
+    # The --no-dev flag ensures that uv doesn't install dev dependencies before it runs
+    # the command. However, uv doesn't remove dev dependencies, if they are present.
+    # To run the command with prod dependencies only, first run `just prodenv` and then
+    # run `just run`.
     uv run --no-dev {{ args }}
 
 # Run tests
