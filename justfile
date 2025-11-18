@@ -66,7 +66,7 @@ prodenv:
 devenv: && install-pre-commit
     uv sync --inexact
 
-# Run a command
+# Run a command in the virtual environment
 run *args: _checkenv
     #!/usr/bin/env bash
     set -euo pipefail
