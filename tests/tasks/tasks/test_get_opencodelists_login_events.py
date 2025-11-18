@@ -15,5 +15,5 @@ def test_get_records():
     )
     records = list(get_opencodelists_login_events.get_records([row]))
     record = records[0]
-    assert record.login_at == datetime.datetime(2025, 1, 1, microsecond=0)
+    assert record.logged_in_at == datetime.datetime(2025, 1, 1, microsecond=0)
     assert record.email_hash == utils.sha256("user@example.com")

@@ -5,7 +5,7 @@ import sqlalchemy
 from .. import DATA_DIR, db, io, utils
 
 
-Record = collections.namedtuple("Record", ["login_at", "email_hash"])
+Record = collections.namedtuple("Record", ["logged_in_at", "email_hash"])
 
 
 def extract(engine, metadata):  # pragma: no cover

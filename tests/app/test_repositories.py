@@ -19,7 +19,7 @@ def test_get_num_users_logged_in_per_day(tmp_path):
     login_events_csv = tmp_path / "opencodelists" / "login_events.csv"
     login_events_csv.parent.mkdir()
     login_events_csv.write_text(
-        "login_at,email_hash\n"
+        "logged_in_at,email_hash\n"
         + "2025-01-01 00:00:00,1111111\n"  # left boundary, should be counted
         + "2025-01-02 00:00:00,1111111\n"  # logged in twice, should be counted once
         + "2025-01-03 23:59:59,2222222\n"  # right boundary, should be counted
@@ -46,7 +46,7 @@ def test_repository_get_num_users_logged_in(tmp_path):
     login_events_csv = tmp_path / "opencodelists" / "login_events.csv"
     login_events_csv.parent.mkdir()
     login_events_csv.write_text(
-        "login_at,email_hash\n"
+        "logged_in_at,email_hash\n"
         + "2025-01-01 00:00:00,1111111\n"  # left boundary, should be counted
         + "2025-01-02 00:00:00,1111111\n"  # logged in twice, shouldn't be counted
         + "2025-01-03 23:59:59,2222222\n"  # right boundary, should be counted

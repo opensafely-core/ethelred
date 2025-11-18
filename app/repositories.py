@@ -12,23 +12,29 @@ class Repository:
         }
 
     def get_earliest_login_event_date(self):  # pragma: no cover
-        return _get_scalar_result(self.uris["login_events"], "min", "login_at").date()
+        return _get_scalar_result(
+            self.uris["login_events"], "min", "logged_in_at"
+        ).date()
 
     def get_latest_login_event_date(self):  # pragma: no cover
-        return _get_scalar_result(self.uris["login_events"], "max", "login_at").date()
+        return _get_scalar_result(
+            self.uris["login_events"], "max", "logged_in_at"
+        ).date()
 
     def get_login_events_per_day(self, from_, to_):  # pragma: no cover
-        return _get_events_per_day(self.uris["login_events"], "login_at", from_, to_)
+        return _get_events_per_day(
+            self.uris["login_events"], "logged_in_at", from_, to_
+        )
 
     def get_num_users_logged_in_per_day(self, from_, to_):
         assert from_ <= to_
         with duckdb.connect() as conn:
             rel = conn.read_csv(self.uris["login_events"])
             rel = rel.select(
-                "email_hash, login_at, login_at + INTERVAL 14 DAYS AS logout_at"
+                "email_hash, logged_in_at, logged_in_at + INTERVAL 14 DAYS AS logout_at"
             )
             rel = rel.select(
-                "email_hash, CAST(login_at AS DATE) AS login_on, CAST(logout_at AS DATE) AS logout_on"
+                "email_hash, CAST(logged_in_at AS DATE) AS login_on, CAST(logout_at AS DATE) AS logout_on"
             )
             rel = rel.select(
                 "email_hash, generate_series(login_on, logout_on, INTERVAL 1 DAY) AS login_on"
@@ -66,8 +72,8 @@ class Repository:
         assert from_ <= to_
         with duckdb.connect() as conn:
             rel = conn.read_csv(self.uris["login_events"])
-            login_at = duckdb.ColumnExpression("login_at")
-            login_on = login_at.cast(sqltypes.DATE).alias("login_on")
+            logged_in_at = duckdb.ColumnExpression("logged_in_at")
+            login_on = logged_in_at.cast(sqltypes.DATE).alias("login_on")
             rel = rel.filter(login_on >= from_)
             rel = rel.filter(login_on <= to_)
             rel = rel.select("email_hash").distinct().count("email_hash")
