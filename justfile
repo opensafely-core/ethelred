@@ -105,12 +105,16 @@ check *args=".":
     uv run ruff format --check {{ args }}
     uv run ruff check {{ args }}
 
+# List the tasks
 tasks-list: (run "python -m tasks list")
 
+# Run a task
 tasks-run task: (run "python -m tasks run" task)
 
+# Run the Streamlit app
 streamlit: (run "streamlit run app/app.py")
 
+# Fetch the latest sanitised version of the OpenCodelists database
 fetch-codelists-db:
     #!/usr/bin/env bash
     set -euo pipefail
