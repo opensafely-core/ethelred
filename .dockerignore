@@ -1,0 +1,16 @@
+.git/
+
+**/*~
+**/.#*
+**/*#
+**/__pycache__
+**/*.pyc
+**/.env
+**/.venv
+
+# Python files
+/tests
+
+# Tooling effluent
+**/htmlcov
+**/.coverage
