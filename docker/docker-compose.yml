@@ -1,0 +1,23 @@
+# Note: we do not run prod service with docker-compose, we use it just for
+# configuring the production build
+services:
+  # Prod service. Used to build prod image and run/test it locally
+  prod:
+    build:
+      context: ..
+      # Path relative to context
+      dockerfile: docker/Dockerfile
+      # The production stage in the Dockerfile
+      target: ethelred-prod
+      args:
+        # Dynamic env vars supplied by just
+        - BUILD_DATE
+        - GITREF
+        # The port the streamlit app will run on
+        - STREAMLIT_SERVER_PORT=8080
+    # Use Docker's builitin PID daemon
+    init: true
+    ports:
+      - "8080:8080"
+    # Image name, both locally and public
+    image: ethelred-streamlit-app
