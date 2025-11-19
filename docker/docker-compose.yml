@@ -13,6 +13,9 @@ services:
         # Dynamic env vars supplied by just
         - BUILD_DATE
         - GITREF
+        # Environment variables from .env file
+        - UBUNTU_VERSION
+        - UV_VERSION
         # The port the streamlit app will run on
         - STREAMLIT_SERVER_PORT=8080
     # Use Docker's builitin PID daemon
