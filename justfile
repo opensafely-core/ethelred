@@ -104,6 +104,7 @@ check *args=".":
 
     uv run ruff format --check {{ args }}
     uv run ruff check {{ args }}
+    just docker/lint
 
 # List the tasks
 tasks-list: (run "python -m tasks list")
