@@ -63,7 +63,7 @@ lines-after-imports = 2
 "streamlit" = ["st"]
 
 [tool.uv]
-exclude-newer = "2025-11-11T00:00:00Z"
+exclude-newer = "2025-11-18T00:00:00Z"
 
 [dependency-groups]
 dev = [
