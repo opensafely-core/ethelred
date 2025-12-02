@@ -17,7 +17,7 @@ jobs:
     needs: ci
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: digitalocean/app_action/deploy@f4c57e650e1dec6665ad5d3af739b67b9d31aab1
         env:
           REPOSITORY_ROOT_URI: ${{ vars.REPOSITORY_ROOT_URI }}
