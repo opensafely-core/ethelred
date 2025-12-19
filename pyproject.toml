@@ -9,6 +9,7 @@ dependencies = [
     "altair",
     "duckdb",
     "pandas",
+    "requests",
     "sqlalchemy",
     "streamlit",
     "watchdog",
@@ -28,6 +29,7 @@ exclude_also = [
 ]
 omit = [
     "tasks/__main__.py",
+    "tasks/github_api.py",  # too costly to maintain integration tests
     "tests/jobserver/get_tables.py",
     "tests/jobserver/tables.py",
 ]
