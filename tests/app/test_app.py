@@ -2,7 +2,6 @@ import datetime
 
 import pandas
 import pytest
-from streamlit.testing.v1 import AppTest
 
 from app import app
 
@@ -32,6 +31,8 @@ class FakeRepository:
 
 @pytest.mark.slow
 def test_app():
+    from streamlit.testing.v1 import AppTest
+
     app_test = AppTest.from_function(app.main, args=(FakeRepository(),))
     app_test.run()
     assert not app_test.exception
