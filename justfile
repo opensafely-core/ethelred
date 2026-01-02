@@ -84,7 +84,7 @@ test *args:
 
 # Run fast tests as quickly as possible
 test-fast *args:
-    uv run pytest {{ args }}
+    uv run pytest -m "not slow" {{ args }}
 
 # Fix code
 fix *args=".":
