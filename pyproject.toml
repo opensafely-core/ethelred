@@ -40,8 +40,8 @@ show_contexts = true
 [tool.pytest]
 filterwarnings = [
     # Streamlit modifies an Altair chart's theme using a deprecated attribute. We don't
-    # control Streamlit, so we ignore the deprecation warning.
-    "ignore::altair.utils.deprecation.AltairDeprecationWarning:streamlit.elements.vega_charts",
+    # control Streamlit, so we ignore warnings from that module without importing Altair.
+    "ignore:.*:Warning:streamlit.elements.vega_charts",
 ]
 pythonpath = ["app"]
 markers = ["slow"]
