@@ -82,6 +82,10 @@ test *args:
     uv run coverage run --source {{ justfile_directory() }} --module pytest {{ args }}
     uv run coverage report || uv run coverage html
 
+# Run fast tests as quickly as possible
+test-fast *args:
+    uv run pytest {{ args }}
+
 # Fix code
 fix *args=".":
     uv run ruff format {{ args }}
