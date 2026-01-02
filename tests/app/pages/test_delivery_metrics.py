@@ -2,13 +2,14 @@ import datetime
 
 import pandas
 import pytest
-from streamlit.testing.v1 import AppTest
 
 from pages.delivery_metrics import Repository, main
 
 
 @pytest.mark.slow
 def test_app():
+    from streamlit.testing.v1 import AppTest
+
     class FakeRepository:
         def get_prs_created_per_day(self):
             return pandas.DataFrame({"date": [datetime.date(2025, 1, 1)], "count": [1]})
