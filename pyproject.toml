@@ -44,6 +44,8 @@ filterwarnings = [
     "ignore::altair.utils.deprecation.AltairDeprecationWarning:streamlit.elements.vega_charts",
 ]
 pythonpath = ["app"]
+markers = ["slow"]
+strict_markers = true
 
 [tool.ruff]
 src = [".", "app"]
