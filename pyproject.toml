@@ -28,6 +28,7 @@ exclude_also = [
 ]
 omit = [
     "tasks/__main__.py",
+    "tasks/github_api.py",  # too costly to maintain integration tests
     "tests/jobserver/get_tables.py",
     "tests/jobserver/tables.py",
 ]
@@ -35,13 +36,15 @@ omit = [
 [tool.coverage.html]
 show_contexts = true
 
-[tool.pytest.ini_options]
+[tool.pytest]
 filterwarnings = [
     # Streamlit modifies an Altair chart's theme using a deprecated attribute. We don't
-    # control Streamlit, so we ignore the deprecation warning.
-    "ignore::altair.utils.deprecation.AltairDeprecationWarning:streamlit.elements.vega_charts",
+    # control Streamlit, so we ignore warnings from that module without importing Altair.
+    "ignore:.*:Warning:streamlit.elements.vega_charts",
 ]
-pythonpath = "app"
+pythonpath = ["app"]
+markers = ["slow"]
+strict_markers = true
 
 [tool.ruff]
 src = [".", "app"]
