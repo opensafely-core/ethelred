@@ -20,7 +20,7 @@ The Continuous Deployment workflow (`.github/workflows/cd.yaml`) deploys the Str
 It does so only after all jobs in the Continuous Integration workflow (`.github/workflows/ci.yaml`) succeeded (or were skipped).
 
 The Continuous Deployment workflow requires a repository secret called `DIGITALOCEAN_DEPLOYMENT`.
-It should be set to a DigitalOcean personal access token with the actions:update scope.
+It should be set to a DigitalOcean personal access token with the app:update scope.
 
 For more information about repository secrets,
 see the "[Using secrets in GitHub Actions][]" page in the GitHub docs.
