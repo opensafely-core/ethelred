@@ -102,7 +102,7 @@ check *args=".":
     rc=0
     uv lock --check || rc=$?
     if test "$rc" != "0" ; then
-        echo "Timestamp cutoffs in uv.lock must match those in pyproject.toml. See DEVELOPERS.md for details and hints." >&2
+        echo "Timestamp cutoffs in uv.lock must match those in pyproject.toml. See docs/development.md for details and hints." >&2
         exit $rc
     fi
 
