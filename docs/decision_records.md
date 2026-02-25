@@ -6,7 +6,7 @@ A lightweight alternative to [Architectural Decision Records][].
 
 We will try to reach decisions by consensus,
 recognising that *a* decision is better than *no* decision.
-Later decisions my supersede earlier decisions.
+Later decisions may supersede earlier decisions.
 
 We will record our decisions, as they are made, in this document.
 We will try not to record our decisions retrospectively.
@@ -23,7 +23,7 @@ We will link to records as follows:
 
 Links and typos aside,
 we will treat *records* as immutable.
-(We will treat *decisions* as mutable, as later decisions my supersede earlier decisions.)
+(We will treat *decisions* as mutable, as later decisions may supersede earlier decisions.)
 
 ## 001: Two applications, one codebase
 
