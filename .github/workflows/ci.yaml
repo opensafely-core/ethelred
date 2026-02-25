@@ -15,7 +15,6 @@ jobs:
         with:
           install-just: true
           install-uv: true
-          cache: uv
       - run: just devenv
       - run: just check
 
