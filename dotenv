@@ -1,2 +1,2 @@
-OPENCODELISTS_DATABASE_PATH=data/opencodelists/db.sqlite3
+OPENCODELISTS_DATABASE_PATH=tmp/opencodelists/db.sqlite3
 DOKKU_USERNAME=
