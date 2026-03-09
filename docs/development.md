@@ -10,13 +10,18 @@ Follow installation instructions from the [Just Programmer's Manual](https://jus
 
 Follow installation instructions from the [uv documentation](https://docs.astral.sh/uv/getting-started/installation/) for your OS.
 
+### s3cmd
+
+Install `s3cmd` from your OS package repository if you want to publish the derived CSVs to DigitalOcean Spaces.
+
 ## Setup
 
-1. Copy `dotenv` to `.env` and update `.env`.
-2. Download a dump of the OpenCodelists SQLite database.
+1. Create a Digital Ocean Spaces access key with write access to the `ethelred` bucket.
+2. Copy `dotenv` to `.env` and update `.env`.
+3. Download a dump of the OpenCodelists SQLite database.
    If you have SSH for `dokku3` set up you can retrieve this with `just fetch-codelists-db`.
    Otherwise refer to [OpenCodelists's][5] developer documentation for setup instructions.
-3. Install development dependencies with `just devenv`.
+4. Install development dependencies with `just devenv`.
 
 ## Running
 
@@ -24,6 +29,7 @@ Follow installation instructions from the [uv documentation](https://docs.astral
 just tasks-list  # lists all tasks
 just tasks-run <task>  # runs individual tasks
 just streamlit  # run the web application
+just publish  # sync data/ to the configured DigitalOcean Spaces bucket
 ```
 
 ## Dependency management

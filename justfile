@@ -119,6 +119,16 @@ tasks-run task: (run "python -m tasks run" task)
 # Run the Streamlit app
 streamlit: (run "streamlit run app/app.py")
 
+# Publish the derived CSVs to DigitalOcean Spaces
+publish: _checkenv
+    s3cmd \
+        --access_key="$SPACES_ACCESS_KEY_ID" \
+        --secret_key="$SPACES_SECRET_KEY" \
+        --host="$SPACES_REGION.digitaloceanspaces.com" \
+        --host-bucket="%(bucket)s.$SPACES_REGION.digitaloceanspaces.com" \
+        --bucket-location="$SPACES_REGION" \
+        sync --delete-removed --acl-public data/ "s3://$SPACES_BUCKET/"
+
 # Fetch the latest sanitised version of the OpenCodelists database
 fetch-codelists-db:
     #!/usr/bin/env bash
