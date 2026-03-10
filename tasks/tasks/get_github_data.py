@@ -7,8 +7,6 @@ from .. import DATA_DIR, github_api, io
 
 GITHUB_DIR = DATA_DIR / "github"
 EARLY_DATE = "1970-01-01T00:00:00Z"
-
-
 PR = collections.namedtuple(
     "PR",
     [
@@ -23,13 +21,23 @@ PR = collections.namedtuple(
         "is_draft",
     ],
 )
+TEAM_REPO = collections.namedtuple("TEAM_REPO", ["org", "team", "repo"])
+TEAM_MEMBER = collections.namedtuple("TEAM_MEMBER", ["org", "team", "login"])
+ORGS = ("opensafely-core", "ebmdatalab", "bennettoxford")
 
 
 def main():  # pragma: no cover
     client = github_api.Client(
-        {"opensafely-core": os.environ["GITHUB_OPENSAFELY_CORE_TOKEN"]}
+        {
+            "opensafely-core": os.environ["GITHUB_OPENSAFELY_CORE_TOKEN"],
+            "ebmdatalab": os.environ["GITHUB_EBMDATALAB_TOKEN"],
+            "bennettoxford": os.environ["GITHUB_BENNETTOXFORD_TOKEN"],
+        }
     )
-    get_prs(client, "opensafely-core", GITHUB_DIR / "opensafely-core" / "prs.csv")
+    for org in ORGS:
+        org_dir = GITHUB_DIR / org
+        get_prs(client, org, org_dir / "prs.csv")
+        get_teams(client, org, org_dir)
 
 
 def get_prs(client, org, file):
@@ -92,6 +100,25 @@ def get_prs(client, org, file):
         tmp_file.replace(file)
 
 
+def get_teams(client, org, directory):
+    team_repos = []
+    team_members = []
+
+    for team_record in client.rest_query("/orgs/{org}/teams", org=org):
+        team = team_record["slug"]
+        for repo in client.rest_query(
+            "/orgs/{org}/teams/{team}/repos", org=org, team=team
+        ):
+            team_repos.append(TEAM_REPO(org=org, team=team, repo=repo["name"]))
+        for member in client.rest_query(
+            "/orgs/{org}/teams/{team}/members", org=org, team=team
+        ):
+            team_members.append(TEAM_MEMBER(org=org, team=team, login=member["login"]))
+
+    io.write(team_repos, directory / "team_repos.csv")
+    io.write(team_members, directory / "team_members.csv")
+
+
 def read_local_data(path):
     if not path.exists():
         return []
@@ -107,7 +134,7 @@ def read_local_data(path):
 
 
 def get_updates(client, org, since):
-    prs = client.query(org, github_api.PR_QUERY % (org, since))
+    prs = client.graphql_query(org, github_api.PR_QUERY % (org, since))
     yield from (convert_pr(org, pr) for pr in prs)
 
 

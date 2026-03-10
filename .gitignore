@@ -5,3 +5,6 @@ tmp/
 !docker/.env
 __pycache__/
 .venv/
+/AGENTS.md
+/docs/plans/
+/.claude/

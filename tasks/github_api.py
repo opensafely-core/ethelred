@@ -1,6 +1,7 @@
 import json
 
 import requests
+import requests.utils
 
 
 class Client:
@@ -8,7 +9,7 @@ class Client:
         self._tokens = tokens
         self._session = requests.Session()
 
-    def query(self, org, query):
+    def graphql_query(self, org, query):
         more_pages = True
         cursor = None
         while more_pages:
@@ -17,6 +18,17 @@ class Client:
             page_info = page["pageInfo"]
             more_pages = page_info["hasNextPage"]
             cursor = page_info["endCursor"]
+
+    def rest_query(self, path, **kwargs):
+        headers = self._get_headers(kwargs["org"])
+        more_pages = True
+        url = f"https://api.github.com{path.format(**kwargs)}"
+
+        while more_pages:
+            response = self._session.get(url, headers=headers)
+            response.raise_for_status()
+            yield from response.json()
+            more_pages, url = self._next_page(response)
 
     def _query_page(self, org, query, cursor):
         response = self._session.post(
@@ -52,6 +64,13 @@ Query: {query}
 Response:
 {json.dumps(results, indent=2)}"""
             raise RuntimeError(msg)
+
+    def _next_page(self, response):
+        if "Link" in response.headers:
+            for link in requests.utils.parse_header_links(response.headers["Link"]):
+                if link["rel"] == "next":
+                    return True, link["url"]
+        return False, None
 
 
 PR_QUERY = """
